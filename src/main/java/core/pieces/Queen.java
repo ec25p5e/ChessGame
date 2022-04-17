@@ -1,12 +1,17 @@
 package core.pieces;
 
+import core.Utils;
 import core.pieces.piece.Piece;
 
 import java.util.Collection;
 
 public final class Queen extends Piece {
-    public Queen(final int piecePosition) {
-        super(PieceType.QUEEN, piecePosition, false);
+    public Queen(final Utils queenUtils, final int piecePosition) {
+        super(PieceType.QUEEN, queenUtils, piecePosition, false);
+    }
+
+    public Queen(final Utils queenUtils, final int piecePosition, final boolean isFirstMove) {
+        super(PieceType.QUEEN, queenUtils, piecePosition, isFirstMove);
     }
 
     @Override
@@ -19,7 +24,8 @@ public final class Queen extends Piece {
         return null;
     }
 
-    public Queen(final int piecePosition, final boolean isFirstMove) {
-        super(PieceType.QUEEN, piecePosition, isFirstMove);
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
     }
 }

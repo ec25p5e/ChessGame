@@ -1,7 +1,7 @@
 package core;
 
 public enum Utils implements IUtils {
-    YELLOW() {
+    WHITE() {
         @Override
         public boolean isYellow() {
             return true;

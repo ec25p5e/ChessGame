@@ -1,15 +1,18 @@
 package core.pieces.piece;
 
+import core.Utils;
 import lombok.Getter;
 
 @Getter
 public abstract class Piece implements IPiece {
     protected final PieceType pieceType;
+    protected final Utils pieceUtils;
     protected int piecePosition;
     protected final boolean isFirstMove;
 
-    public Piece(final PieceType pieceType, final int piecePosition, final boolean isFirstMove) {
+    public Piece(final PieceType pieceType, final Utils pieceUtils, final int piecePosition, final boolean isFirstMove) {
         this.pieceType = pieceType;
+        this.pieceUtils = pieceUtils;
         this.piecePosition = piecePosition;
         this.isFirstMove = isFirstMove;
     }
@@ -17,11 +20,6 @@ public abstract class Piece implements IPiece {
     @Override
     public boolean equals(final Object other) {
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return this.pieceType.toString();
     }
 
     public enum PieceType {

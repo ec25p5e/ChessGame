@@ -1,16 +1,17 @@
 package core.pieces;
 
+import core.Utils;
 import core.pieces.piece.Piece;
 
 import java.util.Collection;
 
 public final class King extends Piece {
-    public King(final int piecePosition) {
-        super(PieceType.KING, piecePosition, false);
+    public King(final Utils kingUtils, final int piecePosition) {
+        super(PieceType.KING, kingUtils, piecePosition, false);
     }
 
-    public King(final int piecePosition, final boolean isFirstMove) {
-        super(PieceType.KING, piecePosition, isFirstMove);
+    public King(final Utils kingUtils, final int piecePosition, final boolean isFirstMove) {
+        super(PieceType.KING, kingUtils, piecePosition, isFirstMove);
     }
 
     @Override
@@ -21,5 +22,10 @@ public final class King extends Piece {
     @Override
     public Collection<Object> calculateLegalMoves() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
     }
 }

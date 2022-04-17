@@ -44,7 +44,7 @@ public class Window {
         this.boardDirection = BoardDirection.NORMAL;
         this.debugPanel = new DebugPanel();
         this.boardPanel = new BoardPanel();
-        this.pieceIconPath = "src/resources/pieces/";
+        this.pieceIconPath = "src/main/resources/pieces/";
         setDefaultLookAndFeelDecorated(true);
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.add(this.debugPanel, BorderLayout.SOUTH);
@@ -113,6 +113,21 @@ public class Window {
             this.validate();
             this.repaint();
         }
+
+        public void setTileDarkColor(final Board board, final Color darkColor) {
+            for(final TilePanel boardTile: this.boardTiles) {
+                boardTile.setDarkTileColor(darkColor);
+            }
+
+            this.drawBoard(board);
+        }
+
+        public void setTileLightColor(final Board board, final Color lightColor) {
+            for (final TilePanel boardTile : boardTiles) {
+                boardTile.setLightTileColor(lightColor);
+            }
+            this.drawBoard(board);
+        }
     }
 
     private class TilePanel extends JPanel {
@@ -123,6 +138,7 @@ public class Window {
             this.tileId = tileId;
             this.setPreferredSize(TILE_PANEL_DIMENSION);
             this.assignTileColor();
+            this.assignTilePieceIcon(chessBoard);
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -149,7 +165,6 @@ public class Window {
 
                 }
             });
-
             this.validate();
         }
 
@@ -160,16 +175,23 @@ public class Window {
             this.repaint();
         }
 
+        public void setLightTileColor(final Color color) {
+            lightTileColor = color;
+        }
+
+        public void setDarkTileColor(final Color color) {
+            darkTileColor = color;
+        }
+
         private void assignTilePieceIcon(final Board board) {
             this.removeAll();
 
             if(board.getPiece(this.tileId) != null) {
                 try {
-                    final BufferedImage image = ImageIO.read(
-                            new File(
-                                    pieceIconPath +
-                                    board.getPiece(this.tileId)));
-
+                    final BufferedImage image = ImageIO.read(new File(pieceIconPath +
+                            board.getPiece(this.tileId).getPieceUtils().toString().charAt(0) + "" +
+                            board.getPiece(this.tileId).toString() +
+                            ".gif"));
                     this.add(new JLabel(new ImageIcon(image)));
                 } catch(final IOException e) {
                     e.printStackTrace();
