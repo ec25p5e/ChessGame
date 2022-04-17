@@ -6,13 +6,13 @@ public enum BoardUtils {
     INSTANCE;
 
     public final List<Boolean> FIRST_ROW = initRow(0);
-    public final List<Boolean> SECOND_ROW = initRow(1);
-    public final List<Boolean> THIRD_ROW = initRow(2);
-    public final List<Boolean> FOURTH_ROW = initRow(3);
-    public final List<Boolean> FIFTH_ROW = initRow(4);
-    public final List<Boolean> SIXTH_ROW = initRow(5);
-    public final List<Boolean> SEVENTH_ROW = initRow(6);
-    public final List<Boolean> EIGHTH_ROW = initRow(7);
+    public final List<Boolean> SECOND_ROW = initRow(8);
+    public final List<Boolean> THIRD_ROW = initRow(16);
+    public final List<Boolean> FOURTH_ROW = initRow(24);
+    public final List<Boolean> FIFTH_ROW = initRow(32);
+    public final List<Boolean> SIXTH_ROW = initRow(40);
+    public final List<Boolean> SEVENTH_ROW = initRow(48);
+    public final List<Boolean> EIGHTH_ROW = initRow(56);
     public final List<String> NOTATION = setupNotation();
     public final Map<String, Integer> POSITION_TO_COORDINATE = setupPositionToCoordinateMap();
 

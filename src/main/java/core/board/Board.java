@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 public final class Board {
@@ -20,8 +21,8 @@ public final class Board {
 
     private Board(final Builder boardBuilder) {
         this.boardConfig = Collections.unmodifiableMap(boardBuilder.boardConfig);
-        this.whitePieces = null;
-        this.blackPieces = null;
+        this.whitePieces = filterActivePieces(boardBuilder, Utils.WHITE);
+        this.blackPieces = filterActivePieces(boardBuilder, Utils.WHITE);
     }
 
     public Piece getPiece(final int coordinate) {
@@ -53,6 +54,12 @@ public final class Board {
         public Board build() {
             return new Board(this);
         }
+    }
+
+    private static Collection<Piece> filterActivePieces(final Builder builder, final Utils pieceUtils) {
+        return builder.boardConfig.values().stream()
+                .filter(piece -> piece.getPieceUtils() == pieceUtils)
+                .collect(Collectors.toList());
     }
 
     private static Board createDefaultBoardImpl() {
