@@ -2,13 +2,18 @@ package gui;
 
 import com.google.common.collect.Lists;
 
+import core.board.Board;
 import core.board.BoardUtils;
 import util.Constants;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +27,7 @@ public class Window {
     private final DebugPanel debugPanel;
     private final BoardPanel boardPanel;
     private String pieceIconPath;
+    private Board chessBoard;
     private BoardDirection boardDirection;
     private Color lightTileColor = Color.decode("#FFFACD");
     private Color darkTileColor = Color.decode("#593E1A");
@@ -34,6 +40,7 @@ public class Window {
     private Window() {
         this.windowFrame = new JFrame(Constants.WINDOW_TITLE);
         this.windowFrame.setLayout(new BorderLayout());
+        this.chessBoard = Board.createDefaultBoard();
         this.boardDirection = BoardDirection.NORMAL;
         this.debugPanel = new DebugPanel();
         this.boardPanel = new BoardPanel();
@@ -52,7 +59,7 @@ public class Window {
     }
 
     public void display() {
-        Window.get().getBoardPanel().drawBoard();
+        Window.get().getBoardPanel().drawBoard(Window.get().getGameBoard());
     }
 
     private JFrame getWindowFrame() {
@@ -61,6 +68,10 @@ public class Window {
 
     private BoardPanel getBoardPanel() {
         return this.boardPanel;
+    }
+
+    private Board getGameBoard() {
+        return this.chessBoard;
     }
 
     private static void center(final JFrame frame) {
@@ -91,11 +102,11 @@ public class Window {
             this.validate();
         }
 
-        public void drawBoard() {
+        public void drawBoard(final Board board) {
             this.removeAll();
 
             for(final TilePanel boardTile: boardDirection.traverse(this.boardTiles)) {
-                boardTile.drawTile();
+                boardTile.drawTile(board);
                 this.add(boardTile);
             }
 
@@ -142,10 +153,28 @@ public class Window {
             this.validate();
         }
 
-        public void drawTile() {
+        public void drawTile(final Board board) {
             this.assignTileColor();
+            this.assignTilePieceIcon(board);
             this.validate();
             this.repaint();
+        }
+
+        private void assignTilePieceIcon(final Board board) {
+            this.removeAll();
+
+            if(board.getPiece(this.tileId) != null) {
+                try {
+                    final BufferedImage image = ImageIO.read(
+                            new File(
+                                    pieceIconPath +
+                                    board.getPiece(this.tileId)));
+
+                    this.add(new JLabel(new ImageIcon(image)));
+                } catch(final IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         private void assignTileColor() {
