@@ -6,6 +6,7 @@ import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import util.Constants;
@@ -65,6 +66,9 @@ public final class Window extends Observable {
         notifyObservers();
     }
 
+
+
+
     /**
      * Questa classe rappresenta la scacchiera "fisica" che viene disegnata nella GUI
      */
@@ -104,6 +108,9 @@ public final class Window extends Observable {
             this.repaint();
         }
     }
+
+
+
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"
@@ -274,6 +281,9 @@ public final class Window extends Observable {
         }
     }
 
+
+
+
     /**
      * Questa classe viene utilizzata come osservatore dello stato della scacchiera.
      * Più precisamente a ogni cambio di stato esegue dei controlli
@@ -323,6 +333,92 @@ public final class Window extends Observable {
             JOptionPane.showMessageDialog(get().getBoardPanel(),
                     text, title,
                     JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+
+
+
+    /**
+     *
+     */
+    private static class TableGameAIWatcher implements Observer {
+
+        /**
+         * This method is called whenever the observed object is changed. An
+         * application calls an {@code Observable} object's
+         * {@code notifyObservers} method to have all the object's
+         * observers notified of the change.
+         *
+         * @param o   the observable object.
+         * @param arg an argument passed to the {@code notifyObservers}
+         *            method.
+         */
+        @Override
+        public void update(Observable o, Object arg) {
+            if(Window.get().getVirtualBoard().getCurrentPlayer().getUtils() == Utils.BLACK &&
+                !Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate() &&
+                !Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
+                System.out.println(Window.get().getVirtualBoard().getCurrentPlayer() + " è impostato su AI...");
+                final AIThinkThank thinkThank = new AIThinkThank();
+                thinkThank.execute();
+            }
+
+            if (Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate()) {
+                JOptionPane.showMessageDialog(Window.get().getBoardPanel(),
+                        "Game Over: Giocatore " + Window.get().getVirtualBoard().getCurrentPlayer() + " è sotto scacco matto!", "Game Over",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            if (Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
+                JOptionPane.showMessageDialog(Window.get().getBoardPanel(),
+                        "Game Over: Giocatore " + Window.get().getVirtualBoard().getCurrentPlayer() + " è in una situazione di blocco (stallo)!", "Game Over",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+
+    /**
+     *
+     */
+    private static class AIThinkThank extends SwingWorker<Move, String>{
+
+        private AIThinkThank() {
+        }
+
+        /**
+         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
+         * method is finished. The default
+         * implementation does nothing. Subclasses may override this method to
+         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
+         * that you can query status inside the implementation of this method to
+         * determine the result of this task or whether this task has been cancelled.
+         *
+         * @see #doInBackground
+         * @see #isCancelled()
+         * @see #get
+         */
+        @Override
+        protected void done() {
+            super.done();
+        }
+
+        /**
+         * Computes a result, or throws an exception if unable to do so.
+         *
+         * <p>
+         * Note that this method is executed only once.
+         *
+         * <p>
+         * Note: this method is executed in a background thread.
+         *
+         * @return the computed result
+         * @throws Exception if unable to compute a result
+         */
+        @Override
+        protected Move doInBackground() throws Exception {
+            return null;
         }
     }
 }
