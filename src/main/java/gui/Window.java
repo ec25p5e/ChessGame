@@ -6,6 +6,7 @@ import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.player.ai.StockAlphaBeta;
 import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -334,37 +335,36 @@ public final class Window extends Observable {
         }
 
         /**
-         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
-         * method is finished. The default
-         * implementation does nothing. Subclasses may override this method to
-         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
-         * that you can query status inside the implementation of this method to
-         * determine the result of this task or whether this task has been cancelled.
-         *
-         * @see #doInBackground
-         * @see #isCancelled()
-         * @see #get
+         * Questo metodo viene chiamato dall'observer dell'AI e si occupa di eseguire
+         * la logica della AI del giocatore.
+         * Valuterà dunque tutte le mosse e sceglierà la migliore
+         * @return
          */
         @Override
-        protected void done() {
-            super.done();
+        protected Move doInBackground() {
+            System.out.println("AI sta eseguendo qualcosa in background");
+
+            final Move bestMove;
+            final StockAlphaBeta strategy = new StockAlphaBeta(4);
+            bestMove = strategy.execute(Window.get().getVirtualBoard());
+
+            return bestMove;
         }
 
         /**
-         * Computes a result, or throws an exception if unable to do so.
          *
-         * <p>
-         * Note that this method is executed only once.
-         *
-         * <p>
-         * Note: this method is executed in a background thread.
-         *
-         * @return the computed result
-         * @throws Exception if unable to compute a result
          */
         @Override
-        protected Move doInBackground() throws Exception {
-            return null;
+        protected void done() {
+            System.out.println("dopo aver pensato ha finito");
+
+            try {
+                final Move bestMove = get();
+                System.out.println(bestMove);
+                Window.get().moveMadeUpdate(PlayerType.COMPUTER);
+            } catch(final Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
