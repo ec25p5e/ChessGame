@@ -32,19 +32,10 @@ public class BlackPlayer extends Player {
 
     /**
      * @return l'attributo degli utils riguardante il colore del giocatore
-     * Questo metodo diventerà obsoleto con l'aggiunta di "getUtils"
      */
     @Override
     public Utils getPlayerColor() {
         return Utils.BLACK;
-    }
-
-    /**
-     * @return gli utility dei giocatori
-     */
-    @Override
-    public Utils getUtils() {
-        return Utils.WHITE;
     }
 
     /**

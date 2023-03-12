@@ -95,4 +95,12 @@ public abstract class Player implements IPlayer {
                 .anyMatch(move -> doMove(move)
                         .moveStatus().isDone());
     }
+
+    /**
+     * Questo metodo controlla se c'è la possibilità di fare delle mosse d'arrocco
+     * @return "TRUE" se non sono in scacco, attraverso scacco
+     */
+    protected boolean hasCastleOpportunities() {
+        return !this.isInCheck && !this.playerKing.isCastled() && (this.playerKing.isCastledByKing() || this.playerKing.isCastledByQueen());
+    }
 }
