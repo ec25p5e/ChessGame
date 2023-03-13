@@ -1,5 +1,6 @@
 package core.board;
 
+import com.google.common.annotations.VisibleForTesting;
 import core.movements.MoveFactory;
 import core.pieces.*;
 import core.utils.Utils;
@@ -30,7 +31,7 @@ public final class VirtualBoard {
     private final Pawn enPassantPawn;
     private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard(); // initDefaultBoardTest(); // initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
@@ -123,6 +124,30 @@ public final class VirtualBoard {
         configurator.setPiece(new Bishop(61, Utils.WHITE));
         configurator.setPiece(new Knight(62, Utils.WHITE));
         configurator.setPiece(new Rook(63, Utils.WHITE));
+
+        // Imposta il giocatore che inizia a muovere la prima mossa
+        configurator.setMoveMaker(Utils.WHITE);
+
+        // "Compila" la scacchiera virtuale
+        return configurator.build();
+    }
+
+    @VisibleForTesting
+    private static VirtualBoard initDefaultBoardTest() {
+        final BoardConfigurator configurator = new BoardConfigurator();
+
+
+
+        // Pedina da mattere sotto scacco
+        configurator.setPiece(new King(63, Utils.BLACK, true, true));
+
+
+        // Attaccanti
+        configurator.setPiece(new King(54, Utils.WHITE, true, true));
+
+
+
+
 
         // Imposta il giocatore che inizia a muovere la prima mossa
         configurator.setMoveMaker(Utils.WHITE);
