@@ -1,5 +1,6 @@
 package core.board;
 
+import core.movements.MoveFactory;
 import core.pieces.*;
 import core.utils.Utils;
 import core.movements.Move;
@@ -27,6 +28,7 @@ public final class VirtualBoard {
     private final Collection<Piece> whitePieces;
     private final Collection<Piece> blackPieces;
     private final Pawn enPassantPawn;
+    private final Move transitionMove;
 
     private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard();
     
@@ -47,6 +49,7 @@ public final class VirtualBoard {
         this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);
         this.blackPlayer = new BlackPlayer(this, blackUsableMoves, whiteUsableMoves);
         this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
+        this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
     }
 
     /**
