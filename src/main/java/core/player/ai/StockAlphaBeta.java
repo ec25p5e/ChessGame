@@ -121,7 +121,7 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
                 s = "\t" + this + "(" +this.searchDepth + ")" + ", m: (" +moveCounter+ "/" +numMoves+ ") " + move + " is illegal! best: " +bestMove;
             }
 
-            // System.out.println(s);
+            System.out.println(s);
             setChanged();
             notifyObservers(s);
             moveCounter++;
@@ -130,9 +130,8 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
         final long executionTime = System.currentTimeMillis() - startTime;
         final String result = board.getCurrentPlayer() + " SELECTS " +bestMove+ " [#boards evaluated = " +this.boardsEvaluated+
                 " time taken = " + executionTime /1000+ " rate = " +(1000 * ((double)this.boardsEvaluated/ executionTime));
-        /* System.out.printf("%s SELECTS %s [#boards evaluated = %d, time taken = %d ms, rate = %.1f\n", board.getCurrentPlayer(),
+        System.out.printf("%s SELECTS %s [#boards evaluated = %d, time taken = %d ms, rate = %.1f\n", board.getCurrentPlayer(),
                 bestMove, this.boardsEvaluated, executionTime, (1000 * ((double)this.boardsEvaluated/ executionTime)));
-        */
 
         setChanged();
         notifyObservers(result);

@@ -2,6 +2,7 @@ package core.movements;
 
 import core.board.BoardConfigurator;
 import core.board.VirtualBoard;
+import core.board.VirtualBoardUtils;
 import core.pieces.piece.Piece;
 import lombok.Getter;
 
@@ -86,6 +87,22 @@ public abstract class Move {
      */
     public boolean isCastlingMove() {
         return false;
+    }
+
+    /**
+     * Questo metodo serve per aggiungere un controllo aggiuntivo di sicurezza
+     * sulle mosse e l'identificazione delle pedine
+     * @return stringa che indica le coordinate in stringa della mossa
+     */
+    public String disambiguationFile() {
+        for(final Move move : this.board.getCurrentPlayer().getUsableMoves()) {
+            if(move.getDestinationCoordinate() == this.destinationCoordinate && !this.equals(move)
+                    && this.pieceToMove.getPieceType().equals(move.getPieceToMove().getPieceType())) {
+                return VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.pieceToMove.getPiecePosition()).substring(0, 1);
+            }
+        }
+
+        return "";
     }
 
     /**
