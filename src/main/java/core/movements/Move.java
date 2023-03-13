@@ -64,6 +64,7 @@ public abstract class Move {
         this.board.getCurrentPlayer().getActivePieces().stream().filter(piece -> !this.pieceToMove.equals(piece)).forEach(builder::setPiece);
         this.board.getCurrentPlayer().getOpponentPlayer().getActivePieces().forEach(builder::setPiece);
 
+        assert this.pieceToMove != null;
         builder.setPiece(this.pieceToMove.movePiece(this));
         builder.setMoveMaker(this.board.getCurrentPlayer().getOpponentPlayer().getPlayerColor());
         builder.setMoveTransition(this);

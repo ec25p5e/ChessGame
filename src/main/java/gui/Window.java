@@ -37,6 +37,7 @@ public final class Window extends Observable {
     private Piece sourceTile;
     private Piece humanMovedPiece;
     private BoardPanel boardPanel;
+    private Move computerMove;
 
     private static final Window INSTANCE = new Window();
 
@@ -67,6 +68,14 @@ public final class Window extends Observable {
     private void moveMadeUpdate(final PlayerType playerType) {
         setChanged();
         notifyObservers(playerType);
+    }
+
+    private void updateGameBoard(final VirtualBoard board) {
+        this.virtualBoard = board;
+    }
+
+    private void updateComputerMove(final Move move) {
+        this.computerMove = move;
     }
 
     /**
@@ -292,21 +301,16 @@ public final class Window extends Observable {
     private static class TableGameAIWatcher implements Observer {
 
         /**
-         * This method is called whenever the observed object is changed. An
-         * application calls an {@code Observable} object's
-         * {@code notifyObservers} method to have all the object's
-         * observers notified of the change.
          *
-         * @param o   the observable object.
-         * @param arg an argument passed to the {@code notifyObservers}
-         *            method.
+         * @param o     the observable object.
+         * @param arg   an argument passed to the {@code notifyObservers}
+         *                 method.
          */
         @Override
         public void update(Observable o, Object arg) {
             if(Window.get().getVirtualBoard().getCurrentPlayer().getUtils().isBlack() &&
                 !Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate() &&
                 !Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
-                System.out.println(Window.get().getVirtualBoard().getCurrentPlayer() + " è impostato su AI...");
                 final AIThinkThank thinkThank = new AIThinkThank();
                 thinkThank.execute();
             }
@@ -342,11 +346,8 @@ public final class Window extends Observable {
          */
         @Override
         protected Move doInBackground() {
-            System.out.println("AI sta eseguendo qualcosa in background");
-
-            final Move bestMove;
-            final StockAlphaBeta strategy = new StockAlphaBeta(4);
-            bestMove = strategy.execute(Window.get().getVirtualBoard());
+            final StockAlphaBeta strategy = new StockAlphaBeta(1);
+            final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
 
             return bestMove;
         }
@@ -356,11 +357,11 @@ public final class Window extends Observable {
          */
         @Override
         protected void done() {
-            System.out.println("dopo aver pensato ha finito");
-
             try {
                 final Move bestMove = get();
-                System.out.println(bestMove);
+                Window.get().updateComputerMove(bestMove);
+                Window.get().updateGameBoard(Window.get().getVirtualBoard().getCurrentPlayer().doMove(bestMove).toBoard());
+                Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
                 Window.get().moveMadeUpdate(PlayerType.COMPUTER);
             } catch(final Exception e) {
                 e.printStackTrace();
