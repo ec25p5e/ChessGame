@@ -1,5 +1,7 @@
 package core.board;
 
+import com.google.common.annotations.VisibleForTesting;
+import core.movements.MoveFactory;
 import core.pieces.*;
 import core.utils.Utils;
 import core.movements.Move;
@@ -27,8 +29,9 @@ public final class VirtualBoard {
     private final Collection<Piece> whitePieces;
     private final Collection<Piece> blackPieces;
     private final Pawn enPassantPawn;
+    private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoardTest(); // initDefaultBoardTest(); // initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
@@ -47,6 +50,7 @@ public final class VirtualBoard {
         this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);
         this.blackPlayer = new BlackPlayer(this, blackUsableMoves, whiteUsableMoves);
         this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
+        this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
     }
 
     /**
@@ -120,6 +124,33 @@ public final class VirtualBoard {
         configurator.setPiece(new Bishop(61, Utils.WHITE));
         configurator.setPiece(new Knight(62, Utils.WHITE));
         configurator.setPiece(new Rook(63, Utils.WHITE));
+
+        // Imposta il giocatore che inizia a muovere la prima mossa
+        configurator.setMoveMaker(Utils.WHITE);
+
+        // "Compila" la scacchiera virtuale
+        return configurator.build();
+    }
+
+    @VisibleForTesting
+    private static VirtualBoard initDefaultBoardTest() {
+        final BoardConfigurator configurator = new BoardConfigurator();
+
+
+
+        configurator.setPiece(new King(63, Utils.BLACK, true, true));
+
+
+
+        configurator.setPiece(new Pawn(13, Utils.BLACK));
+        configurator.setPiece(new Queen(4, Utils.BLACK));
+        configurator.setPiece(new Bishop(27, Utils.WHITE));
+
+
+
+        configurator.setPiece(new King(60, Utils.WHITE, true, true));
+
+
 
         // Imposta il giocatore che inizia a muovere la prima mossa
         configurator.setMoveMaker(Utils.WHITE);

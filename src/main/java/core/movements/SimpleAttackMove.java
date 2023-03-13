@@ -35,6 +35,7 @@ public class SimpleAttackMove extends AttackMove {
      */
     @Override
     public String toString() {
-        return this.pieceToMove.getPieceType() + "X" + VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.destinationCoordinate);
+        return this.pieceToMove.getPieceType() + this.disambiguationFile() + "x"
+                + VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.destinationCoordinate);
     }
 }

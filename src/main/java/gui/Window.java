@@ -6,6 +6,7 @@ import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.player.ai.StockAlphaBeta;
 import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +35,9 @@ public final class Window extends Observable {
 
     private VirtualBoard virtualBoard;
     private Piece sourceTile;
+    private Piece humanMovedPiece;
     private BoardPanel boardPanel;
+    private Move computerMove;
 
     private static final Window INSTANCE = new Window();
 
@@ -43,7 +46,7 @@ public final class Window extends Observable {
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardPanel = new BoardPanel();
-        this.addObserver(new GameObserver());
+        this.addObserver(new TableGameAIWatcher());
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.windowFrame.setSize(Constants.WINDOW_DIMENSION);
@@ -59,15 +62,21 @@ public final class Window extends Observable {
     }
 
     /**
-     * Questo metodo serve a chiamare l'update dell'observer quando viene mossa una pedina
+     *
+     * @param playerType
      */
-    private void moveUpdate() {
+    private void moveMadeUpdate(final PlayerType playerType) {
         setChanged();
-        notifyObservers();
+        notifyObservers(playerType);
     }
 
+    private void updateGameBoard(final VirtualBoard board) {
+        this.virtualBoard = board;
+    }
 
-
+    private void updateComputerMove(final Move move) {
+        this.computerMove = move;
+    }
 
     /**
      * Questa classe rappresenta la scacchiera "fisica" che viene disegnata nella GUI
@@ -89,7 +98,6 @@ public final class Window extends Observable {
             this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             this.setBackground(Constants.BOARD_PANEL_BACKGROUND);
             this.validate();
-            // this.controlState(virtualBoard);
         }
 
         /**
@@ -108,7 +116,6 @@ public final class Window extends Observable {
             this.repaint();
         }
     }
-
 
 
 
@@ -139,11 +146,16 @@ public final class Window extends Observable {
                 public void mouseClicked(MouseEvent e) {
                     if(isRightMouseButton(e)) {
                         sourceTile = null;
+                        humanMovedPiece = null;
                     } else if(isLeftMouseButton(e)) {
                         // Se l'attributo della pedina selezionata è vuoto, imposta una nuova pedina
                         // Altrimenti esegui il movimento della pedina
                         if(sourceTile == null) {
                             sourceTile = virtualBoard.getPiece(tileId);
+                            humanMovedPiece = sourceTile;
+
+                            if(humanMovedPiece == null)
+                                sourceTile = null;
                         } else {
                             final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
                             final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
@@ -152,12 +164,13 @@ public final class Window extends Observable {
                                 virtualBoard = transition.toBoard();
 
                             sourceTile = null;
+                            humanMovedPiece = null;
                         }
                     }
 
                     invokeLater(() -> {
                         boardPanel.drawBoard(virtualBoard);
-                        moveUpdate();
+                        Window.get().moveMadeUpdate(PlayerType.HUMAN);
                     });
                 }
 
@@ -226,7 +239,6 @@ public final class Window extends Observable {
         private void setPieceIcon(final VirtualBoard board) {
             this.removeAll();
             final Piece actualPiece = board.getPiece(this.tileId);
-            // System.out.println(Constants.RESOURCE_BASE_PATH + "pieceIcon/" + actualPiece.getPieceUtils().toString().charAt(0) + "" + actualPiece + ".gif");
 
             if(actualPiece != null) {
                 try {
@@ -283,83 +295,22 @@ public final class Window extends Observable {
 
 
 
-
-    /**
-     * Questa classe viene utilizzata come osservatore dello stato della scacchiera.
-     * Più precisamente a ogni cambio di stato esegue dei controlli
-     */
-    private static class GameObserver implements Observer {
-        private static int COUNT_CHECK_WHITE = 0;
-        private static int COUNT_CHECK_BLACK = 0;
-
-        /**
-         * Questo metodo serve per osservare lo stato della scacchiera e a segnalare all'utente quando un giocatore è sotto scacco, scacco matto o stallo
-         * @param o     the observable object.
-         * @param arg   an argument passed to the {@code notifyObservers}
-         *                 method.
-         */
-        @Override
-        public void update(final Observable o, final Object arg) {
-            if(VirtualBoardUtils.isGameOver(get().getVirtualBoard()))
-                this.createJOptionPane("Game Over!", "Ha vinto il giocatore\s" + get().getVirtualBoard().getCurrentPlayer());
-            else if(get().getVirtualBoard().getCurrentPlayer().isInCheckMate())
-                this.createJOptionPane("Game Over!", "Il giocatore\s" + get().getVirtualBoard().getCurrentPlayer() + "\s è sotto scacco matto");
-            else if(get().getVirtualBoard().getCurrentPlayer().isInStaleMate())
-                this.createJOptionPane("Game Over", "Il giocatore\s" + get().getVirtualBoard().getCurrentPlayer() + "\s è in stallo!");
-            else if(get().getVirtualBoard().getBlackPlayer().isInCheck()) {
-                if(COUNT_CHECK_BLACK == 0)
-                    this.createJOptionPane("Attenzione", "Il giocatore\s" + get().getVirtualBoard().getBlackPlayer() + "\s è in scacco!");
-
-                COUNT_CHECK_BLACK++;
-            } else if(get().getVirtualBoard().getWhitePlayer().isInCheck()) {
-                if(COUNT_CHECK_WHITE == 0)
-                    this.createJOptionPane("Attenzione", "Il giocatore\s" + get().getVirtualBoard().getWhitePlayer() + "\s è in scacco!");
-
-                COUNT_CHECK_WHITE++;
-            }
-
-            if(!get().getVirtualBoard().getBlackPlayer().isInCheck())
-                COUNT_CHECK_BLACK = 0;
-            else if(!get().getVirtualBoard().getWhitePlayer().isInCheck())
-                COUNT_CHECK_WHITE = 0;
-        }
-
-        /**
-         * Questo metodo si occupa di creare un popup d'informazione a schermo
-         * @param title titolo del popup
-         * @param text testo da mostrare
-         */
-        private void createJOptionPane(String title, String text) {
-            JOptionPane.showMessageDialog(get().getBoardPanel(),
-                    text, title,
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-
-
-
     /**
      *
      */
     private static class TableGameAIWatcher implements Observer {
 
         /**
-         * This method is called whenever the observed object is changed. An
-         * application calls an {@code Observable} object's
-         * {@code notifyObservers} method to have all the object's
-         * observers notified of the change.
          *
-         * @param o   the observable object.
-         * @param arg an argument passed to the {@code notifyObservers}
-         *            method.
+         * @param o     the observable object.
+         * @param arg   an argument passed to the {@code notifyObservers}
+         *                 method.
          */
         @Override
         public void update(Observable o, Object arg) {
-            if(Window.get().getVirtualBoard().getCurrentPlayer().getUtils() == Utils.BLACK &&
+            if(Window.get().getVirtualBoard().getCurrentPlayer().getUtils().isBlack() &&
                 !Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate() &&
                 !Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
-                System.out.println(Window.get().getVirtualBoard().getCurrentPlayer() + " è impostato su AI...");
                 final AIThinkThank thinkThank = new AIThinkThank();
                 thinkThank.execute();
             }
@@ -388,37 +339,33 @@ public final class Window extends Observable {
         }
 
         /**
-         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
-         * method is finished. The default
-         * implementation does nothing. Subclasses may override this method to
-         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
-         * that you can query status inside the implementation of this method to
-         * determine the result of this task or whether this task has been cancelled.
-         *
-         * @see #doInBackground
-         * @see #isCancelled()
-         * @see #get
+         * Questo metodo viene chiamato dall'observer dell'AI e si occupa di eseguire
+         * la logica della AI del giocatore.
+         * Valuterà dunque tutte le mosse e sceglierà la migliore
+         * @return
          */
         @Override
-        protected void done() {
-            super.done();
+        protected Move doInBackground() {
+            final StockAlphaBeta strategy = new StockAlphaBeta(3);
+            final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
+
+            return bestMove;
         }
 
         /**
-         * Computes a result, or throws an exception if unable to do so.
          *
-         * <p>
-         * Note that this method is executed only once.
-         *
-         * <p>
-         * Note: this method is executed in a background thread.
-         *
-         * @return the computed result
-         * @throws Exception if unable to compute a result
          */
         @Override
-        protected Move doInBackground() throws Exception {
-            return null;
+        protected void done() {
+            try {
+                final Move bestMove = get();
+                Window.get().updateComputerMove(bestMove);
+                Window.get().updateGameBoard(Window.get().getVirtualBoard().getCurrentPlayer().doMove(bestMove).toBoard());
+                Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
+                Window.get().moveMadeUpdate(PlayerType.COMPUTER);
+            } catch(final Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -44,7 +44,7 @@ public class BlackPlayer extends Player {
      */
     @Override
     public Utils getUtils() {
-        return Utils.WHITE;
+        return Utils.BLACK;
     }
 
     /**

@@ -44,6 +44,16 @@ public abstract class Piece implements IPiece {
     }
 
     /**
+     * Questo metodo serve per ritornare il valore del tipo di pedina.
+     * Si potrebbe utilizzare anche il modo esteso inserito nel metodo in altre parti del codice.
+     * È UN METODO WRAPPER
+     * @return valore del tipo di pedina.
+     */
+    public int getPieceValue() {
+        return this.pieceType.getPieceValue();
+    }
+
+    /**
      * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
      */
     @Override

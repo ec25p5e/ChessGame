@@ -34,6 +34,7 @@ public class SimpleMove extends Move {
      */
     @Override
     public String toString() {
-        return this.pieceToMove.getPieceType().toString() + VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.destinationCoordinate);
+        return this.pieceToMove.getPieceType().toString() + this.disambiguationFile()
+                + VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.destinationCoordinate);
     }
 }

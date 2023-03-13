@@ -13,13 +13,20 @@ public enum PieceType {
     QUEEN(900, "Q"),
     KING(10000, "K");
 
-    @Getter
     private final int value;
     private final String pieceName;
 
     PieceType(final int value, final String pieceName) {
         this.value = value;
         this.pieceName = pieceName;
+    }
+
+    /**
+     * Metodo GETTER per incapsulare l'attributo "value"
+     * @return valore numerico del tipo di pedina
+     */
+    public int getPieceValue() {
+        return this.value;
     }
 
     @Override
