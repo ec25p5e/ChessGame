@@ -31,7 +31,7 @@ public final class VirtualBoard {
     private final Pawn enPassantPawn;
     private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard(); // initDefaultBoardTest(); // initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoardTest(); // initDefaultBoardTest(); // initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
@@ -138,14 +138,17 @@ public final class VirtualBoard {
 
 
 
-        // Pedina da mattere sotto scacco
         configurator.setPiece(new King(63, Utils.BLACK, true, true));
 
 
-        // Attaccanti
-        configurator.setPiece(new King(54, Utils.WHITE, true, true));
+
+        configurator.setPiece(new Pawn(13, Utils.BLACK));
+        configurator.setPiece(new Queen(4, Utils.BLACK));
+        configurator.setPiece(new Bishop(27, Utils.WHITE));
 
 
+
+        configurator.setPiece(new King(60, Utils.WHITE, true, true));
 
 
 
