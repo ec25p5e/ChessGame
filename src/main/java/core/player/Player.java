@@ -5,7 +5,6 @@ import core.movements.Move;
 import core.movements.MoveStatus;
 import core.movements.MoveTransition;
 import core.pieces.King;
-import core.utils.Utils;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -30,6 +29,7 @@ public abstract class Player implements IPlayer {
         this.board = board;
         this.playerKing = this.detectKing();
         this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentPlayerMoves).isEmpty();
+        playerUsableMoves.addAll(calculateKingCastles(playerUsableMoves, opponentPlayerMoves));
         this.usableMoves = Collections.unmodifiableCollection(playerUsableMoves);
     }
 
@@ -48,19 +48,14 @@ public abstract class Player implements IPlayer {
      * @return Una mossa di transizione che può essere "terminata", "sotto scacco". Altrimenti è "invalida"
      */
     public MoveTransition doMove(final Move move) {
-        // Se la mossa non è tra quelle eseguibili termina e ritorna un animazione di movimento non valida
-        if(!this.usableMoves.contains(move))
-            return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVES);
+        if (!this.usableMoves.contains(move))
+            return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVE);
 
-        // Esegui il movimento
-        final VirtualBoard transitionMove = move.run();
+        final VirtualBoard transitionedBoard = move.run();
 
-        // Se il giocatore è in scacco ritorna una mossa di transizione con lo stato di "in scacco",
-        // quindi non è possibile eseguire altre mosse.
-        // Altrimenti crea una mossa di transizione con lo stato di terminata, quindi la mossa è stata eseguita
-        return transitionMove.getCurrentPlayer().getOpponentPlayer().isInCheck() ?
+        return transitionedBoard.getCurrentPlayer().getOpponent().isInCheck() ?
                 new MoveTransition(this.board, this.board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK) :
-                new MoveTransition(this.board, transitionMove, move, MoveStatus.DONE);
+                new MoveTransition(this.board, transitionedBoard, move, MoveStatus.DONE);
     }
 
     /**
