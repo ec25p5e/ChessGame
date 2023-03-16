@@ -115,6 +115,27 @@ public class Rook extends Piece {
     }
 
     /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.rookBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
+
+    /**
      * Questo metodo ha l'obbiettivo di controllare se la coordinata candidata è situata sulla prima o ultima riga della scacchiera
      * @param currentCandidate candidata corrente dove è situata la pedina
      * @param candidateCoordinate coordinata candidata per l'analisi

@@ -350,7 +350,7 @@ public final class Window extends Observable {
          */
         @Override
         protected Move doInBackground() {
-            final StockAlphaBeta strategy = new StockAlphaBeta(3);
+            final StockAlphaBeta strategy = new StockAlphaBeta(6);
             final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
 
             return bestMove;

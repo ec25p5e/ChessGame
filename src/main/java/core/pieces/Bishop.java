@@ -105,6 +105,27 @@ public class Bishop extends Piece {
     }
 
     /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.bishopBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
+
+    /**
      * Questo metodo serve a capire se la coordinata candidata andrà sull'ultima riga, per il bianco
      * @param candidateOffset valore di calcolo attuale
      * @param candidateCoordinate coordinata della pedina

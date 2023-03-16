@@ -33,12 +33,28 @@ public abstract class Player implements IPlayer {
         this.usableMoves = Collections.unmodifiableCollection(playerUsableMoves);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isInCheckMate() {
         return this.isInCheck && !this.findEscapeMoves();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isInStaleMate() {
         return !this.isInCheck && !this.findEscapeMoves();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isCastled() {
+        return this.playerKing.isCastled();
     }
 
     /**

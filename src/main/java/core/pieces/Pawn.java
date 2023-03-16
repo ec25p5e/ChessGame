@@ -159,4 +159,25 @@ public class Pawn extends Piece {
     public Piece movePiece(final Move move) {
         return PieceUtils.INSTANCE.getPieceAtCoordinate(Pawn.class, move.getPieceToMove().getPieceUtils(), move.getDestinationCoordinate());
     }
+
+    /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.pawnBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
 }
