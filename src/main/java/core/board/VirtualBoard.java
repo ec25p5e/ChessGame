@@ -137,14 +137,15 @@ public final class VirtualBoard {
         final BoardConfigurator configurator = new BoardConfigurator();
 
         // Imposta i RE
-        configurator.setPiece(new King(4, Utils.BLACK, true, true));
+        configurator.setPiece(new King(7, Utils.BLACK, true, true));
         configurator.setPiece(new King(60, Utils.WHITE, true, true));
 
         // Imposta l'attaccante
-        configurator.setPiece(new Bishop(27, Utils.WHITE));
+        configurator.setPiece(new Bishop(56, Utils.WHITE));
 
         // Imposta la prima vittima
-        configurator.setPiece(new Pawn(13, Utils.BLACK));
+        configurator.setPiece(new Pawn(15, Utils.BLACK));
+        configurator.setPiece(new Pawn(6, Utils.BLACK));
 
 
 
