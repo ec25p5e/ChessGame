@@ -47,6 +47,48 @@ public interface IUtils {
     Player selectPlayerByUtils(final WhitePlayer whitePlayer, final BlackPlayer blackPlayer);
 
     /**
+     *
+     * @param position
+     * @return
+     */
+    int pawnBonus(int position);
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    int knightBonus(int position);
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    int bishopBonus(int position);
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    int rookBonus(int position);
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    int kingBonus(int position);
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    int queenBonus(int position);
+
+    /**
      * @return la stesura del colore (bianco/nero)
      */
     @Override

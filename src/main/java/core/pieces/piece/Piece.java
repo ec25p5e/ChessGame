@@ -52,12 +52,4 @@ public abstract class Piece implements IPiece {
     public int getPieceValue() {
         return this.pieceType.getPieceValue();
     }
-
-    /**
-     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
-     */
-    @Override
-    public String toString() {
-        return this.pieceType.toString();
-    }
 }

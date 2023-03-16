@@ -20,4 +20,18 @@ public interface IPiece {
      * @return Una pedina
      */
     Piece movePiece(final Move move);
+
+    /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     * @return numero intero positivo o negativo
+     */
+    int locationBonus();
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    String toString();
 }
