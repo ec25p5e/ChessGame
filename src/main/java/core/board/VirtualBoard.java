@@ -31,7 +31,7 @@ public final class VirtualBoard {
     private final Pawn enPassantPawn;
     private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoardTest(); // initDefaultBoardTest(); // initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard(); // initDefaultBoardTest(); // initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
