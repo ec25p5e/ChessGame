@@ -31,7 +31,7 @@ public final class VirtualBoard {
     private final Pawn enPassantPawn;
     private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoardTest(); // initDefaultBoardTest(); // initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard(); // initDefaultBoardTest(); // initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
@@ -48,7 +48,7 @@ public final class VirtualBoard {
         final Collection<Move> blackUsableMoves = this.calculateUsableMoves(this.blackPieces);
 
         this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);
-        this.blackPlayer = new BlackPlayer(this, blackUsableMoves, whiteUsableMoves);
+        this.blackPlayer = new BlackPlayer(this, whiteUsableMoves, blackUsableMoves);
         this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
         this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
     }
@@ -96,7 +96,7 @@ public final class VirtualBoard {
      * oltre al colore che deve muovere per primo
      * @return la scacchiera virtuale con le pedine posizionate
      */
-    private static VirtualBoard initDefaultBoard() {
+    public static VirtualBoard initDefaultBoard() {
         final BoardConfigurator configurator = new BoardConfigurator();
 
         // Black pieces
@@ -136,20 +136,24 @@ public final class VirtualBoard {
     private static VirtualBoard initDefaultBoardTest() {
         final BoardConfigurator configurator = new BoardConfigurator();
 
-
-
-        configurator.setPiece(new King(63, Utils.BLACK, true, true));
-
-
-
-        configurator.setPiece(new Pawn(13, Utils.BLACK));
-        configurator.setPiece(new Queen(4, Utils.BLACK));
-        configurator.setPiece(new Bishop(27, Utils.WHITE));
-
-
-
+        // Imposta i RE
+        configurator.setPiece(new King(7, Utils.BLACK, true, true));
         configurator.setPiece(new King(60, Utils.WHITE, true, true));
 
+        // Imposta l'attaccante
+        configurator.setPiece(new Bishop(56, Utils.WHITE));
+
+        // Imposta la prima vittima
+        configurator.setPiece(new Pawn(15, Utils.BLACK));
+        configurator.setPiece(new Pawn(6, Utils.BLACK));
+
+
+
+
+        // EV: comparse
+        /* configurator.setPiece(new Pawn(18, Utils.WHITE));
+        configurator.setPiece(new Pawn(34, Utils.WHITE));
+        configurator.setPiece(new Pawn(36, Utils.WHITE)); */
 
 
         // Imposta il giocatore che inizia a muovere la prima mossa

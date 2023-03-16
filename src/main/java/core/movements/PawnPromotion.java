@@ -47,10 +47,10 @@ public class PawnPromotion extends PawnMove {
         final BoardConfigurator builder = new BoardConfigurator();
 
         movedPawnBoard.getCurrentPlayer().getActivePieces().stream().filter(piece -> !this.promotedPawn.equals(piece)).forEach(builder::setPiece);
-        movedPawnBoard.getCurrentPlayer().getOpponentPlayer().getActivePieces().forEach(builder::setPiece);
+        movedPawnBoard.getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
         builder.setPiece(this.promotionPiece.movePiece(this));
-        builder.setMoveMaker(movedPawnBoard.getCurrentPlayer().getPlayerColor());
+        builder.setMoveMaker(movedPawnBoard.getCurrentPlayer().getUtils());
         builder.setMoveTransition(this);
 
         return builder.build();

@@ -66,12 +66,13 @@ public enum Utils implements IUtils {
         }
 
         /**
-         * @return la stesura del colore (bianco/nero)
-
-         @Override
-         public String toString() {
-         return "nero";
-         }*/
+         *
+         * @return
+         */
+        @Override
+        public String toString() {
+            return "White";
+        }
     },
     BLACK() {
         /**
@@ -133,12 +134,13 @@ public enum Utils implements IUtils {
         }
 
         /**
-         * @return la stesura del colore (bianco/nero)
-
+         *
+         * @return
+         */
         @Override
         public String toString() {
-            return "nero";
-        }*/
+            return "Black";
+        }
     };
 
     // Valore utilizzato per sapere di quanto muoversi in una determinata direzione

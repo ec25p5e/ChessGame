@@ -140,10 +140,14 @@ public final class Window extends Observable {
             this.setTileColor();
             this.setPieceIcon(virtualBoard);
             this.highlightTileBorder(virtualBoard);
-            this.highlightUsable(virtualBoard);
+            // this.highlightUsable(virtualBoard);
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    // Se il gioco è finito blocca le mosse
+                    if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
+                        return;
+
                     if(isRightMouseButton(e)) {
                         sourceTile = null;
                         humanMovedPiece = null;
@@ -169,8 +173,8 @@ public final class Window extends Observable {
                     }
 
                     invokeLater(() -> {
-                        boardPanel.drawBoard(virtualBoard);
                         Window.get().moveMadeUpdate(PlayerType.HUMAN);
+                        boardPanel.drawBoard(virtualBoard);
                     });
                 }
 
@@ -257,7 +261,7 @@ public final class Window extends Observable {
          * @param board scacchiera "virtuale" di riferimento
          */
         private void highlightTileBorder(final VirtualBoard board) {
-            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getPlayerColor() && sourceTile.getPiecePosition() == this.tileId)
+            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getUtils() && sourceTile.getPiecePosition() == this.tileId)
                 setBorder(BorderFactory.createLineBorder(Color.cyan));
             else
                 setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -286,7 +290,7 @@ public final class Window extends Observable {
          * @return una lista di mosse
          */
         private Collection<Move> pieceUsableMoves(final VirtualBoard board) {
-            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getPlayerColor())
+            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getUtils())
                 return sourceTile.calculateMoves(board);
 
             return Collections.emptyList();
