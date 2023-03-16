@@ -63,11 +63,10 @@ public abstract class Move {
         final BoardConfigurator builder = new BoardConfigurator();
 
         this.board.getCurrentPlayer().getActivePieces().stream().filter(piece -> !this.pieceToMove.equals(piece)).forEach(builder::setPiece);
-        this.board.getCurrentPlayer().getOpponentPlayer().getActivePieces().forEach(builder::setPiece);
+        this.board.getCurrentPlayer().getOpponent().getActivePieces().forEach(builder::setPiece);
 
-        assert this.pieceToMove != null;
         builder.setPiece(this.pieceToMove.movePiece(this));
-        builder.setMoveMaker(this.board.getCurrentPlayer().getOpponentPlayer().getPlayerColor());
+        builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getUtils());
         builder.setMoveTransition(this);
 
         return builder.build();

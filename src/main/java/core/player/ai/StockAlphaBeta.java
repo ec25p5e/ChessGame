@@ -68,6 +68,11 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
         this.boardsEvaluated = 0;
     }
 
+    @Override
+    public String toString() {
+        return "StockAB";
+    }
+
     /**
      * Questo metodo serve per eseguire la logica della AI
      * @param board scacchiera virtuale di riferimento

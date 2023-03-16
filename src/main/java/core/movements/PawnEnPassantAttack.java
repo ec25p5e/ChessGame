@@ -39,10 +39,10 @@ public class PawnEnPassantAttack extends PawnAttackMove {
         final BoardConfigurator configurator = new BoardConfigurator();
 
         this.board.getCurrentPlayer().getActivePieces().stream().filter(piece -> !this.pieceToMove.equals(piece)).forEach(configurator::setPiece);
-        this.board.getCurrentPlayer().getOpponentPlayer().getActivePieces().stream().filter(piece -> !piece.equals(this.getPieceAttacked())).forEach(configurator::setPiece);
+        this.board.getCurrentPlayer().getOpponent().getActivePieces().stream().filter(piece -> !piece.equals(this.getPieceAttacked())).forEach(configurator::setPiece);
 
         configurator.setPiece(this.pieceToMove.movePiece(this));
-        configurator.setMoveMaker(this.board.getCurrentPlayer().getOpponentPlayer().getPlayerColor());
+        configurator.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getUtils());
         configurator.setMoveTransition(this);
 
         return configurator.build();
