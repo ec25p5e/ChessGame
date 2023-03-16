@@ -97,6 +97,28 @@ public class Knight extends Piece {
     }
 
     /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.knightBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
+
+
+    /**
      * Questo metodo serve a capire se la coordinata candidata andrà sulla prima riga, per il bianco
      * @param currentCoordinate coordinata della pedina
      * @param candidateOffset valore di calcolo attuale
