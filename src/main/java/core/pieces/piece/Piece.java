@@ -1,5 +1,6 @@
 package core.pieces.piece;
 
+import core.board.VirtualBoardUtils;
 import core.utils.Utils;
 import lombok.Getter;
 
@@ -41,6 +42,39 @@ public abstract class Piece implements IPiece {
 
         return this.piecePosition == otherPiece.getPiecePosition() && this.pieceType == otherPiece.getPieceType() &&
                 this.pieceUtils == otherPiece.getPieceUtils() && this.isFirstMove == otherPiece.isFirstMove();
+    }
+
+    /**
+     * Questo metodo indica se il pedone è in castling
+     * Viene utilizzato solo dai RE
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastled() {
+        return false;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dal
+     * RE. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByKing() {
+        return false;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dalla
+     * Regina. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByQueen() {
+        return false;
     }
 
     /**

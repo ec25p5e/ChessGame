@@ -1,0 +1,35 @@
+[
+  {
+    "type": "core.pieces.Rook",
+    "properties": {
+      "piecePosition": 56,
+      "pieceUtils": "BLACK",
+      "pieceType": "ROOK",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.King",
+    "properties": {
+      "isCastled": false,
+      "isCastledByKing": true,
+      "isCastledByQueen": true,
+      "piecePosition": 60,
+      "pieceUtils": "WHITE",
+      "pieceType": "KING",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.King",
+    "properties": {
+      "isCastled": false,
+      "isCastledByKing": true,
+      "isCastledByQueen": true,
+      "piecePosition": 4,
+      "pieceUtils": "BLACK",
+      "pieceType": "KING",
+      "isFirstMove": true
+    }
+  }
+]
