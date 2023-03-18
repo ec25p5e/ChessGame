@@ -110,6 +110,15 @@ public final class Window extends Observable {
         final JMenu optionsMenu = new JMenu("Opzioni");
         optionsMenu.setMnemonic(KeyEvent.VK_O);
 
+
+        // Annullare ultima mossa
+        final JMenuItem undoLastMove = new JMenuItem("Annulla ultima mossa", KeyEvent.VK_Z);
+        undoLastMove.addActionListener(e -> {
+            if(Window.get().getMoveLog().size() > 0)
+                this.undoLastMove();
+        });
+        optionsMenu.add(undoLastMove);
+
         return optionsMenu;
     }
 
@@ -127,6 +136,19 @@ public final class Window extends Observable {
         preferencesMenu.add(flipBoardItem);
 
         return preferencesMenu;
+    }
+
+    /**
+     *
+     */
+    private void undoLastMove() {
+       final Move lastMove = Window.get().getMoveLog().removeMove(Window.get().getMoveLog().size() - 1);
+       this.virtualBoard = this.virtualBoard.getCurrentPlayer().unMakeMove(lastMove).toBoard();
+       this.computerMove = null;
+
+       Window.get().getMoveLog().removeMove(lastMove);
+       Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+       Window.get().getBoardPanel().drawBoard(this.virtualBoard);
     }
 
 

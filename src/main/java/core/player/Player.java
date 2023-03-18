@@ -94,6 +94,15 @@ public abstract class Player implements IPlayer {
     }
 
     /**
+     *
+     * @param move
+     * @return
+     */
+    public MoveTransition unMakeMove(final Move move) {
+        return new MoveTransition(this.board, move.undo(), move, MoveStatus.DONE);
+    }
+
+    /**
      * Questo metodo serve per trovare le mosse possibili che portano ad arrivare alla coordinata passata
      * @param tileId coordinata di riferimento ==> coordinata di destinazione
      * @param moves lista di movimenti tra la quale cercare
