@@ -1,5 +1,6 @@
 package gui;
 
+import com.google.common.collect.Lists;
 import core.board.MoveLog;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
@@ -38,6 +39,7 @@ public final class Window extends Observable {
     private final TakenPiecesPanel takenPiecesPanel;
 
     private VirtualBoard virtualBoard;
+    private BoardDirection boardDirection;
     private Piece sourceTile;
     private Piece humanMovedPiece;
     private BoardPanel boardPanel;
@@ -52,6 +54,7 @@ public final class Window extends Observable {
         this.windowFrame.setJMenuBar(tableMenuBar);
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
+        this.boardDirection = BoardDirection.NORMAL;
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
         this.takenPiecesPanel = new TakenPiecesPanel();
@@ -114,8 +117,19 @@ public final class Window extends Observable {
         final JMenu preferencesMenu = new JMenu("Preferenze");
         preferencesMenu.setMnemonic(KeyEvent.VK_P);
 
+
+        // Invertire la board (flip board)
+        final JMenuItem flipBoardItem = new JMenuItem("Inverti scacchiera");
+        flipBoardItem.addActionListener(e -> {
+            this.boardDirection = this.boardDirection.opposite();
+            this.boardPanel.drawBoard(this.virtualBoard);
+        });
+        preferencesMenu.add(flipBoardItem);
+
         return preferencesMenu;
     }
+
+
 
     /**
      * Questa classe rappresenta la scacchiera "fisica" che viene disegnata nella GUI
@@ -146,15 +160,17 @@ public final class Window extends Observable {
         public void drawBoard(final VirtualBoard board) {
             this.removeAll();
 
-            for (final Tile boardTile : boardTiles) {
+            for (final Tile boardTile : boardDirection.traverse(boardTiles)) {
                 boardTile.drawTile(board);
-                this.add(boardTile);
+                add(boardTile);
             }
 
-            this.validate();
-            this.repaint();
+            validate();
+            repaint();
         }
     }
+
+
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"
@@ -374,6 +390,7 @@ public final class Window extends Observable {
     }
 
 
+
     /**
      *
      */
@@ -414,4 +431,48 @@ public final class Window extends Observable {
             }
         }
     }
+
+
+
+    /**
+     *
+     */
+    private enum BoardDirection {
+        NORMAL {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return boardTiles;
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return FLIPPED;
+            }
+        },
+        FLIPPED {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return Lists.reverse(boardTiles);
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return NORMAL;
+            }
+        };
+
+        /**
+         * Questo metodo serve a invertire la board
+         * @param boardTiles celle della scacchiera fisica
+         * @return lista di celle ordinate
+         */
+        abstract List<Tile> traverse(final List<Tile> boardTiles);
+
+        /**
+         * Questo metodo serve a trovare l'opposto della configurazione attuale
+         * @return l'opposto. ex: NORMAL --> FLIPPED
+         */
+        abstract BoardDirection opposite();
+    }
+
 }
