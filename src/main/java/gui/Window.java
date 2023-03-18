@@ -1,15 +1,20 @@
 package gui;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import core.board.MoveLog;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
 import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
+import core.pieces.Pawn;
 import core.pieces.piece.Piece;
+import core.pieces.piece.PieceDeserializer;
 import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
+import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import util.Constants;
@@ -22,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -185,7 +191,27 @@ public final class Window extends Observable {
             this.setPreferredSize(Constants.BOARD_DIMENSION);
             this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             this.setBackground(Constants.BOARD_PANEL_BACKGROUND);
+            this.serializeData();
             this.validate();
+        }
+
+        private void serializeData() {
+            Gson gsonBuilder = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(Piece.class, new PieceDeserializer())
+                    .enableComplexMapKeySerialization()
+                    .create();
+
+            try {
+                FileWriter writer = new FileWriter("testSerialization.json");
+                Piece[] objs = virtualBoard.getAllPieces().toArray(new Piece[0]);
+                writer.write(gsonBuilder.toJson(objs));
+                writer.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            } catch(NullPointerException npe) {
+
+            }
         }
 
         /**

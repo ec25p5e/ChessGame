@@ -1,11 +1,8 @@
 package core.pieces.piece;
 
-import com.google.gson.annotations.SerializedName;
 import core.board.VirtualBoardUtils;
 import core.utils.Utils;
 import lombok.Getter;
-
-import java.util.HashMap;
 
 /**
  * Questa classe rappresenta la pedina che però deve essere implementata da ogni singola classe di pedina
@@ -13,7 +10,6 @@ import java.util.HashMap;
 @Getter
 public abstract class Piece implements IPiece {
     protected final int piecePosition;
-    @SerializedName("coordinate")
     protected final String pieceCoordinate;
     protected final Utils pieceUtils;
     protected final PieceType pieceType;

@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import core.movements.MoveFactory;
 import core.pieces.*;
 import core.pieces.piece.PieceAssistant;
-import core.pieces.piece.PieceSerializer;
+import core.pieces.piece.PieceDeserializer;
 import core.utils.Utils;
 import core.movements.Move;
 import core.player.BlackPlayer;
@@ -14,6 +14,7 @@ import core.player.WhitePlayer;
 import core.pieces.piece.Piece;
 import lombok.Getter;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -109,7 +110,7 @@ public final class VirtualBoard {
         final BoardConfigurator configurator = new BoardConfigurator();
         final Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(Piece.class, new PieceSerializer())
+                .registerTypeAdapter(Piece.class, new PieceDeserializer())
                 .enableComplexMapKeySerialization()
                 .create();
         String inFile = "";

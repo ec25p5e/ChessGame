@@ -3,6 +3,7 @@
     "type": "core.pieces.Rook",
     "properties": {
       "piecePosition": 0,
+      "coordinate": "a8",
       "pieceUtils": "BLACK",
       "pieceType": "ROOK",
       "isFirstMove": true
@@ -12,6 +13,7 @@
     "type": "core.pieces.Knight",
     "properties": {
       "piecePosition": 1,
+      "coordinate": "b8",
       "pieceUtils": "BLACK",
       "pieceType": "KNIGHT",
       "isFirstMove": true
@@ -21,6 +23,7 @@
     "type": "core.pieces.Bishop",
     "properties": {
       "piecePosition": 2,
+      "coordinate": "c8",
       "pieceUtils": "BLACK",
       "pieceType": "BISHOP",
       "isFirstMove": true
@@ -30,6 +33,7 @@
     "type": "core.pieces.Queen",
     "properties": {
       "piecePosition": 3,
+      "coordinate": "d8",
       "pieceUtils": "BLACK",
       "pieceType": "QUEEN",
       "isFirstMove": true
@@ -42,6 +46,7 @@
       "isCastledByKing": true,
       "isCastledByQueen": true,
       "piecePosition": 4,
+      "coordinate": "e8",
       "pieceUtils": "BLACK",
       "pieceType": "KING",
       "isFirstMove": true
@@ -51,6 +56,7 @@
     "type": "core.pieces.Bishop",
     "properties": {
       "piecePosition": 5,
+      "coordinate": "f8",
       "pieceUtils": "BLACK",
       "pieceType": "BISHOP",
       "isFirstMove": true
@@ -60,6 +66,7 @@
     "type": "core.pieces.Knight",
     "properties": {
       "piecePosition": 6,
+      "coordinate": "g8",
       "pieceUtils": "BLACK",
       "pieceType": "KNIGHT",
       "isFirstMove": true
@@ -69,6 +76,7 @@
     "type": "core.pieces.Rook",
     "properties": {
       "piecePosition": 7,
+      "coordinate": "h8",
       "pieceUtils": "BLACK",
       "pieceType": "ROOK",
       "isFirstMove": true
@@ -78,6 +86,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 8,
+      "coordinate": "a7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -87,6 +96,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 9,
+      "coordinate": "b7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -96,6 +106,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 10,
+      "coordinate": "c7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -105,6 +116,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 11,
+      "coordinate": "d7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -114,6 +126,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 12,
+      "coordinate": "e7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -123,6 +136,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 13,
+      "coordinate": "f7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -132,6 +146,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 14,
+      "coordinate": "g7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -141,6 +156,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 15,
+      "coordinate": "h7",
       "pieceUtils": "BLACK",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -150,6 +166,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 48,
+      "coordinate": "a2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -159,6 +176,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 49,
+      "coordinate": "b2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -168,6 +186,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 50,
+      "coordinate": "c2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -177,6 +196,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 51,
+      "coordinate": "d2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -186,6 +206,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 52,
+      "coordinate": "e2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -195,6 +216,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 53,
+      "coordinate": "f2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -204,6 +226,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 54,
+      "coordinate": "g2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -213,6 +236,7 @@
     "type": "core.pieces.Pawn",
     "properties": {
       "piecePosition": 55,
+      "coordinate": "h2",
       "pieceUtils": "WHITE",
       "pieceType": "PAWN",
       "isFirstMove": true
@@ -222,6 +246,7 @@
     "type": "core.pieces.Rook",
     "properties": {
       "piecePosition": 56,
+      "coordinate": "a1",
       "pieceUtils": "WHITE",
       "pieceType": "ROOK",
       "isFirstMove": true
@@ -231,6 +256,7 @@
     "type": "core.pieces.Knight",
     "properties": {
       "piecePosition": 57,
+      "coordinate": "b1",
       "pieceUtils": "WHITE",
       "pieceType": "KNIGHT",
       "isFirstMove": true
@@ -240,6 +266,7 @@
     "type": "core.pieces.Bishop",
     "properties": {
       "piecePosition": 58,
+      "coordinate": "c1",
       "pieceUtils": "WHITE",
       "pieceType": "BISHOP",
       "isFirstMove": true
@@ -249,6 +276,7 @@
     "type": "core.pieces.Queen",
     "properties": {
       "piecePosition": 59,
+      "coordinate": "d1",
       "pieceUtils": "WHITE",
       "pieceType": "QUEEN",
       "isFirstMove": true
@@ -261,6 +289,7 @@
       "isCastledByKing": true,
       "isCastledByQueen": true,
       "piecePosition": 60,
+      "coordinate": "e1",
       "pieceUtils": "WHITE",
       "pieceType": "KING",
       "isFirstMove": true
@@ -270,6 +299,7 @@
     "type": "core.pieces.Bishop",
     "properties": {
       "piecePosition": 61,
+      "coordinate": "f1",
       "pieceUtils": "WHITE",
       "pieceType": "BISHOP",
       "isFirstMove": true
@@ -279,6 +309,7 @@
     "type": "core.pieces.Knight",
     "properties": {
       "piecePosition": 62,
+      "coordinate": "g1",
       "pieceUtils": "WHITE",
       "pieceType": "KNIGHT",
       "isFirstMove": true
@@ -288,6 +319,7 @@
     "type": "core.pieces.Rook",
     "properties": {
       "piecePosition": 63,
+      "coordinate": "h1",
       "pieceUtils": "WHITE",
       "pieceType": "ROOK",
       "isFirstMove": true
