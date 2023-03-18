@@ -44,6 +44,7 @@ public final class Window extends Observable {
     private Piece humanMovedPiece;
     private BoardPanel boardPanel;
     private Move computerMove;
+    private boolean highlightLegalMoves;
 
     private static final Window INSTANCE = new Window();
 
@@ -55,6 +56,7 @@ public final class Window extends Observable {
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardDirection = BoardDirection.NORMAL;
+        this.highlightLegalMoves = false;
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
         this.takenPiecesPanel = new TakenPiecesPanel();
@@ -134,6 +136,17 @@ public final class Window extends Observable {
             this.boardPanel.drawBoard(this.virtualBoard);
         });
         preferencesMenu.add(flipBoardItem);
+
+        // Aggiungi una riga per dividere il menu
+        preferencesMenu.addSeparator();
+
+        // Evidenzia le mosse possibili
+        final JCheckBoxMenuItem cbLegalMoveHighlighter = new JCheckBoxMenuItem(
+                "Mostra aiuto mosse", false);
+
+        cbLegalMoveHighlighter.addActionListener(e -> highlightLegalMoves = cbLegalMoveHighlighter.isSelected());
+
+        preferencesMenu.add(cbLegalMoveHighlighter);
 
         return preferencesMenu;
     }
@@ -351,12 +364,14 @@ public final class Window extends Observable {
          * @param board scacchiera "virtuale" di riferimento
          */
         private void highlightUsable(final VirtualBoard board) {
-            for(final Move move : this.pieceUsableMoves(board)) {
-                if (move.getDestinationCoordinate() == this.tileId) {
-                    try {
-                        this.add(new JLabel(new ImageIcon(ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "game/greenIndicator.png")))));
-                    } catch (final IOException e) {
-                        e.printStackTrace();
+            if(isHighlightLegalMoves()) {
+                for (final Move move : this.pieceUsableMoves(board)) {
+                    if (move.getDestinationCoordinate() == this.tileId) {
+                        try {
+                            this.add(new JLabel(new ImageIcon(ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "game/greenIndicator.png")))));
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
