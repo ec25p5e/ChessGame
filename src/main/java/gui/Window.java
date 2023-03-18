@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -34,6 +33,7 @@ import static javax.swing.SwingUtilities.*;
 public final class Window extends Observable {
     private final JFrame windowFrame;
     private final MoveLog moveLog;
+    private final TakenPiecesPanel takenPiecesPanel;
 
     private VirtualBoard virtualBoard;
     private Piece sourceTile;
@@ -49,7 +49,9 @@ public final class Window extends Observable {
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
+        this.takenPiecesPanel = new TakenPiecesPanel();
         this.addObserver(new TableGameAIWatcher());
+        this.windowFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.windowFrame.setSize(Constants.WINDOW_DIMENSION);
@@ -62,6 +64,7 @@ public final class Window extends Observable {
 
     public void start() {
         Window.get().getMoveLog().clear();
+        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
         Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
     }
 
@@ -177,6 +180,7 @@ public final class Window extends Observable {
                     }
 
                     invokeLater(() -> {
+                        takenPiecesPanel.redo(moveLog);
                         Window.get().moveMadeUpdate(PlayerType.HUMAN);
                         boardPanel.drawBoard(virtualBoard);
                     });
@@ -369,6 +373,8 @@ public final class Window extends Observable {
                 final Move bestMove = get();
                 Window.get().updateComputerMove(bestMove);
                 Window.get().updateGameBoard(Window.get().getVirtualBoard().getCurrentPlayer().doMove(bestMove).toBoard());
+                Window.get().getMoveLog().addMove(bestMove);
+                Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
                 Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
                 Window.get().moveMadeUpdate(PlayerType.COMPUTER);
             } catch(final Exception e) {
