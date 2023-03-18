@@ -72,6 +72,14 @@ public abstract class Move {
         return builder.build();
     }
 
+    public VirtualBoard undo() {
+        final BoardConfigurator builder = new BoardConfigurator();
+        this.board.getAllPieces().forEach(builder::setPiece);
+        builder.setMoveMaker(this.board.getCurrentPlayer().getUtils());
+
+        return builder.build();
+    }
+
     /**
      * @return La pedina che si sta attaccando.
      * All'interno di questa classe il valore è nullo ma nella

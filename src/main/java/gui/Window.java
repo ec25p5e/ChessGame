@@ -1,14 +1,14 @@
 package gui;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.common.collect.Lists;
+import core.board.MoveLog;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
 import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
-import core.pieces.piece.PieceSerializer;
+import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,11 +17,11 @@ import util.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -35,21 +35,33 @@ import static javax.swing.SwingUtilities.*;
 @Setter
 public final class Window extends Observable {
     private final JFrame windowFrame;
+    private final MoveLog moveLog;
+    private final TakenPiecesPanel takenPiecesPanel;
 
     private VirtualBoard virtualBoard;
+    private BoardDirection boardDirection;
     private Piece sourceTile;
     private Piece humanMovedPiece;
     private BoardPanel boardPanel;
     private Move computerMove;
+    private boolean highlightLegalMoves;
 
     private static final Window INSTANCE = new Window();
 
     private Window() {
         this.windowFrame = new JFrame(Constants.WINDOW_TITLE);
+        final JMenuBar tableMenuBar = new JMenuBar();
+        this.populateMenuBar(tableMenuBar);
+        this.windowFrame.setJMenuBar(tableMenuBar);
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
+        this.boardDirection = BoardDirection.NORMAL;
+        this.highlightLegalMoves = false;
         this.boardPanel = new BoardPanel();
+        this.moveLog = new MoveLog();
+        this.takenPiecesPanel = new TakenPiecesPanel();
         this.addObserver(new TableGameAIWatcher());
+        this.windowFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.windowFrame.setSize(Constants.WINDOW_DIMENSION);
@@ -61,7 +73,9 @@ public final class Window extends Observable {
     }
 
     public void start() {
-        this.boardPanel.drawBoard(this.getVirtualBoard());
+        Window.get().getMoveLog().clear();
+        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
     }
 
     /**
@@ -80,6 +94,77 @@ public final class Window extends Observable {
     private void updateComputerMove(final Move move) {
         this.computerMove = move;
     }
+
+    private void populateMenuBar(final JMenuBar tableMenuBar) {
+        tableMenuBar.add(this.createFileMenu());
+        tableMenuBar.add(this.createOptionsMenu());
+        tableMenuBar.add(this.createPreferencesMenu());
+    }
+
+    private JMenu createFileMenu() {
+        final JMenu filesMenu = new JMenu("File");
+        filesMenu.setMnemonic(KeyEvent.VK_F);
+
+        return filesMenu;
+    }
+
+    private JMenu createOptionsMenu() {
+        final JMenu optionsMenu = new JMenu("Opzioni");
+        optionsMenu.setMnemonic(KeyEvent.VK_O);
+
+
+        // Annullare ultima mossa
+        final JMenuItem undoLastMove = new JMenuItem("Annulla ultima mossa", KeyEvent.VK_Z);
+        undoLastMove.addActionListener(e -> {
+            if(Window.get().getMoveLog().size() > 0)
+                this.undoLastMove();
+        });
+        optionsMenu.add(undoLastMove);
+
+        return optionsMenu;
+    }
+
+    private JMenu createPreferencesMenu() {
+        final JMenu preferencesMenu = new JMenu("Preferenze");
+        preferencesMenu.setMnemonic(KeyEvent.VK_P);
+
+
+        // Invertire la board (flip board)
+        final JMenuItem flipBoardItem = new JMenuItem("Inverti scacchiera");
+        flipBoardItem.addActionListener(e -> {
+            this.boardDirection = this.boardDirection.opposite();
+            this.boardPanel.drawBoard(this.virtualBoard);
+        });
+        preferencesMenu.add(flipBoardItem);
+
+        // Aggiungi una riga per dividere il menu
+        preferencesMenu.addSeparator();
+
+        // Evidenzia le mosse possibili
+        final JCheckBoxMenuItem cbLegalMoveHighlighter = new JCheckBoxMenuItem(
+                "Mostra aiuto mosse", false);
+
+        cbLegalMoveHighlighter.addActionListener(e -> highlightLegalMoves = cbLegalMoveHighlighter.isSelected());
+
+        preferencesMenu.add(cbLegalMoveHighlighter);
+
+        return preferencesMenu;
+    }
+
+    /**
+     *
+     */
+    private void undoLastMove() {
+       final Move lastMove = Window.get().getMoveLog().removeMove(Window.get().getMoveLog().size() - 1);
+       this.virtualBoard = this.virtualBoard.getCurrentPlayer().unMakeMove(lastMove).toBoard();
+       this.computerMove = null;
+
+       Window.get().getMoveLog().removeMove(lastMove);
+       Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+       Window.get().getBoardPanel().drawBoard(this.virtualBoard);
+    }
+
+
 
     /**
      * Questa classe rappresenta la scacchiera "fisica" che viene disegnata nella GUI
@@ -110,33 +195,17 @@ public final class Window extends Observable {
         public void drawBoard(final VirtualBoard board) {
             this.removeAll();
 
-            for (final Tile boardTile : boardTiles) {
+            for (final Tile boardTile : boardDirection.traverse(boardTiles)) {
                 boardTile.drawTile(board);
-                this.add(boardTile);
+                add(boardTile);
             }
 
-            this.validate();
-            this.repaint();
-            this.save();
-        }
-
-        private void save() {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Piece.class, new PieceSerializer())
-                    .enableComplexMapKeySerialization()
-                    .create();
-
-            try {
-                FileWriter writer = new FileWriter("statusWrite.json");
-                List<Piece> objs = new ArrayList<>(Window.get().getVirtualBoard().getAllPieces());
-                writer.write(gson.toJson(objs));
-                writer.close();
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
+            validate();
+            repaint();
         }
     }
+
+
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"
@@ -159,7 +228,7 @@ public final class Window extends Observable {
             this.setTileColor();
             this.setPieceIcon(virtualBoard);
             this.highlightTileBorder(virtualBoard);
-            // this.highlightUsable(virtualBoard);
+            this.highlightUsable(virtualBoard);
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -183,8 +252,10 @@ public final class Window extends Observable {
                             final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
                             final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
 
-                            if (transition.moveStatus().isDone())
+                            if (transition.moveStatus().isDone()) {
                                 virtualBoard = transition.toBoard();
+                                moveLog.addMove(move);
+                            }
 
                             sourceTile = null;
                             humanMovedPiece = null;
@@ -192,6 +263,7 @@ public final class Window extends Observable {
                     }
 
                     invokeLater(() -> {
+                        takenPiecesPanel.redo(moveLog);
                         Window.get().moveMadeUpdate(PlayerType.HUMAN);
                         boardPanel.drawBoard(virtualBoard);
                     });
@@ -292,12 +364,14 @@ public final class Window extends Observable {
          * @param board scacchiera "virtuale" di riferimento
          */
         private void highlightUsable(final VirtualBoard board) {
-            for(final Move move : this.pieceUsableMoves(board)) {
-                if (move.getDestinationCoordinate() == this.tileId) {
-                    try {
-                        this.add(new JLabel(new ImageIcon(ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "game/greenIndicator.png")))));
-                    } catch (final IOException e) {
-                        e.printStackTrace();
+            if(isHighlightLegalMoves()) {
+                for (final Move move : this.pieceUsableMoves(board)) {
+                    if (move.getDestinationCoordinate() == this.tileId) {
+                        try {
+                            this.add(new JLabel(new ImageIcon(ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "game/greenIndicator.png")))));
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -353,6 +427,7 @@ public final class Window extends Observable {
     }
 
 
+
     /**
      *
      */
@@ -384,6 +459,8 @@ public final class Window extends Observable {
                 final Move bestMove = get();
                 Window.get().updateComputerMove(bestMove);
                 Window.get().updateGameBoard(Window.get().getVirtualBoard().getCurrentPlayer().doMove(bestMove).toBoard());
+                Window.get().getMoveLog().addMove(bestMove);
+                Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
                 Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
                 Window.get().moveMadeUpdate(PlayerType.COMPUTER);
             } catch(final Exception e) {
@@ -391,4 +468,48 @@ public final class Window extends Observable {
             }
         }
     }
+
+
+
+    /**
+     *
+     */
+    private enum BoardDirection {
+        NORMAL {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return boardTiles;
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return FLIPPED;
+            }
+        },
+        FLIPPED {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return Lists.reverse(boardTiles);
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return NORMAL;
+            }
+        };
+
+        /**
+         * Questo metodo serve a invertire la board
+         * @param boardTiles celle della scacchiera fisica
+         * @return lista di celle ordinate
+         */
+        abstract List<Tile> traverse(final List<Tile> boardTiles);
+
+        /**
+         * Questo metodo serve a trovare l'opposto della configurazione attuale
+         * @return l'opposto. ex: NORMAL --> FLIPPED
+         */
+        abstract BoardDirection opposite();
+    }
+
 }

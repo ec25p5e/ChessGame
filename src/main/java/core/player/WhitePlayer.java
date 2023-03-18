@@ -42,6 +42,9 @@ public class WhitePlayer extends Player {
     public Collection<Move> calculateKingCastles(Collection<Move> playerUsableMoves, Collection<Move> opponentPlayerMoves) {
         final List<Move> kingCastles = new ArrayList<>();
 
+        if(!hasCastleOpportunities())
+            return Collections.emptyList();
+
         /* Controlla che le condizioni siano soddisfate:
             1. Non sia la prima mossa del RE            AND
             2. Il re non sia in posizione iniziale      AND

@@ -160,12 +160,14 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
 
         int currentHighest = highest;
 
-        for (final Move move : MoveSorter.STANDARD.sort(board.getCurrentPlayer().getUsableMoves())) {
+        for (final Move move : MoveSorter.STANDARD.sort((board.getCurrentPlayer().getUsableMoves()))) {
             final MoveTransition moveTransition = board.getCurrentPlayer().doMove(move);
 
             if (moveTransition.moveStatus().isDone()) {
                 final VirtualBoard toBoard = moveTransition.toBoard();
-                currentHighest = Math.max(currentHighest, min(toBoard, calculateQuiescenceDepth(toBoard, depth), currentHighest, lowest));
+
+                currentHighest = Math.max(currentHighest, min(toBoard,
+                        calculateQuiescenceDepth(toBoard, depth), currentHighest, lowest));
 
                 if (currentHighest >= lowest)
                     return lowest;
@@ -184,24 +186,25 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
      * @return
      */
     private int min(final VirtualBoard board, final int depth, final int highest, final int lowest) {
-        if(depth == 0 || VirtualBoardUtils.isEndGame(board)) {
+        if (depth == 0 || VirtualBoardUtils.isEndGame(board)) {
             this.boardsEvaluated++;
             return this.evaluator.evaluate(board, depth);
         }
 
         int currentLowest = lowest;
-        for(final Move move : MoveSorter.STANDARD.sort(board.getCurrentPlayer().getUsableMoves())) {
+
+        for (final Move move : MoveSorter.STANDARD.sort((board.getCurrentPlayer().getUsableMoves()))) {
             final MoveTransition moveTransition = board.getCurrentPlayer().doMove(move);
-
-            if(moveTransition.moveStatus().isDone()) {
+            if (moveTransition.moveStatus().isDone()) {
                 final VirtualBoard toBoard = moveTransition.toBoard();
-                currentLowest = Math.min(currentLowest, max(toBoard, calculateQuiescenceDepth(toBoard, depth), highest, currentLowest));
 
-                if(currentLowest <= highest)
+                currentLowest = Math.min(currentLowest, max(toBoard,
+                        calculateQuiescenceDepth(toBoard, depth), highest, currentLowest));
+
+                if (currentLowest <= highest)
                     return highest;
             }
         }
-
         return currentLowest;
     }
 

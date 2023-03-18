@@ -38,7 +38,8 @@ public class King extends Piece {
      * @param isCastledByKing indica se è sotto scacco dal re
      * @param isCastledByQueen indica se è sotto scacco dalla regina
      */
-    public King(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove,  final boolean isCastled, final boolean isCastledByKing, final boolean isCastledByQueen) {
+    public King(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
+                final boolean isCastledByKing, final boolean isCastledByQueen) {
         super(PieceType.KING, piecePosition, pieceUtils, isFirstMove);
         this.isCastled = isCastled;
         this.isCastledByKing = isCastledByKing;
@@ -69,33 +70,29 @@ public class King extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
-        for(final int candidateOffset : OPERATION_MOVE) {
-            // Se finisce sulla prima riga non è un problema a differenza di altre pedine
-            if(firstColumnExclusion(this.piecePosition, candidateOffset) ||
-                eighthColumnExclusion(this.piecePosition, candidateOffset))
+        for(final int currentCandidate : OPERATION_MOVE) {
+            if(firstColumnExclusion(this.piecePosition, currentCandidate) ||
+                eighthColumnExclusion(this.piecePosition, currentCandidate)) {
                 continue;
+            }
 
-            // Aggiungi il valore di calcolo alla coordinata
-            final int candidateDestination = this.piecePosition + candidateOffset;
+            final int candidateDestination = this.piecePosition + currentCandidate;
 
-            // Controlla che sia all'interno della scacchiera
             if(VirtualBoardUtils.isValidTileCoordinate(candidateDestination)) {
-                // Prendi il contenuto della cella di destinazione
                 final Piece pieceAtDestination = board.getPiece(candidateDestination);
 
-                // Se è vuoto, crea un movimento semplice
-                if(pieceAtDestination == null)
+                if(pieceAtDestination == null) {
                     usableMoves.add(new SimpleMove(board, this, candidateDestination));
-                else {
-                    // Altrimenti, analizza il colore e se è diverso crea una mossa d'attacco
+                } else {
                     final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
-                    if(this.pieceUtils != pieceAtDestinationUtils)
+                    if(this.pieceUtils != pieceAtDestinationUtils) {
                         usableMoves.add(new SimpleAttackMove(board, this, candidateDestination, pieceAtDestination));
+                    }
                 }
             }
         }
+
 
         // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
@@ -164,13 +161,16 @@ public class King extends Piece {
      */
     @Override
     public boolean equals(final Object other) {
-        if(this == other)
+        if (this == other)
             return true;
 
-        if(!(other instanceof final King king) || !super.equals(other))
+        if (!(other instanceof final King king))
             return false;
 
-        return this.isCastled == king.isCastled();
+        if (!super.equals(other))
+            return false;
+
+        return isCastled == king.isCastled;
     }
 
     /**
