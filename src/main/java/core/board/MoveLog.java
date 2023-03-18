@@ -1,11 +1,13 @@
 package core.board;
 
 import core.movements.Move;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MoveLog {
+    @Getter
     private final List<Move> moves;
 
     public MoveLog() {
