@@ -8,7 +8,6 @@ import core.utils.Utils;
 import core.movements.Move;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,6 @@ import java.util.List;
  * Questa classe serve per rappresentare la pedina del Re ed estende la classe {@link Piece}
  * perché il pedone è un tipo di pedina
  */
-@Getter
 public class King extends Piece {
 
     // Questo array serve a contenere i valori da utilizzare durante il calcolo delle possibili mosse quando si aggiungono
@@ -110,7 +108,7 @@ public class King extends Piece {
      */
     @Override
     public Piece movePiece(final Move move) {
-        return new King(move.getDestinationCoordinate(), this.pieceUtils, false, true, false, false);
+        return new King(move.getDestinationCoordinate(), this.pieceUtils, false, move.isCastlingMove(), false, false);
     }
 
     /**
@@ -124,6 +122,39 @@ public class King extends Piece {
     @Override
     public int locationBonus() {
         return this.pieceUtils.kingBonus(this.piecePosition);
+    }
+
+    /**
+     * Questo metodo indica se il pedone è in castling
+     * Viene utilizzato solo dai RE
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastled() {
+        return this.isCastled;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dal
+     * RE. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByKing() {
+        return this.isCastledByKing;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dalla
+     * Regina. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByQueen() {
+        return this.isCastledByQueen;
     }
 
     /**

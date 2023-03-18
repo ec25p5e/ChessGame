@@ -1,13 +1,15 @@
 package gui;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
 import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.pieces.piece.PieceSerializer;
 import core.player.ai.StockAlphaBeta;
-import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import util.Constants;
@@ -19,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -114,10 +117,26 @@ public final class Window extends Observable {
 
             this.validate();
             this.repaint();
+            this.save();
+        }
+
+        private void save() {
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(Piece.class, new PieceSerializer())
+                    .enableComplexMapKeySerialization()
+                    .create();
+
+            try {
+                FileWriter writer = new FileWriter("statusWrite.json");
+                List<Piece> objs = new ArrayList<>(Window.get().getVirtualBoard().getAllPieces());
+                writer.write(gson.toJson(objs));
+                writer.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
-
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"
@@ -350,7 +369,7 @@ public final class Window extends Observable {
          */
         @Override
         protected Move doInBackground() {
-            final StockAlphaBeta strategy = new StockAlphaBeta(6);
+            final StockAlphaBeta strategy = new StockAlphaBeta(2);
             final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
 
             return bestMove;
