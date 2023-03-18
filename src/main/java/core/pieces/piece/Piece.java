@@ -1,5 +1,7 @@
 package core.pieces.piece;
 
+import com.google.gson.annotations.SerializedName;
+import core.board.VirtualBoardUtils;
 import core.utils.Utils;
 import lombok.Getter;
 
@@ -9,6 +11,8 @@ import lombok.Getter;
 @Getter
 public abstract class Piece implements IPiece {
     protected final int piecePosition;
+    @SerializedName("coordinate")
+    protected final String pieceCoordinate;
     protected final Utils pieceUtils;
     protected final PieceType pieceType;
     protected final boolean isFirstMove;
@@ -22,6 +26,7 @@ public abstract class Piece implements IPiece {
     public Piece(final PieceType pieceType, final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
         this.pieceType = pieceType;
         this.piecePosition = piecePosition;
+        this.pieceCoordinate = VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.piecePosition);
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
     }
@@ -41,6 +46,39 @@ public abstract class Piece implements IPiece {
 
         return this.piecePosition == otherPiece.getPiecePosition() && this.pieceType == otherPiece.getPieceType() &&
                 this.pieceUtils == otherPiece.getPieceUtils() && this.isFirstMove == otherPiece.isFirstMove();
+    }
+
+    /**
+     * Questo metodo indica se il pedone è in castling
+     * Viene utilizzato solo dai RE
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastled() {
+        return false;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dal
+     * RE. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByKing() {
+        return false;
+    }
+
+    /**
+     * Questo metodo serve a indicare se è in castling dalla
+     * Regina. È specifico per il metodo "isCastled"
+     *
+     * @return valore booleano
+     */
+    @Override
+    public boolean isCastledByQueen() {
+        return false;
     }
 
     /**

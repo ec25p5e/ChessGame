@@ -56,7 +56,7 @@ public enum PieceUtils {
      */
     private static <T extends Piece> Table<Utils, Integer, T> createAllPieces(final Class<T> classPiece) {
         final ImmutableTable.Builder<Utils, Integer, T> pieces = ImmutableTable.builder();
-        final PieceAssistant<T> pieceAssistant = new PieceAssistant<>();
+        final PieceAssistant pieceAssistant = new PieceAssistant();
 
         for(final Utils utils : Utils.values()) {
             for(int i = 0; i < VirtualBoardUtils.NUM_TILES; i++) {
