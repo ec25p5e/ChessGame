@@ -1,14 +1,12 @@
 package gui;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import core.board.MoveLog;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
 import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
-import core.pieces.piece.PieceSerializer;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +33,7 @@ import static javax.swing.SwingUtilities.*;
 @Setter
 public final class Window extends Observable {
     private final JFrame windowFrame;
+    private final MoveLog moveLog;
 
     private VirtualBoard virtualBoard;
     private Piece sourceTile;
@@ -49,6 +48,7 @@ public final class Window extends Observable {
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardPanel = new BoardPanel();
+        this.moveLog = new MoveLog();
         this.addObserver(new TableGameAIWatcher());
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -61,7 +61,8 @@ public final class Window extends Observable {
     }
 
     public void start() {
-        this.boardPanel.drawBoard(this.getVirtualBoard());
+        Window.get().getMoveLog().clear();
+        Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
     }
 
     /**
@@ -117,24 +118,6 @@ public final class Window extends Observable {
 
             this.validate();
             this.repaint();
-            this.save();
-        }
-
-        private void save() {
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Piece.class, new PieceSerializer())
-                    .enableComplexMapKeySerialization()
-                    .create();
-
-            try {
-                FileWriter writer = new FileWriter("statusWrite.json");
-                List<Piece> objs = new ArrayList<>(Window.get().getVirtualBoard().getAllPieces());
-                writer.write(gson.toJson(objs));
-                writer.close();
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -159,13 +142,13 @@ public final class Window extends Observable {
             this.setTileColor();
             this.setPieceIcon(virtualBoard);
             this.highlightTileBorder(virtualBoard);
-            // this.highlightUsable(virtualBoard);
+            this.highlightUsable(virtualBoard);
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     // Se il gioco è finito blocca le mosse
-                    if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
-                        return;
+                    /* if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
+                        return; */
 
                     if(isRightMouseButton(e)) {
                         sourceTile = null;
@@ -183,8 +166,10 @@ public final class Window extends Observable {
                             final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
                             final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
 
-                            if (transition.moveStatus().isDone())
+                            if (transition.moveStatus().isDone()) {
                                 virtualBoard = transition.toBoard();
+                                moveLog.addMove(move);
+                            }
 
                             sourceTile = null;
                             humanMovedPiece = null;
