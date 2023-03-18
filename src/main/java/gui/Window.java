@@ -7,6 +7,7 @@ import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import util.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -45,6 +47,9 @@ public final class Window extends Observable {
 
     private Window() {
         this.windowFrame = new JFrame(Constants.WINDOW_TITLE);
+        final JMenuBar tableMenuBar = new JMenuBar();
+        this.populateMenuBar(tableMenuBar);
+        this.windowFrame.setJMenuBar(tableMenuBar);
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardPanel = new BoardPanel();
@@ -83,6 +88,33 @@ public final class Window extends Observable {
 
     private void updateComputerMove(final Move move) {
         this.computerMove = move;
+    }
+
+    private void populateMenuBar(final JMenuBar tableMenuBar) {
+        tableMenuBar.add(this.createFileMenu());
+        tableMenuBar.add(this.createOptionsMenu());
+        tableMenuBar.add(this.createPreferencesMenu());
+    }
+
+    private JMenu createFileMenu() {
+        final JMenu filesMenu = new JMenu("File");
+        filesMenu.setMnemonic(KeyEvent.VK_F);
+
+        return filesMenu;
+    }
+
+    private JMenu createOptionsMenu() {
+        final JMenu optionsMenu = new JMenu("Opzioni");
+        optionsMenu.setMnemonic(KeyEvent.VK_O);
+
+        return optionsMenu;
+    }
+
+    private JMenu createPreferencesMenu() {
+        final JMenu preferencesMenu = new JMenu("Preferenze");
+        preferencesMenu.setMnemonic(KeyEvent.VK_P);
+
+        return preferencesMenu;
     }
 
     /**
@@ -172,8 +204,6 @@ public final class Window extends Observable {
                             if (transition.moveStatus().isDone()) {
                                 virtualBoard = transition.toBoard();
                                 moveLog.addMove(move);
-                            } else {
-                                System.out.println("isDone: " + transition.moveStatus().isDone());
                             }
 
                             sourceTile = null;

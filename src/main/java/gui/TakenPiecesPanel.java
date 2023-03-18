@@ -14,8 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class TakenPiecesPanel extends JPanel {
@@ -24,7 +22,7 @@ public class TakenPiecesPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private static final Color PANEL_COLOR = Color.decode("0xFDF5E6");
-    private static final Dimension TAKEN_PIECES_PANEL_DIMENSION = new Dimension(40, 80);
+    private static final Dimension TAKEN_PIECES_PANEL_DIMENSION = new Dimension(60, 80);
     private static final EtchedBorder PANEL_BORDER = new EtchedBorder(EtchedBorder.RAISED);
 
     public TakenPiecesPanel() {
