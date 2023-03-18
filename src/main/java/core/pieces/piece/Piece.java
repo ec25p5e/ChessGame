@@ -1,5 +1,6 @@
 package core.pieces.piece;
 
+import com.google.gson.annotations.SerializedName;
 import core.board.VirtualBoardUtils;
 import core.utils.Utils;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import lombok.Getter;
 @Getter
 public abstract class Piece implements IPiece {
     protected final int piecePosition;
+    @SerializedName("coordinate")
+    protected final String pieceCoordinate;
     protected final Utils pieceUtils;
     protected final PieceType pieceType;
     protected final boolean isFirstMove;
@@ -23,6 +26,7 @@ public abstract class Piece implements IPiece {
     public Piece(final PieceType pieceType, final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
         this.pieceType = pieceType;
         this.piecePosition = piecePosition;
+        this.pieceCoordinate = VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.piecePosition);
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
     }

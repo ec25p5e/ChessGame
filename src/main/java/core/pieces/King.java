@@ -108,7 +108,7 @@ public class King extends Piece {
      */
     @Override
     public Piece movePiece(final Move move) {
-        return new King(move.getDestinationCoordinate(), this.pieceUtils, false, true, false, false);
+        return new King(move.getDestinationCoordinate(), this.pieceUtils, false, move.isCastlingMove(), false, false);
     }
 
     /**

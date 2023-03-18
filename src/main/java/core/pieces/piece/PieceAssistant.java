@@ -11,6 +11,7 @@ import static util.Constants.*;
  */
 public class PieceAssistant {
 
+    @SuppressWarnings("unchecked")
     public <T extends Piece> T init(Class<?> pieceClass, final int coordinate, final Utils utils, final boolean firstMove,
                                     final boolean isQueenCastle, final boolean isKingCastle) throws ClassNotFoundException {
         return switch (pieceClass.getName()) {

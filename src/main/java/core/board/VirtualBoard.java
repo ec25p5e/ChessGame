@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import core.movements.MoveFactory;
 import core.pieces.*;
 import core.pieces.piece.PieceAssistant;
-import core.pieces.piece.PieceDeserializer;
+import core.pieces.piece.PieceSerializer;
 import core.utils.Utils;
 import core.movements.Move;
 import core.player.BlackPlayer;
@@ -109,7 +109,7 @@ public final class VirtualBoard {
         final BoardConfigurator configurator = new BoardConfigurator();
         final Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(Piece.class, new PieceDeserializer())
+                .registerTypeAdapter(Piece.class, new PieceSerializer())
                 .enableComplexMapKeySerialization()
                 .create();
         String inFile = "";

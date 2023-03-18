@@ -8,7 +8,7 @@ import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
-import core.pieces.piece.PieceDeserializer;
+import core.pieces.piece.PieceSerializer;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,23 +64,6 @@ public final class Window extends Observable {
         this.boardPanel.drawBoard(this.getVirtualBoard());
     }
 
-    public void save() {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Piece.class, new PieceDeserializer())
-                .enableComplexMapKeySerialization()
-                .create();
-
-        try {
-            FileWriter writer = new FileWriter("status2.json");
-            List<Piece> objsToSerialize = new ArrayList<>(this.virtualBoard.getAllPieces());
-            writer.write(gson.toJson(objsToSerialize));
-            writer.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      *
      * @param playerType
@@ -134,11 +117,26 @@ public final class Window extends Observable {
 
             this.validate();
             this.repaint();
-            Window.get().save();
+            this.save();
+        }
+
+        private void save() {
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .registerTypeAdapter(Piece.class, new PieceSerializer())
+                    .enableComplexMapKeySerialization()
+                    .create();
+
+            try {
+                FileWriter writer = new FileWriter("statusWrite.json");
+                List<Piece> objs = new ArrayList<>(Window.get().getVirtualBoard().getAllPieces());
+                writer.write(gson.toJson(objs));
+                writer.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
-
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"

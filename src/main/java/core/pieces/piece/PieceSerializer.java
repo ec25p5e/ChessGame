@@ -4,8 +4,7 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-public class PieceDeserializer implements JsonSerializer<Piece>,
-        JsonDeserializer<Piece> {
+public class PieceSerializer implements JsonDeserializer<Piece>, JsonSerializer<Piece> {
 
     @Override
     public Piece deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
