@@ -5,6 +5,8 @@ import core.board.VirtualBoardUtils;
 import core.utils.Utils;
 import lombok.Getter;
 
+import java.util.HashMap;
+
 /**
  * Questa classe rappresenta la pedina che però deve essere implementata da ogni singola classe di pedina
  */
@@ -16,6 +18,7 @@ public abstract class Piece implements IPiece {
     protected final Utils pieceUtils;
     protected final PieceType pieceType;
     protected final boolean isFirstMove;
+    protected transient final int cachedHashCode;
 
     /**
      * @param pieceType tipo di pedina. 6 disponibili
@@ -29,6 +32,7 @@ public abstract class Piece implements IPiece {
         this.pieceCoordinate = VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.piecePosition);
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
+        this.cachedHashCode = computeHashCode();
     }
 
     /**
@@ -46,6 +50,15 @@ public abstract class Piece implements IPiece {
 
         return this.piecePosition == otherPiece.getPiecePosition() && this.pieceType == otherPiece.getPieceType() &&
                 this.pieceUtils == otherPiece.getPieceUtils() && this.isFirstMove == otherPiece.isFirstMove();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        return this.cachedHashCode;
     }
 
     /**
@@ -89,5 +102,18 @@ public abstract class Piece implements IPiece {
      */
     public int getPieceValue() {
         return this.pieceType.getPieceValue();
+    }
+
+    /**
+     *
+     * @return
+     */
+    private int computeHashCode() {
+        int result = this.pieceType.hashCode();
+        result = 31 * result + this.pieceUtils.hashCode();
+        result = 31 * result + this.piecePosition;
+        result = 31 * result + (this.isFirstMove ? 1 : 0);
+
+        return result;
     }
 }

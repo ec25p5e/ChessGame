@@ -25,12 +25,12 @@ public abstract class Player implements IPlayer {
     protected final Collection<Move> usableMoves;
     protected final boolean isInCheck;
 
-    public Player(final VirtualBoard board, final Collection<Move> playerUsableMoves, final Collection<Move> opponentPlayerMoves) {
+    public Player(final VirtualBoard board, final Collection<Move> playerUsable, final Collection<Move> opponentUsable) {
         this.board = board;
         this.playerKing = this.detectKing();
-        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentPlayerMoves).isEmpty();
-        playerUsableMoves.addAll(calculateKingCastles(playerUsableMoves, opponentPlayerMoves));
-        this.usableMoves = Collections.unmodifiableCollection(playerUsableMoves);
+        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentUsable).isEmpty();
+        playerUsable.addAll(calculateKingCastles(playerUsable, opponentUsable));
+        this.usableMoves = Collections.unmodifiableCollection(playerUsable);
     }
 
     /**
@@ -58,14 +58,33 @@ public abstract class Player implements IPlayer {
     }
 
     /**
+     *
+     * @return
+     */
+    public boolean isKingSideCastleCapable() {
+        return this.playerKing.isCastledByKing();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isQueenSideCastleCapable() {
+        return this.playerKing.isCastledByQueen();
+    }
+
+
+    /**
      * Questo metodo si può definire come il punto di entrata nell'esecuzione dei movimenti;
      * in quanto viene chiamato nella GUI {@link gui.Window}
      * @param move mossa da effettuare
      * @return Una mossa di transizione che può essere "terminata", "sotto scacco". Altrimenti è "invalida"
      */
     public MoveTransition doMove(final Move move) {
-        if (!this.usableMoves.contains(move))
+        if (!this.usableMoves.contains(move)) {
+            System.out.println(move.getDestinationCoordinate());
             return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVE);
+        }
 
         final VirtualBoard transitionedBoard = move.run();
 
@@ -84,6 +103,15 @@ public abstract class Player implements IPlayer {
         return moves.stream()
                 .filter(move -> move.getDestinationCoordinate() == tileId)
                 .collect(collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected boolean hasCastleOpportunities() {
+        return !this.isInCheck && !this.playerKing.isCastled() &&
+                (this.playerKing.isCastledByKing() || this.playerKing.isCastledByQueen());
     }
 
     /**

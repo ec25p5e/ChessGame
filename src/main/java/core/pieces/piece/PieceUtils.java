@@ -61,7 +61,7 @@ public enum PieceUtils {
         for(final Utils utils : Utils.values()) {
             for(int i = 0; i < VirtualBoardUtils.NUM_TILES; i++) {
                 try {
-                    pieces.put(utils, i, pieceAssistant.init(classPiece, i, utils, false, true, true));
+                    pieces.put(utils, i, pieceAssistant.init(classPiece, i, utils, false, false, false));
                 } catch(final ClassNotFoundException e) {
                     e.printStackTrace();
                 }

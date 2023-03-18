@@ -150,8 +150,8 @@ public final class Window extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     // Se il gioco è finito blocca le mosse
-                    /* if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
-                        return; */
+                    if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
+                        return;
 
                     if(isRightMouseButton(e)) {
                         sourceTile = null;
@@ -172,6 +172,8 @@ public final class Window extends Observable {
                             if (transition.moveStatus().isDone()) {
                                 virtualBoard = transition.toBoard();
                                 moveLog.addMove(move);
+                            } else {
+                                System.out.println("isDone: " + transition.moveStatus().isDone());
                             }
 
                             sourceTile = null;
