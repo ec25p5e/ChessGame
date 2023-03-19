@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TakenPiecesPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">gui</a>
+</div>
+
+<h1>Coverage Summary for Class: TakenPiecesPanel (gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TakenPiecesPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/51)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package gui;
+&nbsp;
+&nbsp;import com.google.common.primitives.Ints;
+&nbsp;import core.move.MoveLog;
+&nbsp;import core.move.Move;
+&nbsp;import core.pieces.piece.Piece;
+&nbsp;import util.Constants;
+&nbsp;
+&nbsp;import javax.imageio.ImageIO;
+&nbsp;import javax.swing.*;
+&nbsp;import javax.swing.border.EtchedBorder;
+&nbsp;import java.awt.*;
+&nbsp;import java.awt.image.BufferedImage;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class TakenPiecesPanel extends JPanel {
+&nbsp;    private final JPanel northPanel;
+&nbsp;    private final JPanel southPanel;
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 1L;
+<b class="nc">&nbsp;    private static final Color PANEL_COLOR = Color.decode(&quot;0xFDF5E6&quot;);</b>
+<b class="nc">&nbsp;    private static final Dimension TAKEN_PIECES_PANEL_DIMENSION = new Dimension(60, 80);</b>
+<b class="nc">&nbsp;    private static final EtchedBorder PANEL_BORDER = new EtchedBorder(EtchedBorder.RAISED);</b>
+&nbsp;
+&nbsp;    public TakenPiecesPanel() {
+<b class="nc">&nbsp;        super(new BorderLayout());</b>
+<b class="nc">&nbsp;        setBackground(Color.decode(&quot;0xFDF5E6&quot;));</b>
+<b class="nc">&nbsp;        setBorder(PANEL_BORDER);</b>
+<b class="nc">&nbsp;        this.northPanel = new JPanel(new GridLayout(8, 2));</b>
+<b class="nc">&nbsp;        this.southPanel = new JPanel(new GridLayout(8, 2));</b>
+<b class="nc">&nbsp;        this.northPanel.setBackground(PANEL_COLOR);</b>
+<b class="nc">&nbsp;        this.southPanel.setBackground(PANEL_COLOR);</b>
+<b class="nc">&nbsp;        add(this.northPanel, BorderLayout.NORTH);</b>
+<b class="nc">&nbsp;        add(this.southPanel, BorderLayout.SOUTH);</b>
+<b class="nc">&nbsp;        setPreferredSize(TAKEN_PIECES_PANEL_DIMENSION);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void redo(final MoveLog moveLog) {
+&nbsp;        // Pulisci entrambe le colonne
+<b class="nc">&nbsp;        this.southPanel.removeAll();</b>
+<b class="nc">&nbsp;        this.northPanel.removeAll();</b>
+&nbsp;
+&nbsp;        // Array con le pedine catturate (uno per colore)
+<b class="nc">&nbsp;        final List&lt;Piece&gt; whiteTakenPieces = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        final List&lt;Piece&gt; blackTakenPieces = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        // Cicla tutte le mosse e determina quali sono state delle mosse di attacco
+&nbsp;        // Per tutte le mosse di attacco dividi il colore del pedone mangiato
+&nbsp;        // e inseriscile nei rispettivi array
+<b class="nc">&nbsp;        for(final Move move : moveLog.getMoves()) {</b>
+<b class="nc">&nbsp;            if(move.isAttack()) {</b>
+<b class="nc">&nbsp;                final Piece takenPiece = move.getPieceAttacked();</b>
+&nbsp;
+<b class="nc">&nbsp;                if(takenPiece.getPieceUtils().isWhite())</b>
+<b class="nc">&nbsp;                    whiteTakenPieces.add(takenPiece);</b>
+<b class="nc">&nbsp;                else if(takenPiece.getPieceUtils().isBlack())</b>
+<b class="nc">&nbsp;                    blackTakenPieces.add(takenPiece);</b>
+&nbsp;                else
+<b class="nc">&nbsp;                    throw new RuntimeException(&quot;Identità della pedina non valida!&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Ordina le pedine bianche per il valore asc
+<b class="nc">&nbsp;        whiteTakenPieces.sort((p1, p2) -&gt; Ints.compare(p1.getPieceValue(), p2.getPieceValue()));</b>
+&nbsp;
+&nbsp;        // Ordina le pedine nere per valore asc
+<b class="nc">&nbsp;        blackTakenPieces.sort((p1, p2) -&gt; Ints.compare(p1.getPieceValue(), p2.getPieceValue()));</b>
+&nbsp;
+&nbsp;        // Mostra le pedine bianche nella colonna
+<b class="nc">&nbsp;        for (final Piece takenPiece : whiteTakenPieces) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                final BufferedImage image = ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + &quot;pieceIcon/&quot;</b>
+<b class="nc">&nbsp;                        + takenPiece.getPieceUtils().toString().substring(0, 1) + &quot;&quot; + takenPiece.toString()</b>
+&nbsp;                        + &quot;.gif&quot;));
+<b class="nc">&nbsp;                final ImageIcon ic = new ImageIcon(image);</b>
+<b class="nc">&nbsp;                final JLabel imageLabel = new JLabel(new ImageIcon(ic.getImage().getScaledInstance(</b>
+<b class="nc">&nbsp;                        ic.getIconWidth() - 15, ic.getIconWidth() - 15, Image.SCALE_SMOOTH)));</b>
+<b class="nc">&nbsp;                this.southPanel.add(imageLabel);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            catch (final IOException e) {</b>
+<b class="nc">&nbsp;                e.printStackTrace();</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Mostra le pedine nere nella colonna
+<b class="nc">&nbsp;        for (final Piece takenPiece : blackTakenPieces) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                final BufferedImage image = ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + &quot;pieceIcon/&quot;</b>
+<b class="nc">&nbsp;                        + takenPiece.getPieceUtils().toString().substring(0, 1) + &quot;&quot; + takenPiece.toString()</b>
+&nbsp;                        + &quot;.gif&quot;));
+<b class="nc">&nbsp;                final ImageIcon ic = new ImageIcon(image);</b>
+<b class="nc">&nbsp;                final JLabel imageLabel = new JLabel(new ImageIcon(ic.getImage().getScaledInstance(</b>
+<b class="nc">&nbsp;                        ic.getIconWidth() - 15, ic.getIconWidth() - 15, Image.SCALE_SMOOTH)));</b>
+<b class="nc">&nbsp;                this.northPanel.add(imageLabel);</b>
+&nbsp;
+<b class="nc">&nbsp;            } catch (final IOException e) {</b>
+<b class="nc">&nbsp;                e.printStackTrace();</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        validate();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

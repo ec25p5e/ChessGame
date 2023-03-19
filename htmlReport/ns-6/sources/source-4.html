@@ -1,0 +1,104 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IPlayer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.player</a>
+</div>
+
+<h1>Coverage Summary for Class: IPlayer (core.player)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IPlayer</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.player;
+&nbsp;
+&nbsp;import core.move.Move;
+&nbsp;import core.utils.Utils;
+&nbsp;import core.pieces.piece.Piece;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;
+&nbsp;/**
+&nbsp; * Questa interfaccia contiene i metodi dei {@link WhitePlayer} e {@link BlackPlayer}
+&nbsp; */
+&nbsp;public interface IPlayer {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return gli utility dei giocatori
+&nbsp;     */
+&nbsp;    Utils getUtils();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return Il giocatore avversario. Quindi nella classe {@link WhitePlayer} ritornerà il giocatore nero e viceversa.
+&nbsp;     */
+&nbsp;    Player getOpponent();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return Tutte le pedine attive per il giocatore
+&nbsp;     */
+&nbsp;    Collection&lt;Piece&gt; getActivePieces();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per calcolare tutte le mosse che mettono sotto scacco i RE
+&nbsp;     * Ogni giocatore ha una specializzazione del metodo stesso
+&nbsp;     * @param playerUsableMoves tutte le mosse praticabili dal giocatore corrente
+&nbsp;     * @param opponentPlayerMoves tutte le mosse praticabili dal giocatore opposto
+&nbsp;     * @return tutte le mosse che soddisfino la condizione, cosi da poterle aggiungere
+&nbsp;     */
+&nbsp;    Collection&lt;Move&gt; calculateKingCastles(Collection&lt;Move&gt; playerUsableMoves, Collection&lt;Move&gt; opponentPlayerMoves);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

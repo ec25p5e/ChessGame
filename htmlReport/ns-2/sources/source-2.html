@@ -1,0 +1,274 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > VirtualBoard</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.board</a>
+</div>
+
+<h1>Coverage Summary for Class: VirtualBoard (core.board)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VirtualBoard</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.3%
+  </span>
+  <span class="absValue">
+    (56/62)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.board;
+&nbsp;
+&nbsp;import com.google.gson.Gson;
+&nbsp;import com.google.gson.GsonBuilder;
+&nbsp;import core.move.MoveFactory;
+&nbsp;import core.pieces.*;
+&nbsp;import core.pieces.piece.PieceAssistant;
+&nbsp;import core.pieces.piece.PieceDeserializer;
+&nbsp;import core.utils.Utils;
+&nbsp;import core.move.Move;
+&nbsp;import core.player.BlackPlayer;
+&nbsp;import core.player.Player;
+&nbsp;import core.player.WhitePlayer;
+&nbsp;import core.pieces.piece.Piece;
+&nbsp;import lombok.Getter;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;import static core.utils.Utils.BLACK;
+&nbsp;import static core.utils.Utils.WHITE;
+&nbsp;import static util.Constants.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Questa classe serve per rappresentare la scacchiera in formato virtuale.
+&nbsp; */
+&nbsp;@Getter
+&nbsp;public final class VirtualBoard {
+<b class="nc">&nbsp;    private final Map&lt;Integer, Piece&gt; configuration;</b>
+<b class="fc">&nbsp;    private final Player currentPlayer;</b>
+<b class="fc">&nbsp;    private final WhitePlayer whitePlayer;</b>
+<b class="fc">&nbsp;    private final BlackPlayer blackPlayer;</b>
+<b class="fc">&nbsp;    private final Collection&lt;Piece&gt; whitePieces;</b>
+<b class="fc">&nbsp;    private final Collection&lt;Piece&gt; blackPieces;</b>
+<b class="fc">&nbsp;    private final Pawn enPassantPawn;</b>
+<b class="fc">&nbsp;    private final Move transitionMove;</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard();</b>
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * All&#39;interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
+&nbsp;     * scegliere il primo giocatore che dovrà muovere e altri parametri del {@link VirtualBoard}
+&nbsp;     * @param boardConfigurator che serve per mappare le pedine, transizioni,... sulla scacchiera
+&nbsp;     */
+<b class="fc">&nbsp;    public VirtualBoard(final BoardConfigurator boardConfigurator) {</b>
+<b class="fc">&nbsp;        this.configuration = Collections.unmodifiableMap(boardConfigurator.getConfiguration());</b>
+<b class="fc">&nbsp;        this.whitePieces = calculateActivePiecesByUtils(boardConfigurator, WHITE);</b>
+<b class="fc">&nbsp;        this.blackPieces = calculateActivePiecesByUtils(boardConfigurator, Utils.BLACK);</b>
+<b class="fc">&nbsp;        this.enPassantPawn = boardConfigurator.getEnPassant();</b>
+&nbsp;
+<b class="fc">&nbsp;        final Collection&lt;Move&gt; whiteUsableMoves = this.calculateUsableMoves(this.whitePieces);</b>
+<b class="fc">&nbsp;        final Collection&lt;Move&gt; blackUsableMoves = this.calculateUsableMoves(this.blackPieces);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);</b>
+<b class="fc">&nbsp;        this.blackPlayer = new BlackPlayer(this, whiteUsableMoves, blackUsableMoves);</b>
+<b class="fc">&nbsp;        this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);</b>
+<b class="fc">&nbsp;        this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per ottenere la pedina situata a una coordinata
+&nbsp;     * @param id coordinata da utilizzare come target
+&nbsp;     * @return pedina situata alla coordinata
+&nbsp;     */
+&nbsp;    public Piece getPiece(final int id) {
+<b class="fc">&nbsp;        return this.configuration.get(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di concatenare tutte le mosse eseguibili dal player bianco e nero.
+&nbsp;     * @return collection di mosse eseguibili
+&nbsp;     */
+&nbsp;    public Collection&lt;Move&gt; getAllUsableMoves() {
+<b class="fc">&nbsp;        return Stream.concat(</b>
+<b class="fc">&nbsp;                this.whitePlayer.getUsableMoves().stream(),</b>
+<b class="fc">&nbsp;                this.blackPlayer.getUsableMoves().stream()</b>
+<b class="fc">&nbsp;        ).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per commutare le due collection di pedine in una unica
+&nbsp;     * @return collection di pedine bianche e nere
+&nbsp;     */
+&nbsp;    public Collection&lt;Piece&gt; getAllPieces() {
+<b class="fc">&nbsp;        return Stream.concat(</b>
+<b class="fc">&nbsp;                this.blackPieces.stream(),</b>
+<b class="fc">&nbsp;                this.whitePieces.stream()</b>
+<b class="fc">&nbsp;        ).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return la scacchiera virtuale con le pedine posizionate alla GUI ({@link gui.Window})
+&nbsp;     */
+&nbsp;    public static VirtualBoard getDefaultBoard() {
+<b class="nc">&nbsp;        return DEFAULT_BOARD;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * All&#39;interno di questo metodo vengono definiti i tipi, colori e coordinate delle pedine
+&nbsp;     * oltre al colore che deve muovere per primo
+&nbsp;     * @return la scacchiera virtuale con le pedine posizionate
+&nbsp;     */
+&nbsp;    public static VirtualBoard initDefaultBoard() {
+<b class="fc">&nbsp;        final BoardConfigurator configurator = new BoardConfigurator();</b>
+<b class="fc">&nbsp;        final Gson gson = new GsonBuilder()</b>
+<b class="fc">&nbsp;                .setPrettyPrinting()</b>
+<b class="fc">&nbsp;                .registerTypeAdapter(Piece.class, new PieceDeserializer())</b>
+<b class="fc">&nbsp;                .enableComplexMapKeySerialization()</b>
+<b class="fc">&nbsp;                .create();</b>
+<b class="fc">&nbsp;        String inFile = &quot;&quot;;</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + BASE_GAME_FILE)));</b>
+<b class="nc">&nbsp;        } catch(IOException e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        if(!inFile.equals(&quot;&quot;)) {</b>
+<b class="fc">&nbsp;            final PieceAssistant pieceAssistant = new PieceAssistant();</b>
+<b class="fc">&nbsp;            final Piece[] objs = gson.fromJson(inFile, Piece[].class);</b>
+&nbsp;
+<b class="fc">&nbsp;            for(Piece obj : objs) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    configurator.setPiece(pieceAssistant.init(</b>
+<b class="fc">&nbsp;                            Class.forName(obj.getClass().getCanonicalName()),</b>
+<b class="fc">&nbsp;                            obj.getPieceCoordinate(),</b>
+<b class="fc">&nbsp;                            (obj.getPieceUtils() == WHITE ? WHITE : BLACK),</b>
+<b class="fc">&nbsp;                            obj.isFirstMove(),</b>
+<b class="fc">&nbsp;                            obj.isCastledByQueen(),</b>
+<b class="fc">&nbsp;                            obj.isCastledByKing()</b>
+&nbsp;                    ));
+<b class="nc">&nbsp;                } catch(ClassNotFoundException e) {</b>
+<b class="nc">&nbsp;                    e.printStackTrace();</b>
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            configurator.setMoveMaker(WHITE);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return configurator.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di raccogliere tutti le possibili mosse della lista di pedina passata
+&nbsp;     * @param pieces pedine per la quale si vuole conoscere le mosse
+&nbsp;     * @return collection di movimenti
+&nbsp;     */
+&nbsp;    private Collection&lt;Move&gt; calculateUsableMoves(final Collection&lt;Piece&gt; pieces) {
+<b class="fc">&nbsp;        return pieces.stream().flatMap(piece -&gt; piece.calculateMoves(this).stream())</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per capire quali pedine sono attive nel gioco in base al loro colore
+&nbsp;     * per poterle dividere nei due attributi della classe {@link VirtualBoard}
+&nbsp;     * @param boardConfigurator serve per ottenere le pedine
+&nbsp;     * @param utils serve a filtrare il colore delle pedine
+&nbsp;     * @return collection di pedine attive
+&nbsp;     */
+&nbsp;    private static Collection&lt;Piece&gt; calculateActivePiecesByUtils(final BoardConfigurator boardConfigurator, final Utils utils) {
+<b class="fc">&nbsp;        return boardConfigurator.getConfiguration().values().stream()</b>
+<b class="fc">&nbsp;                .filter(piece -&gt; piece.getPieceUtils() == utils)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

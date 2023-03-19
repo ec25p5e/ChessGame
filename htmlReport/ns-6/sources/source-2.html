@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Player</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.player</a>
+</div>
+
+<h1>Coverage Summary for Class: Player (core.player)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Player</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.3%
+  </span>
+  <span class="absValue">
+    (33/35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.player;
+&nbsp;
+&nbsp;import core.board.VirtualBoard;
+&nbsp;import core.move.Move;
+&nbsp;import core.move.MoveStatus;
+&nbsp;import core.move.MoveTransition;
+&nbsp;import core.pieces.King;
+&nbsp;import lombok.Getter;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import static java.util.stream.Collectors.collectingAndThen;
+&nbsp;import static core.pieces.piece.PieceType.KING;
+&nbsp;
+&nbsp;/**
+&nbsp; * Questa classe serve a rappresentare il giocatore generico che deve essere estesa dal {@link BlackPlayer} e {@link WhitePlayer}
+&nbsp; *
+&nbsp; */
+&nbsp;@Getter
+&nbsp;public abstract class Player implements IPlayer {
+<b class="nc">&nbsp;    protected final VirtualBoard board;</b>
+<b class="nc">&nbsp;    protected final King playerKing;</b>
+<b class="fc">&nbsp;    protected final Collection&lt;Move&gt; usableMoves;</b>
+<b class="fc">&nbsp;    protected final boolean isInCheck;</b>
+&nbsp;
+<b class="fc">&nbsp;    public Player(final VirtualBoard board, final Collection&lt;Move&gt; playerUsable, final Collection&lt;Move&gt; opponentUsable) {</b>
+<b class="fc">&nbsp;        this.board = board;</b>
+<b class="fc">&nbsp;        this.playerKing = this.detectKing();</b>
+<b class="fc">&nbsp;        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentUsable).isEmpty();</b>
+<b class="fc">&nbsp;        playerUsable.addAll(calculateKingCastles(playerUsable, opponentUsable));</b>
+<b class="fc">&nbsp;        this.usableMoves = Collections.unmodifiableCollection(playerUsable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public boolean isInCheckMate() {
+<b class="fc">&nbsp;        return this.isInCheck &amp;&amp; !this.findEscapeMoves();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public boolean isInStaleMate() {
+<b class="fc">&nbsp;        return !this.isInCheck &amp;&amp; !this.findEscapeMoves();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public boolean isCastled() {
+<b class="fc">&nbsp;        return this.playerKing.isCastled();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public boolean isKingSideCastleCapable() {
+<b class="fc">&nbsp;        return this.playerKing.isCastledByKing();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public boolean isQueenSideCastleCapable() {
+<b class="fc">&nbsp;        return this.playerKing.isCastledByQueen();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si può definire come il punto di entrata nell&#39;esecuzione dei movimenti;
+&nbsp;     * in quanto viene chiamato nella GUI {@link gui.Window}
+&nbsp;     * @param move mossa da effettuare
+&nbsp;     * @return Una mossa di transizione che può essere &quot;terminata&quot;, &quot;sotto scacco&quot;. Altrimenti è &quot;invalida&quot;
+&nbsp;     */
+&nbsp;    public MoveTransition doMove(final Move move) {
+<b class="fc">&nbsp;        if (!this.usableMoves.contains(move)) {</b>
+<b class="fc">&nbsp;            System.out.println(move.getDestinationCoordinate());</b>
+<b class="fc">&nbsp;            return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVE);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        final VirtualBoard transitionedBoard = move.run();</b>
+&nbsp;
+<b class="fc">&nbsp;        return transitionedBoard.getCurrentPlayer().getOpponent().isInCheck() ?</b>
+<b class="fc">&nbsp;                new MoveTransition(this.board, this.board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK) :</b>
+<b class="fc">&nbsp;                new MoveTransition(this.board, transitionedBoard, move, MoveStatus.DONE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param move
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public MoveTransition unMakeMove(final Move move) {
+<b class="fc">&nbsp;        return new MoveTransition(this.board, move.undo(), move, MoveStatus.DONE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per trovare le mosse possibili che portano ad arrivare alla coordinata passata
+&nbsp;     * @param tileId coordinata di riferimento ==&gt; coordinata di destinazione
+&nbsp;     * @param moves lista di movimenti tra la quale cercare
+&nbsp;     * @return movimenti filtrati in funzione di &quot;tileId&quot;
+&nbsp;     */
+&nbsp;    public static Collection&lt;Move&gt; calculateAttacksOnTile(final int tileId, final Collection&lt;Move&gt; moves) {
+<b class="fc">&nbsp;        return moves.stream()</b>
+<b class="fc">&nbsp;                .filter(move -&gt; move.getDestinationCoordinate() == tileId)</b>
+<b class="fc">&nbsp;                .collect(collectingAndThen(Collectors.toList(), Collections::unmodifiableList));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    protected boolean hasCastleOpportunities() {
+<b class="fc">&nbsp;        return !this.isInCheck &amp;&amp; !this.playerKing.isCastled() &amp;&amp;</b>
+<b class="fc">&nbsp;                (this.playerKing.isCastledByKing() || this.playerKing.isCastledByQueen());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a trovare il re tra le pedine attive
+&nbsp;     * @return il re per poterlo impostare
+&nbsp;     */
+&nbsp;    private King detectKing() {
+<b class="fc">&nbsp;        return (King) getActivePieces().stream()</b>
+<b class="fc">&nbsp;                .filter(piece -&gt; piece.getPieceType() == KING)</b>
+<b class="fc">&nbsp;                .findAny()</b>
+<b class="fc">&nbsp;                .orElseThrow(RuntimeException::new);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo esegue tutte le mosse possibili e se ce ne sono ancora che andranno a buon fine.
+&nbsp;     * @return &quot;TRUE&quot; se ci sono ancora mosse eseguibili con esito positivo. Altrimenti &quot;FALSE&quot;
+&nbsp;     */
+&nbsp;    private boolean findEscapeMoves() {
+<b class="fc">&nbsp;        return this.usableMoves.stream()</b>
+<b class="fc">&nbsp;                .anyMatch(move -&gt; doMove(move)</b>
+<b class="fc">&nbsp;                        .moveStatus().isDone());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

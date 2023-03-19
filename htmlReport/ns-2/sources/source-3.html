@@ -1,0 +1,328 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > VirtualBoardUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.board</a>
+</div>
+
+<h1>Coverage Summary for Class: VirtualBoardUtils (core.board)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VirtualBoardUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (14/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (39/42)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.board;
+&nbsp;
+&nbsp;import core.move.Move;
+&nbsp;import core.move.MoveFactory;
+&nbsp;import core.move.MoveTransition;
+&nbsp;import core.pieces.King;
+&nbsp;import core.pieces.piece.Piece;
+&nbsp;import core.pieces.piece.PieceType;
+&nbsp;import core.player.Player;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Questo metodo contiene gli attributi e metodi utili alla manipolazione da effettuare
+&nbsp; * con la scacchiera virtuale come conversione da notazione numerica ad algebrica e viceversa, identificare le celle della
+&nbsp; * medesima riga.
+&nbsp; */
+<b class="fc">&nbsp;public enum VirtualBoardUtils {</b>
+<b class="fc">&nbsp;    INSTANCE;</b>
+&nbsp;
+&nbsp;    public final List&lt;Boolean&gt; FIRST_COLUMN = setupColumn(0);
+&nbsp;    public final List&lt;Boolean&gt; SECOND_COLUMN = setupColumn(1);
+&nbsp;    public final List&lt;Boolean&gt; THIRD_COLUMN = setupColumn(2);
+&nbsp;    public final List&lt;Boolean&gt; FOURTH_COLUMN = setupColumn(3);
+&nbsp;    public final List&lt;Boolean&gt; FIFTH_COLUMN = setupColumn(4);
+&nbsp;    public final List&lt;Boolean&gt; SIXTH_COLUMN = setupColumn(5);
+&nbsp;    public final List&lt;Boolean&gt; SEVENTH_COLUMN = setupColumn(6);
+&nbsp;    public final List&lt;Boolean&gt; EIGHTH_COLUMN = setupColumn(7);
+&nbsp;    public final List&lt;Boolean&gt; FIRST_ROW = setupRow(0);
+&nbsp;    public final List&lt;Boolean&gt; SECOND_ROW = setupRow(8);
+&nbsp;    public final List&lt;Boolean&gt; THIRD_ROW = setupRow(16);
+&nbsp;    public final List&lt;Boolean&gt; FOURTH_ROW = setupRow(24);
+&nbsp;    public final List&lt;Boolean&gt; FIFTH_ROW = setupRow(32);
+&nbsp;    public final List&lt;Boolean&gt; SIXTH_ROW = setupRow(40);
+&nbsp;    public final List&lt;Boolean&gt; SEVENTH_ROW = setupRow(48);
+&nbsp;    public final List&lt;Boolean&gt; EIGHTH_ROW = setupRow(56);
+&nbsp;    public final List&lt;String&gt; ALGEBRAIC_NOTATION = setupAlgebraic();
+&nbsp;    public final Map&lt;String, Integer&gt; POSITION_TO_COORD = setupPosToCoordMap();
+&nbsp;
+&nbsp;    public static final int START_TILE_INDEX = 0;
+&nbsp;    public static final int NUM_TILES_ROW = 8;
+&nbsp;    public static final int NUM_TILES = 64;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a verificare se una coordinata è all&#39;interno della scacchiera
+&nbsp;     * @param coordinate valore da verificare
+&nbsp;     * @return valore booleano a &quot;TRUE&quot; se la coordinata è maggiore uguale a 0 e minore di 64
+&nbsp;     */
+&nbsp;    public static boolean isValidTileCoordinate(int coordinate) {
+<b class="fc">&nbsp;        return coordinate &gt;= START_TILE_INDEX &amp;&amp; coordinate &lt; NUM_TILES;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di trovare l&#39;id della cella associata alla coordinata in notazione algebrica
+&nbsp;     * @param position valore da trovare in notazione algebrica
+&nbsp;     * @return Numero intero che identifica le celle. Valore da 0 a 63
+&nbsp;     */
+&nbsp;    public int getCoordinateAtPosition(final String position) {
+<b class="fc">&nbsp;        return POSITION_TO_COORD.get(position);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Ritorna l&#39;identificativo della cella nella notazione ALGEBRICA
+&nbsp;     * @param coordinate id della cella di riferimento
+&nbsp;     * @return stringa contenente la coordinata (carattere + numero)
+&nbsp;     */
+&nbsp;    public String getPositionAtCoordinate(final int coordinate) {
+<b class="fc">&nbsp;        return ALGEBRAIC_NOTATION.get(coordinate);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di verificare quando il giocatore è sotto scacco o è in stallo con le mosse
+&nbsp;     * @param board scacchiera &quot;virtuale&quot; di riferimento
+&nbsp;     * @return &quot;TRUE&quot; se sotto scacco o in stallo
+&nbsp;     */
+&nbsp;    public static boolean isGameOver(final VirtualBoard board) {
+<b class="nc">&nbsp;        return board.getCurrentPlayer().isInCheckMate() || board.getCurrentPlayer().isInStaleMate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param board
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public static boolean isThreatenedBoardImmediate(final VirtualBoard board) {
+<b class="fc">&nbsp;        return board.getWhitePlayer().isInCheck() || board.getBlackPlayer().isInCheck();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a verificare se a una coordinata è posizionato un pedone.
+&nbsp;     * Viene confrontato con un RE in base al colore e viene verificato il tipo e che non sia nullo
+&nbsp;     * @param board scacchiera &quot;virtuale&quot; di riferimento
+&nbsp;     * @param king RE da utilizzare come confronto
+&nbsp;     * @param frontTile coordinata da usare come riferimento sulla scacchiera
+&nbsp;     * @return &quot;TRUE&quot; se ci sia una pedina, sia un pedone e abbia un colore diverso rispetto al RE. Altrimenti &quot;FALSE&quot;
+&nbsp;     */
+&nbsp;    public static boolean isKingPawn(final VirtualBoard board, final King king, final int frontTile) {
+<b class="nc">&nbsp;        final Piece piece = board.getPiece(frontTile);</b>
+<b class="nc">&nbsp;        return piece != null &amp;&amp; piece.getPieceType() == PieceType.PAWN &amp;&amp; piece.getPieceUtils() != king.getPieceUtils();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per controllare quando la mossa mette in scacco un pedone
+&nbsp;     * Nel dettaglio, il metodo verrà chiamato per verificare la situazione del RE
+&nbsp;     * @param move mossa che si vuole eseguire
+&nbsp;     * @return &quot;TRUE&quot; se la pedina (giocatore) è in scacco
+&nbsp;     */
+&nbsp;    public static boolean kingThreat(final Move move) {
+<b class="fc">&nbsp;       final VirtualBoard board = move.getBoard();</b>
+<b class="fc">&nbsp;       final MoveTransition transition = board.getCurrentPlayer().doMove(move);</b>
+&nbsp;
+<b class="fc">&nbsp;       return transition.toBoard().getCurrentPlayer().isInCheck();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo esegue un ragionamento complesso degli scacchi, ovvero si occupa di trovare
+&nbsp;     * la vittima con più valore e l&#39;aggressore meno prezioso
+&nbsp;     * MVVLVA: Most Valuable Victim - Least Valuable Aggressor
+&nbsp;     * Il metodo viene utilizzato dalla piccola AI che muove le pedine avversarie
+&nbsp;     * @param move la mossa che si sta valutando
+&nbsp;     * @return il delta (differenza) di valore tra le due pedine
+&nbsp;     */
+&nbsp;    public static int mvvlva(final Move move) {
+<b class="fc">&nbsp;        final Piece movingPiece = move.getPieceToMove();</b>
+&nbsp;
+<b class="fc">&nbsp;        if(move.isAttack()) {</b>
+<b class="fc">&nbsp;            final Piece attackedPiece = move.getPieceAttacked();</b>
+<b class="fc">&nbsp;            return (attackedPiece.getPieceValue() - movingPiece.getPieceValue() + PieceType.KING.getPieceValue()) * 100;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return PieceType.KING.getPieceValue() - movingPiece.getPieceValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param board
+&nbsp;     * @param N
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    public static List&lt;Move&gt; lastNMoves(final VirtualBoard board, int N) {
+<b class="fc">&nbsp;        final List&lt;Move&gt; moveHistory = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Move currentMove = board.getTransitionMove();</b>
+&nbsp;
+<b class="fc">&nbsp;        for(int i = 0; currentMove != MoveFactory.getNullMove() &amp;&amp; i &lt; N; i++) {</b>
+<b class="fc">&nbsp;            moveHistory.add(currentMove);</b>
+<b class="fc">&nbsp;            currentMove = currentMove.getBoard().getTransitionMove();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return Collections.unmodifiableList(moveHistory);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di controllare se il giocatore è sotto scacco matto
+&nbsp;     * o è in una situazione di stallo (nessuna mossa possibile)
+&nbsp;     * @param board la scacchiera virtuale di riferimento
+&nbsp;     * @return valore booleano &quot;TRUE&quot; se la partita deve terminare
+&nbsp;     */
+&nbsp;    public static boolean isEndGame(final VirtualBoard board) {
+<b class="fc">&nbsp;        final Player currentPlayer = board.getCurrentPlayer();</b>
+<b class="fc">&nbsp;        return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di creare una Map di coppie di stringhe e d&#39;interi
+&nbsp;     * Lo scopo è quello di poter risalire tramite un id a una coordinata algebrica
+&nbsp;     * senza dover effettuare calcoli a ogni richiesta.
+&nbsp;     * Questo metodo viene chiamato all&#39;inizio del gioco.
+&nbsp;     * @return mappa di stringhe e interi
+&nbsp;     */
+&nbsp;    private Map&lt;String, Integer&gt; setupPosToCoordMap() {
+<b class="fc">&nbsp;        final Map&lt;String, Integer&gt; posToCoord = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for(int i = START_TILE_INDEX; i &lt; NUM_TILES; i++) {</b>
+<b class="fc">&nbsp;            posToCoord.put(ALGEBRAIC_NOTATION.get(i), i);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return Collections.unmodifiableMap(posToCoord);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Crea una lista di coordinate algebriche per identificare le celle della scacchiera
+&nbsp;     * @return una lista di stringhe di lunghezza 64
+&nbsp;     */
+&nbsp;    private static List&lt;String&gt; setupAlgebraic() {
+<b class="fc">&nbsp;        return List.of(&quot;a8&quot;, &quot;b8&quot;, &quot;c8&quot;, &quot;d8&quot;, &quot;e8&quot;, &quot;f8&quot;, &quot;g8&quot;, &quot;h8&quot;,&quot;a7&quot;, &quot;b7&quot;, &quot;c7&quot;, &quot;d7&quot;, &quot;e7&quot;, &quot;f7&quot;, &quot;g7&quot;, &quot;h7&quot;,&quot;a6&quot;, &quot;b6&quot;, &quot;c6&quot;, &quot;d6&quot;, &quot;e6&quot;, &quot;f6&quot;, &quot;g6&quot;, &quot;h6&quot;,&quot;a5&quot;, &quot;b5&quot;, &quot;c5&quot;, &quot;d5&quot;, &quot;e5&quot;, &quot;f5&quot;, &quot;g5&quot;, &quot;h5&quot;,&quot;a4&quot;, &quot;b4&quot;, &quot;c4&quot;, &quot;d4&quot;, &quot;e4&quot;, &quot;f4&quot;, &quot;g4&quot;, &quot;h4&quot;,&quot;a3&quot;, &quot;b3&quot;, &quot;c3&quot;, &quot;d3&quot;, &quot;e3&quot;, &quot;f3&quot;, &quot;g3&quot;, &quot;h3&quot;,&quot;a2&quot;, &quot;b2&quot;, &quot;c2&quot;, &quot;d2&quot;, &quot;e2&quot;, &quot;f2&quot;, &quot;g2&quot;, &quot;h2&quot;,&quot;a1&quot;, &quot;b1&quot;, &quot;c1&quot;, &quot;d1&quot;, &quot;e1&quot;, &quot;f1&quot;, &quot;g1&quot;, &quot;h1&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di creare una lista di valori booleani, basandosi sul numero passato come argomento.
+&nbsp;     * Nel caso fosse passato 0 come valore, la matrice conterrebbe 8 valori a &quot;TRUE&quot; e 56 a &quot;FALSE&quot; cosi da poter identificare le celle che appartengono alla medesima riga.
+&nbsp;     * Questo metodo viene chiamato 8 volte negli 8 attributi che identificano le 8 diverse righe.
+&nbsp;     * @param numRow numero intero utilizzato come riferimento. Progressione di 8 in 8
+&nbsp;     * @return una lista di valori booleani
+&nbsp;     */
+&nbsp;    private static List&lt;Boolean&gt; setupRow(int numRow) {
+<b class="fc">&nbsp;        final Boolean[] row = new Boolean[NUM_TILES];</b>
+<b class="fc">&nbsp;        Arrays.fill(row, false);</b>
+&nbsp;
+&nbsp;        do {
+<b class="fc">&nbsp;            row[numRow] = true;</b>
+<b class="fc">&nbsp;            numRow++;</b>
+<b class="fc">&nbsp;        } while(numRow % NUM_TILES_ROW != 0);</b>
+&nbsp;
+<b class="fc">&nbsp;        return List.of(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo si occupa di creare una lista di valori booleani, basandosi sul numero passato come argomento.
+&nbsp;     * Nel caso fosse passato 0 come valore, la matrice conterrebbe 8 valori a &quot;TRUE&quot; e 56 a &quot;FALSE&quot; cosi da poter identificare le celle che appartengono alla medesima colonna.
+&nbsp;     * Questo metodo viene chiamato 8 volte negli 8 attributi che identificano le 8 diverse colonne.
+&nbsp;     * @param numCol numero intero utilizzato come riferimento. Progressione di 8 in 8
+&nbsp;     * @return una lista di valori booleani
+&nbsp;     */
+&nbsp;    private static List&lt;Boolean&gt; setupColumn(int numCol) {
+<b class="fc">&nbsp;        final Boolean[] column = new Boolean[NUM_TILES];</b>
+<b class="fc">&nbsp;        Arrays.fill(column, false);</b>
+&nbsp;
+&nbsp;        do {
+<b class="fc">&nbsp;            column[numCol] = true;</b>
+<b class="fc">&nbsp;            numCol += NUM_TILES_ROW;</b>
+<b class="fc">&nbsp;        } while(numCol &lt; NUM_TILES);</b>
+&nbsp;
+<b class="fc">&nbsp;        return List.of(column);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

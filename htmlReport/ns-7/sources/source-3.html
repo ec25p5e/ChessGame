@@ -1,0 +1,430 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StockAlphaBeta</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.player.ai</a>
+</div>
+
+<h1>Coverage Summary for Class: StockAlphaBeta (core.player.ai)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StockAlphaBeta</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.7%
+  </span>
+  <span class="absValue">
+    (88/97)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StockAlphaBeta$MoveSorter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">StockAlphaBeta$MoveSorter$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">StockAlphaBeta$MoveSorter$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    94.1%
+  </span>
+  <span class="absValue">
+    (16/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.9%
+  </span>
+  <span class="absValue">
+    (102/111)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.player.ai;
+&nbsp;
+&nbsp;import com.google.common.collect.ComparisonChain;
+&nbsp;import com.google.common.collect.Ordering;
+&nbsp;import core.board.VirtualBoard;
+&nbsp;import core.board.VirtualBoardUtils;
+&nbsp;import core.move.Move;
+&nbsp;import core.move.MoveFactory;
+&nbsp;import core.move.MoveTransition;
+&nbsp;import core.player.Player;
+&nbsp;import lombok.Getter;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Comparator;
+&nbsp;import java.util.Observable;
+&nbsp;
+&nbsp;import static core.board.VirtualBoardUtils.mvvlva;
+&nbsp;
+&nbsp;/**
+&nbsp; * Questa classe serve come punto d&#39;entrata per l&#39;AI
+&nbsp; */
+&nbsp;public class StockAlphaBeta extends Observable implements IMoveStrategy {
+&nbsp;    private final int searchDepth;
+&nbsp;    private final IBoardEvaluator evaluator;
+&nbsp;    private int quiescenceCount;
+<b class="nc">&nbsp;    @Getter</b>
+&nbsp;    private int boardsEvaluated;
+&nbsp;    private static final int MAX_QUIESCENCE = 5000 * 5;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questa classe &quot;enum&quot; serve per ordinare le mosse e poterle
+&nbsp;     * utilizzare facilmente
+&nbsp;     */
+<b class="fc">&nbsp;    private enum MoveSorter {</b>
+<b class="fc">&nbsp;        STANDARD {</b>
+&nbsp;            @Override
+&nbsp;            Collection&lt;Move&gt; sort(final Collection&lt;Move&gt; moves) {
+<b class="fc">&nbsp;                return Ordering.from((Comparator&lt;Move&gt;) (move1, move2) -&gt; ComparisonChain.start()</b>
+<b class="fc">&nbsp;                        .compareTrueFirst(move1.isCastlingMove(), move2.isCastlingMove())</b>
+<b class="fc">&nbsp;                        .compare(mvvlva(move2), mvvlva(move1))</b>
+<b class="fc">&nbsp;                        .result()).immutableSortedCopy(moves);</b>
+&nbsp;            }
+&nbsp;        },
+<b class="fc">&nbsp;        EXPENSIVE {</b>
+&nbsp;            @Override
+&nbsp;            Collection&lt;Move&gt; sort(final Collection&lt;Move&gt; moves) {
+<b class="fc">&nbsp;                return Ordering.from((Comparator&lt;Move&gt;) (move1, move2) -&gt; ComparisonChain.start()</b>
+<b class="fc">&nbsp;                        .compareTrueFirst(VirtualBoardUtils.kingThreat(move1), VirtualBoardUtils.kingThreat(move2))</b>
+<b class="fc">&nbsp;                        .compareTrueFirst(move1.isCastlingMove(), move2.isCastlingMove())</b>
+<b class="fc">&nbsp;                        .compare(mvvlva(move2), mvvlva(move1))</b>
+<b class="fc">&nbsp;                        .result()).immutableSortedCopy(moves);</b>
+&nbsp;            }
+&nbsp;        };
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Questo metodo serve per ordinare le mosse
+&nbsp;         * @param moves lista di mosse disordinate
+&nbsp;         * @return le mosse ordinate
+&nbsp;         */
+&nbsp;        abstract Collection&lt;Move&gt; sort(Collection&lt;Move&gt; moves);
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public StockAlphaBeta(final int searchDepth) {</b>
+<b class="fc">&nbsp;        this.evaluator = StandardBoardEvaluator.get();</b>
+<b class="fc">&nbsp;        this.searchDepth = searchDepth;</b>
+<b class="fc">&nbsp;        this.quiescenceCount = 0;</b>
+<b class="fc">&nbsp;        this.boardsEvaluated = 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="fc">&nbsp;        return &quot;StockAB&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per eseguire la logica della AI
+&nbsp;     * @param board scacchiera virtuale di riferimento
+&nbsp;     * @return la mossa &quot;migliore&quot; da eseguire secondo l&#39;AI
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Move execute(final VirtualBoard board) {
+<b class="fc">&nbsp;        final long startTime = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        final Player currentPlayer = board.getCurrentPlayer();</b>
+&nbsp;
+<b class="fc">&nbsp;        Move bestMove = MoveFactory.getNullMove();</b>
+<b class="fc">&nbsp;        int highestSeenValue = Integer.MIN_VALUE;</b>
+<b class="fc">&nbsp;        int lowestSeenValue = Integer.MAX_VALUE;</b>
+<b class="fc">&nbsp;        int moveCounter = 1;</b>
+<b class="fc">&nbsp;        int numMoves = board.getCurrentPlayer().getUsableMoves().size();</b>
+&nbsp;        int currentValue;
+&nbsp;
+<b class="fc">&nbsp;        System.out.println(board.getCurrentPlayer() + &quot; PENSA con la profondità di &quot; + this.searchDepth);</b>
+&nbsp;
+<b class="fc">&nbsp;        for(final Move move : MoveSorter.EXPENSIVE.sort(board.getCurrentPlayer().getUsableMoves())) {</b>
+<b class="fc">&nbsp;            final MoveTransition moveTransition = board.getCurrentPlayer().doMove(move);</b>
+&nbsp;            final String s;
+&nbsp;
+<b class="fc">&nbsp;            this.quiescenceCount = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;            if(moveTransition.moveStatus().isDone()) {</b>
+<b class="fc">&nbsp;                final long candidateMoveStartTime = System.nanoTime();</b>
+<b class="fc">&nbsp;                currentValue = currentPlayer.getUtils().isWhite()</b>
+<b class="nc">&nbsp;                        ? min(moveTransition.toBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue)</b>
+<b class="fc">&nbsp;                        : max(moveTransition.toBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue);</b>
+&nbsp;
+<b class="fc">&nbsp;                if(currentPlayer.getUtils().isWhite() &amp;&amp; currentValue &gt; highestSeenValue) {</b>
+<b class="nc">&nbsp;                    highestSeenValue = currentValue;</b>
+<b class="nc">&nbsp;                    bestMove = move;</b>
+&nbsp;
+<b class="nc">&nbsp;                    if(moveTransition.toBoard().getBlackPlayer().isInCheckMate())</b>
+<b class="nc">&nbsp;                        break;</b>
+<b class="fc">&nbsp;                } else if(currentPlayer.getUtils().isBlack() &amp;&amp; currentValue &lt; lowestSeenValue) {</b>
+<b class="fc">&nbsp;                    lowestSeenValue = currentValue;</b>
+<b class="fc">&nbsp;                    bestMove = move;</b>
+&nbsp;
+<b class="fc">&nbsp;                    if(moveTransition.toBoard().getWhitePlayer().isInCheckMate())</b>
+<b class="nc">&nbsp;                        break;</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                final String quiescenceInfo = &quot; &quot; + score(currentPlayer, highestSeenValue, lowestSeenValue) + &quot; q: &quot; +this.quiescenceCount;</b>
+<b class="fc">&nbsp;                s = &quot;\t&quot; + this + &quot;(&quot; +this.searchDepth+ &quot;), m: (&quot; +moveCounter+ &quot;/&quot; +numMoves+ &quot;) &quot; + move + &quot;, best:  &quot; + bestMove</b>
+&nbsp;
+<b class="fc">&nbsp;                        + quiescenceInfo + &quot;, t: &quot; + calculateTimeTaken(candidateMoveStartTime, System.nanoTime());</b>
+<b class="fc">&nbsp;            } else {</b>
+<b class="fc">&nbsp;                s = &quot;\t&quot; + this + &quot;(&quot; +this.searchDepth + &quot;)&quot; + &quot;, m: (&quot; +moveCounter+ &quot;/&quot; +numMoves+ &quot;) &quot; + move + &quot; is illegal! best: &quot; +bestMove;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(s);</b>
+<b class="fc">&nbsp;            setChanged();</b>
+<b class="fc">&nbsp;            notifyObservers(s);</b>
+<b class="fc">&nbsp;            moveCounter++;</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        final long executionTime = System.currentTimeMillis() - startTime;</b>
+<b class="fc">&nbsp;        final String result = board.getCurrentPlayer() + &quot; SELECTS &quot; +bestMove+ &quot; [#boards evaluated = &quot; +this.boardsEvaluated+</b>
+&nbsp;                &quot; time taken = &quot; + executionTime /1000+ &quot; rate = &quot; +(1000 * ((double)this.boardsEvaluated/ executionTime));
+<b class="fc">&nbsp;        System.out.printf(&quot;%s SELECTS %s [#boards evaluated = %d, time taken = %d ms, rate = %.1f\n&quot;, board.getCurrentPlayer(),</b>
+<b class="fc">&nbsp;                bestMove, this.boardsEvaluated, executionTime, (1000 * ((double)this.boardsEvaluated/ executionTime)));</b>
+&nbsp;
+<b class="fc">&nbsp;        setChanged();</b>
+<b class="fc">&nbsp;        notifyObservers(result);</b>
+&nbsp;
+<b class="fc">&nbsp;        return bestMove;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param board
+&nbsp;     * @param depth
+&nbsp;     * @param highest
+&nbsp;     * @param lowest
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private int max(final VirtualBoard board, final int depth, final int highest, final int lowest) {
+<b class="fc">&nbsp;        if (depth == 0 || VirtualBoardUtils.isEndGame(board)) {</b>
+<b class="fc">&nbsp;            this.boardsEvaluated++;</b>
+<b class="fc">&nbsp;            return this.evaluator.evaluate(board, depth);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int currentHighest = highest;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (final Move move : MoveSorter.STANDARD.sort((board.getCurrentPlayer().getUsableMoves()))) {</b>
+<b class="fc">&nbsp;            final MoveTransition moveTransition = board.getCurrentPlayer().doMove(move);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (moveTransition.moveStatus().isDone()) {</b>
+<b class="fc">&nbsp;                final VirtualBoard toBoard = moveTransition.toBoard();</b>
+&nbsp;
+<b class="fc">&nbsp;                currentHighest = Math.max(currentHighest, min(toBoard,</b>
+<b class="fc">&nbsp;                        calculateQuiescenceDepth(toBoard, depth), currentHighest, lowest));</b>
+&nbsp;
+<b class="fc">&nbsp;                if (currentHighest &gt;= lowest)</b>
+<b class="fc">&nbsp;                    return lowest;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return currentHighest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param board
+&nbsp;     * @param depth
+&nbsp;     * @param highest
+&nbsp;     * @param lowest
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private int min(final VirtualBoard board, final int depth, final int highest, final int lowest) {
+<b class="fc">&nbsp;        if (depth == 0 || VirtualBoardUtils.isEndGame(board)) {</b>
+<b class="fc">&nbsp;            this.boardsEvaluated++;</b>
+<b class="fc">&nbsp;            return this.evaluator.evaluate(board, depth);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int currentLowest = lowest;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (final Move move : MoveSorter.STANDARD.sort((board.getCurrentPlayer().getUsableMoves()))) {</b>
+<b class="fc">&nbsp;            final MoveTransition moveTransition = board.getCurrentPlayer().doMove(move);</b>
+<b class="fc">&nbsp;            if (moveTransition.moveStatus().isDone()) {</b>
+<b class="fc">&nbsp;                final VirtualBoard toBoard = moveTransition.toBoard();</b>
+&nbsp;
+<b class="fc">&nbsp;                currentLowest = Math.min(currentLowest, max(toBoard,</b>
+<b class="fc">&nbsp;                        calculateQuiescenceDepth(toBoard, depth), highest, currentLowest));</b>
+&nbsp;
+<b class="fc">&nbsp;                if (currentLowest &lt;= highest)</b>
+<b class="fc">&nbsp;                    return highest;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return currentLowest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param toBoard
+&nbsp;     * @param depth
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private int calculateQuiescenceDepth(final VirtualBoard toBoard, final int depth) {
+<b class="fc">&nbsp;       if(depth == 1 &amp;&amp; this.quiescenceCount &lt; MAX_QUIESCENCE) {</b>
+<b class="fc">&nbsp;           int activityMeasure = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;           if(toBoard.getCurrentPlayer().isInCheck())</b>
+<b class="fc">&nbsp;               activityMeasure += 1;</b>
+&nbsp;
+<b class="fc">&nbsp;           for(final Move move : VirtualBoardUtils.lastNMoves(toBoard, 2)) {</b>
+<b class="fc">&nbsp;               if(move.isAttack())</b>
+<b class="fc">&nbsp;                   activityMeasure += 1;</b>
+<b class="fc">&nbsp;           }</b>
+&nbsp;
+<b class="fc">&nbsp;           if(activityMeasure &gt;= 2) {</b>
+<b class="fc">&nbsp;               this.quiescenceCount++;</b>
+<b class="fc">&nbsp;               return 2;</b>
+&nbsp;           }
+&nbsp;       }
+&nbsp;
+<b class="fc">&nbsp;       return depth - 1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param currentPlayer
+&nbsp;     * @param highestSeenValue
+&nbsp;     * @param lowestSeenValue
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private static String score(final Player currentPlayer, final int highestSeenValue, final int lowestSeenValue) {
+<b class="fc">&nbsp;        if(currentPlayer.getUtils().isWhite())</b>
+<b class="nc">&nbsp;            return &quot;[score: &quot; + highestSeenValue + &quot;]&quot;;</b>
+<b class="fc">&nbsp;        else if(currentPlayer.getUtils().isBlack())</b>
+<b class="fc">&nbsp;            return &quot;[score: &quot; + lowestSeenValue + &quot;]&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;StockAlphaBeta[-score]: runtime exception!&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param start
+&nbsp;     * @param end
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    private static String calculateTimeTaken(final long start, final long end) {
+<b class="fc">&nbsp;        final long timeTaken = (end - start) / 1000000;</b>
+<b class="fc">&nbsp;        return timeTaken + &quot; ms&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

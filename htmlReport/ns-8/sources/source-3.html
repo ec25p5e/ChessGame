@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: IUtils (core.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IUtils</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.utils;
+&nbsp;
+&nbsp;import core.player.BlackPlayer;
+&nbsp;import core.player.Player;
+&nbsp;import core.player.WhitePlayer;
+&nbsp;
+&nbsp;public interface IUtils {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return valore booleano &quot;TRUE&quot; se la pedina è di color bianco
+&nbsp;     */
+&nbsp;    boolean isWhite();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return valore booleano &quot;TRUE&quot; se la pedina è di color nero
+&nbsp;     */
+&nbsp;    boolean isBlack();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Esegue il controllo se il pedone è sulla prima riga della scacchiera. Dunque è giunto dall&#39;altro lato
+&nbsp;     * La prima riga per i bianchi sarà la prima effettiva mentre per i neri sarà l&#39;ottava riga
+&nbsp;     * @param position coordinata usata per controllare la prima riga
+&nbsp;     * @return Valore booleano &quot;TRUE&quot; se è arrivato sulla prima riga. Altrimenti &quot;FALSE&quot;
+&nbsp;     */
+&nbsp;    boolean isPawnPromotionSquare(final int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return valore intero che indica la direzione da intraprendere per muoversi avanti verso il giocatore nemico
+&nbsp;     *         Il numero oscilla tra -1 e 1
+&nbsp;     */
+&nbsp;    int getDirection();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo ritorna il valore opposto al metodo &quot;getDirection&quot; in {@link IUtils}
+&nbsp;     * @return valore intero che indica la direzione da intraprendere per indietro e avanti verso il giocatore nemico
+&nbsp;     *         Il numero oscilla tra 1 e -1
+&nbsp;     */
+&nbsp;    int getOppositeDirection();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Scegli tra i due colori di giocatori quale usare.
+&nbsp;     * Implementato nel &quot;WHITE&quot; ritornerà il giocatore bianco e viceversa
+&nbsp;     * @param whitePlayer giocatore di colore bianco
+&nbsp;     * @param blackPlayer giocatore di colore nero
+&nbsp;     * @return Un giocatore tra i due (bianco/nero)
+&nbsp;     */
+&nbsp;    Player selectPlayerByUtils(final WhitePlayer whitePlayer, final BlackPlayer blackPlayer);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int pawnBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int knightBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int bishopBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int rookBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int kingBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @param position
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int queenBonus(int position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return la stesura del colore (bianco/nero)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    String toString();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

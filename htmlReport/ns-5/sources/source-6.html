@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IPiece</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.pieces.piece</a>
+</div>
+
+<h1>Coverage Summary for Class: IPiece (core.pieces.piece)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IPiece</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.pieces.piece;
+&nbsp;
+&nbsp;import core.board.VirtualBoard;
+&nbsp;import core.move.Move;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;
+&nbsp;public interface IPiece {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo viene utilizzato per rilevare quali sono le mosse possibili per la pedina
+&nbsp;     * @param board scacchiera virtuale di riferimento
+&nbsp;     * @return Una lista di mosse praticabili dalla pedina allo stato corrente
+&nbsp;     */
+&nbsp;    Collection&lt;Move&gt; calculateMoves(final VirtualBoard board);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per ritornare la pedina alla coordinata in base al movimento scelto
+&nbsp;     * @param move mossa scelta dopo aver rilevato la sorgente e la destinazione.
+&nbsp;     * @return Una pedina
+&nbsp;     */
+&nbsp;    Piece movePiece(final Move move);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per ritornare un numero intero che indica il bonus
+&nbsp;     * del pedone per la coordinata e il tipo.
+&nbsp;     * Questo valore viene usato principalmente dall&#39;AI per valutare la scacchiera
+&nbsp;     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+&nbsp;     * @return numero intero positivo o negativo
+&nbsp;     */
+&nbsp;    int locationBonus();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+&nbsp;     */
+&nbsp;    String toString();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo indica se il pedone è in castling
+&nbsp;     * Viene utilizzato solo dai RE
+&nbsp;     * @return valore booleano
+&nbsp;     */
+&nbsp;    boolean isCastled();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a indicare se è in castling dal
+&nbsp;     * RE. È specifico per il metodo &quot;isCastled&quot;
+&nbsp;     * @return valore booleano
+&nbsp;     */
+&nbsp;    boolean isCastledByKing();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a indicare se è in castling dalla
+&nbsp;     * Regina. È specifico per il metodo &quot;isCastled&quot;
+&nbsp;     * @return valore booleano
+&nbsp;     */
+&nbsp;    boolean isCastledByQueen();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

@@ -48,6 +48,16 @@ public class Rook extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando per la torre sarà la sua prima mossa
+     * @param piecePosition coordinata sulla quale è posizionata la torre
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     */
+    public Rook(final int piecePosition, final Utils pieceUtils) {
+        super(PieceType.ROOK, piecePosition, pieceUtils, true);
+    }
+
+    /**
      * Questo metodo viene utilizzato per rilevare quali sono le mosse possibili per la pedina
      * @param board scacchiera virtuale di riferimento
      * @return Una lista di mosse praticabili dalla pedina allo stato corrente

@@ -78,6 +78,15 @@ public enum VirtualBoardUtils {
     }
 
     /**
+     *
+     * @param board
+     * @return
+     */
+    public static boolean isThreatenedBoardImmediate(final VirtualBoard board) {
+        return board.getWhitePlayer().isInCheck() || board.getBlackPlayer().isInCheck();
+    }
+
+    /**
      * Questo metodo serve a verificare se a una coordinata è posizionato un pedone.
      * Viene confrontato con un RE in base al colore e viene verificato il tipo e che non sia nullo
      * @param board scacchiera "virtuale" di riferimento

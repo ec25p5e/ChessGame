@@ -1,0 +1,274 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Knight</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">core.pieces</a>
+</div>
+
+<h1>Coverage Summary for Class: Knight (core.pieces)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Knight</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.3%
+  </span>
+  <span class="absValue">
+    (26/27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package core.pieces;
+&nbsp;
+&nbsp;import core.board.VirtualBoard;
+&nbsp;import core.board.VirtualBoardUtils;
+&nbsp;import core.move.SimpleMove;
+&nbsp;import core.move.Move;
+&nbsp;import core.move.SimpleAttackMove;
+&nbsp;import core.pieces.piece.Piece;
+&nbsp;import core.pieces.piece.PieceType;
+&nbsp;import core.pieces.piece.PieceUtils;
+&nbsp;import core.utils.Utils;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class Knight extends Piece {
+&nbsp;
+&nbsp;    // Questo array serve a contenere i valori da utilizzare durante il calcolo delle possibili mosse quando si aggiungono
+&nbsp;    // i valori alla possibile coordinata.
+<b class="fc">&nbsp;    private static final int[] OPERATION_MOVE = { -17, -15, -10, -6, 6, 10, 15, 17 };</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo costruttore viene utilizzato quando il cavallo sarà in gioco. Quindi non obbligatoriamente sarà la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     */
+&nbsp;    public Knight(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
+<b class="fc">&nbsp;        super(PieceType.KNIGHT, piecePosition, pieceUtils, isFirstMove);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l&#39;oggetto
+&nbsp;     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+&nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     */
+&nbsp;    public Knight(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+<b class="fc">&nbsp;        super(PieceType.KNIGHT, pieceCoordinate, pieceUtils, isFirstMove);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo costruttore viene utilizzato quando il cavallo sarà la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     */
+&nbsp;    public Knight(final int piecePosition, final Utils pieceUtils) {
+<b class="fc">&nbsp;        super(PieceType.KNIGHT, piecePosition, pieceUtils, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo viene utilizzato per rilevare quali sono le mosse possibili per la pedina
+&nbsp;     * @param board scacchiera virtuale di riferimento
+&nbsp;     * @return Una lista di mosse praticabili dalla pedina allo stato corrente
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Collection&lt;Move&gt; calculateMoves(final VirtualBoard board) {
+<b class="fc">&nbsp;        final List&lt;Move&gt; usableMoves = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        // Viene percorso l&#39;array contenente i valori di calcolo
+<b class="fc">&nbsp;        for(final int candidateOffset : OPERATION_MOVE) {</b>
+&nbsp;            // Se la torre capita sulla prima o seconda colonna continua perché cosi può saltare via le pedine allo stato iniziale
+<b class="fc">&nbsp;            if(firstColumnExclusion(this.piecePosition, candidateOffset) ||</b>
+<b class="fc">&nbsp;                secondColumnExclusion(this.piecePosition, candidateOffset) ||</b>
+<b class="fc">&nbsp;                seventhColumnExclusion(this.piecePosition, candidateOffset) ||</b>
+<b class="fc">&nbsp;                eighthColumnExclusion(this.piecePosition, candidateOffset))</b>
+<b class="fc">&nbsp;                continue;</b>
+&nbsp;
+&nbsp;            // Imposta la coordinata con sommata quella di calcolo
+<b class="fc">&nbsp;            final int candidateCoordinate = this.piecePosition + candidateOffset;</b>
+&nbsp;
+&nbsp;            // Controlla che non sia uscito dalla scacchiera
+<b class="fc">&nbsp;            if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {</b>
+&nbsp;                // Prendi il contenuto della cella di destinazione
+<b class="fc">&nbsp;                final Piece pieceAtDestination = board.getPiece(candidateCoordinate);</b>
+&nbsp;
+&nbsp;                // Se la destinazione è vuota crea una mossa normale/semplice
+<b class="fc">&nbsp;                if(pieceAtDestination == null)</b>
+<b class="fc">&nbsp;                    usableMoves.add(new SimpleMove(board, this, candidateCoordinate));</b>
+&nbsp;                else {
+&nbsp;                    // Altrimenti se il colore è diverso dal corrente
+<b class="fc">&nbsp;                    final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();</b>
+&nbsp;
+&nbsp;                    // Crea una mossa di attacco
+<b class="fc">&nbsp;                    if(pieceAtDestinationUtils != this.pieceUtils)</b>
+<b class="fc">&nbsp;                        usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Ritorna la lista completa di tutti i movimenti possibili
+<b class="fc">&nbsp;        return Collections.unmodifiableList(usableMoves);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per ritornare la pedina alla coordinata in base al movimento scelto
+&nbsp;     * @param move mossa scelta dopo aver rilevato la sorgente e la destinazione.
+&nbsp;     * @return Una pedina della classe {@link Knight}
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Piece movePiece(final Move move) {
+<b class="fc">&nbsp;        return PieceUtils.INSTANCE.getPieceAtCoordinate(Knight.class, move.getPieceToMove().getPieceUtils(), move.getDestinationCoordinate());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve per ritornare un numero intero che indica il bonus
+&nbsp;     * del pedone per la coordinata e il tipo.
+&nbsp;     * Questo valore viene usato principalmente dall&#39;AI per valutare la scacchiera
+&nbsp;     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+&nbsp;     *
+&nbsp;     * @return numero intero positivo o negativo
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int locationBonus() {
+<b class="fc">&nbsp;        return this.pieceUtils.knightBonus(this.piecePosition);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return this.pieceType.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla prima riga, per il bianco
+&nbsp;     * @param currentCoordinate coordinata della pedina
+&nbsp;     * @param candidateOffset valore di calcolo attuale
+&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sulla prima riga
+&nbsp;     */
+&nbsp;    private static boolean firstColumnExclusion(final int currentCoordinate, final int candidateOffset) {
+<b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.FIRST_COLUMN.get(currentCoordinate) &amp;&amp; (candidateOffset == -17 || candidateOffset == -10 || candidateOffset == 6 || candidateOffset == 15);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla seconda riga, per il bianco
+&nbsp;     * @param currentCoordinate coordinata della pedina
+&nbsp;     * @param candidateOffset valore di calcolo attuale
+&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sulla seconda riga
+&nbsp;     */
+&nbsp;    private static boolean secondColumnExclusion(final int currentCoordinate, final int candidateOffset) {
+<b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.SECOND_COLUMN.get(currentCoordinate) &amp;&amp; (candidateOffset == -10 || candidateOffset == 6);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla seconda riga, per il nero
+&nbsp;     * @param currentCoordinate coordinata della pedina
+&nbsp;     * @param candidateOffset valore di calcolo attuale
+&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sulla seconda riga
+&nbsp;     */
+&nbsp;    private static boolean seventhColumnExclusion(final int currentCoordinate, final int candidateOffset) {
+<b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.SEVENTH_COLUMN.get(currentCoordinate) &amp;&amp; (candidateOffset == -6 || candidateOffset == 10);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla seconda riga, per il nero
+&nbsp;     * @param currentCoordinate coordinata della pedina
+&nbsp;     * @param candidateOffset valore di calcolo attuale
+&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sulla seconda riga
+&nbsp;     */
+&nbsp;    private static boolean eighthColumnExclusion(final int currentCoordinate, final int candidateOffset) {
+<b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.EIGHTH_COLUMN.get(currentCoordinate) &amp;&amp; (candidateOffset == -15 || candidateOffset == -6 || candidateOffset == 10 || candidateOffset == 17);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 21:16</div>
+</div>
+</body>
+</html>

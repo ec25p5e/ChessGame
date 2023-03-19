@@ -11,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 public abstract class Move {
+    public static core.move.MoveFactory MoveFactory;
     protected final VirtualBoard board;
     protected final int destinationCoordinate;
     protected final Piece pieceToMove;
