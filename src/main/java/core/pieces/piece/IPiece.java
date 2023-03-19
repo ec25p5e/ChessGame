@@ -1,7 +1,7 @@
 package core.pieces.piece;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
+import core.move.Move;
 
 import java.util.Collection;
 

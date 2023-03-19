@@ -1,4 +1,4 @@
-package core.movements;
+package core.move;
 
 import core.board.VirtualBoardUtils;
 import core.board.VirtualBoard;

@@ -1,12 +1,11 @@
 package core.player;
 
 import core.board.VirtualBoard;
-import core.board.VirtualBoardUtils;
-import core.movements.KingSideCastleMove;
-import core.movements.QueenSideCastleMove;
+import core.move.KingSideCastleMove;
+import core.move.QueenSideCastleMove;
 import core.pieces.Rook;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.pieces.piece.Piece;
 
 import java.util.ArrayList;

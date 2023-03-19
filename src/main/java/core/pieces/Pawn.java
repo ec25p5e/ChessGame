@@ -1,7 +1,7 @@
 package core.pieces;
 
 import core.board.VirtualBoard;
-import core.movements.*;
+import core.move.*;
 import core.utils.Utils;
 import core.board.VirtualBoardUtils;
 import core.pieces.piece.Piece;

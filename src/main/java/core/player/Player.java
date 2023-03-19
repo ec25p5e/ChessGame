@@ -1,9 +1,9 @@
 package core.player;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
-import core.movements.MoveStatus;
-import core.movements.MoveTransition;
+import core.move.Move;
+import core.move.MoveStatus;
+import core.move.MoveTransition;
 import core.pieces.King;
 import lombok.Getter;
 

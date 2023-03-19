@@ -2,7 +2,7 @@ package core.board;
 
 import core.pieces.Pawn;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import lombok.Getter;
 

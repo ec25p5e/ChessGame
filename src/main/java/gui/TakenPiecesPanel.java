@@ -1,8 +1,8 @@
 package gui;
 
 import com.google.common.primitives.Ints;
-import core.board.MoveLog;
-import core.movements.Move;
+import core.move.MoveLog;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import util.Constants;
 

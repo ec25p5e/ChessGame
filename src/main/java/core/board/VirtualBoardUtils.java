@@ -1,8 +1,8 @@
 package core.board;
 
-import core.movements.Move;
-import core.movements.MoveFactory;
-import core.movements.MoveTransition;
+import core.move.Move;
+import core.move.MoveFactory;
+import core.move.MoveTransition;
 import core.pieces.King;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
