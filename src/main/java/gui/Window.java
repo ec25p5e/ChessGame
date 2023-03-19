@@ -9,12 +9,10 @@ import core.board.VirtualBoardUtils;
 import core.movements.Move;
 import core.movements.MoveFactory;
 import core.movements.MoveTransition;
-import core.pieces.Pawn;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceDeserializer;
 import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
-import core.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import util.Constants;
@@ -33,6 +31,8 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.*;
+import static util.Constants.*;
+import static util.Constants.SERIALIZATION_PATH;
 
 /**
  * Questa classe rappresenta la GUI e i suoi elementi collegati.
@@ -111,6 +111,19 @@ public final class Window extends Observable {
         final JMenu filesMenu = new JMenu("File");
         filesMenu.setMnemonic(KeyEvent.VK_F);
 
+        // Chiudi il gioco
+        final JMenuItem exitMenuItem = new JMenuItem("Chiudi", KeyEvent.VK_X);
+        exitMenuItem.addActionListener(e -> {
+            // Elimina il file di recupero
+            File f = new File(SERIALIZATION_PATH + RECOVERY_GAME_FILE);
+            f.delete();
+
+            // Chiudi la finestra e killa il processo
+            Window.get().getWindowFrame().dispose();
+            System.exit(0);
+        });
+        filesMenu.add(exitMenuItem);
+
         return filesMenu;
     }
 
@@ -170,6 +183,25 @@ public final class Window extends Observable {
        Window.get().getBoardPanel().drawBoard(this.virtualBoard);
     }
 
+    private void updateRecoveryFile(Collection<Piece> allPieces) {
+        Gson gsonBuilder = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(Piece.class, new PieceDeserializer())
+                .enableComplexMapKeySerialization()
+                .create();
+
+        try {
+            FileWriter writer = new FileWriter(SERIALIZATION_PATH + RECOVERY_GAME_FILE);
+            Piece[] objs = allPieces.toArray(new Piece[0]);
+            writer.write(gsonBuilder.toJson(objs));
+            writer.close();
+        } catch(IOException e) {
+            throw new RuntimeException(IO_EXCEPTION);
+        } catch(NullPointerException npe) {
+            throw new NullPointerException(NPE_EXCEPTION);
+        }
+    }
+
 
 
     /**
@@ -191,27 +223,7 @@ public final class Window extends Observable {
             this.setPreferredSize(Constants.BOARD_DIMENSION);
             this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             this.setBackground(Constants.BOARD_PANEL_BACKGROUND);
-            this.serializeData();
             this.validate();
-        }
-
-        private void serializeData() {
-            Gson gsonBuilder = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .registerTypeAdapter(Piece.class, new PieceDeserializer())
-                    .enableComplexMapKeySerialization()
-                    .create();
-
-            try {
-                FileWriter writer = new FileWriter("testSerialization.json");
-                Piece[] objs = virtualBoard.getAllPieces().toArray(new Piece[0]);
-                writer.write(gsonBuilder.toJson(objs));
-                writer.close();
-            } catch(IOException e) {
-                e.printStackTrace();
-            } catch(NullPointerException npe) {
-
-            }
         }
 
         /**
@@ -291,6 +303,7 @@ public final class Window extends Observable {
                     invokeLater(() -> {
                         takenPiecesPanel.redo(moveLog);
                         Window.get().moveMadeUpdate(PlayerType.HUMAN);
+                        Window.get().updateRecoveryFile(Window.get().getVirtualBoard().getAllPieces());
                         boardPanel.drawBoard(virtualBoard);
                     });
                 }
