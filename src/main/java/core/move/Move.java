@@ -1,4 +1,4 @@
-package core.movements;
+package core.move;
 
 import core.board.BoardConfigurator;
 import core.board.VirtualBoard;
@@ -68,6 +68,14 @@ public abstract class Move {
         builder.setPiece(this.pieceToMove.movePiece(this));
         builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getUtils());
         builder.setMoveTransition(this);
+
+        return builder.build();
+    }
+
+    public VirtualBoard undo() {
+        final BoardConfigurator builder = new BoardConfigurator();
+        this.board.getAllPieces().forEach(builder::setPiece);
+        builder.setMoveMaker(this.board.getCurrentPlayer().getUtils());
 
         return builder.build();
     }

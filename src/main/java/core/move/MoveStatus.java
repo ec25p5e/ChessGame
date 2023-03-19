@@ -1,4 +1,4 @@
-package core.movements;
+package core.move;
 
 /**
  * Questa classe "enum" viene utilizzata per rappresentare i vari stati di una mossa.

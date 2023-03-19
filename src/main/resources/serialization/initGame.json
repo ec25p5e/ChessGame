@@ -1,0 +1,296 @@
+[
+  {
+    "type": "core.pieces.Rook",
+    "properties": {
+      "pieceCoordinate": "a8",
+      "pieceUtils": "BLACK",
+      "pieceType": "ROOK",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Knight",
+    "properties": {
+      "pieceCoordinate": "b8",
+      "pieceUtils": "BLACK",
+      "pieceType": "KNIGHT",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Bishop",
+    "properties": {
+      "pieceCoordinate": "c8",
+      "pieceUtils": "BLACK",
+      "pieceType": "BISHOP",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Queen",
+    "properties": {
+      "pieceCoordinate": "d8",
+      "pieceUtils": "BLACK",
+      "pieceType": "QUEEN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.King",
+    "properties": {
+      "isCastled": false,
+      "isCastledByKing": true,
+      "isCastledByQueen": true,
+      "pieceCoordinate": "e8",
+      "pieceUtils": "BLACK",
+      "pieceType": "KING",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Bishop",
+    "properties": {
+      "pieceCoordinate": "f8",
+      "pieceUtils": "BLACK",
+      "pieceType": "BISHOP",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Knight",
+    "properties": {
+      "pieceCoordinate": "g8",
+      "pieceUtils": "BLACK",
+      "pieceType": "KNIGHT",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Rook",
+    "properties": {
+      "pieceCoordinate": "h8",
+      "pieceUtils": "BLACK",
+      "pieceType": "ROOK",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "a7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "b7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "c7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "d7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "e7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "f7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "g7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "h7",
+      "pieceUtils": "BLACK",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "a2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "b2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "c2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "d2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "e2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "f2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "g2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Pawn",
+    "properties": {
+      "pieceCoordinate": "h2",
+      "pieceUtils": "WHITE",
+      "pieceType": "PAWN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Rook",
+    "properties": {
+      "pieceCoordinate": "a1",
+      "pieceUtils": "WHITE",
+      "pieceType": "ROOK",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Knight",
+    "properties": {
+      "pieceCoordinate": "b1",
+      "pieceUtils": "WHITE",
+      "pieceType": "KNIGHT",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Bishop",
+    "properties": {
+      "pieceCoordinate": "c1",
+      "pieceUtils": "WHITE",
+      "pieceType": "BISHOP",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Queen",
+    "properties": {
+      "pieceCoordinate": "d1",
+      "pieceUtils": "WHITE",
+      "pieceType": "QUEEN",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.King",
+    "properties": {
+      "isCastled": false,
+      "isCastledByKing": true,
+      "isCastledByQueen": true,
+      "pieceCoordinate": "e1",
+      "pieceUtils": "WHITE",
+      "pieceType": "KING",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Bishop",
+    "properties": {
+      "pieceCoordinate": "f1",
+      "pieceUtils": "WHITE",
+      "pieceType": "BISHOP",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Knight",
+    "properties": {
+      "pieceCoordinate": "g1",
+      "pieceUtils": "WHITE",
+      "pieceType": "KNIGHT",
+      "isFirstMove": true
+    }
+  },
+  {
+    "type": "core.pieces.Rook",
+    "properties": {
+      "pieceCoordinate": "h1",
+      "pieceUtils": "WHITE",
+      "pieceType": "ROOK",
+      "isFirstMove": true
+    }
+  }
+]

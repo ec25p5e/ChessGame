@@ -1,6 +1,6 @@
 package core.player;
 
-import core.movements.Move;
+import core.move.Move;
 import core.utils.Utils;
 import core.pieces.piece.Piece;
 

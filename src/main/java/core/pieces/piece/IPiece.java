@@ -1,7 +1,7 @@
 package core.pieces.piece;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
+import core.move.Move;
 
 import java.util.Collection;
 
@@ -34,4 +34,25 @@ public interface IPiece {
      * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
      */
     String toString();
+
+    /**
+     * Questo metodo indica se il pedone è in castling
+     * Viene utilizzato solo dai RE
+     * @return valore booleano
+     */
+    boolean isCastled();
+
+    /**
+     * Questo metodo serve a indicare se è in castling dal
+     * RE. È specifico per il metodo "isCastled"
+     * @return valore booleano
+     */
+    boolean isCastledByKing();
+
+    /**
+     * Questo metodo serve a indicare se è in castling dalla
+     * Regina. È specifico per il metodo "isCastled"
+     * @return valore booleano
+     */
+    boolean isCastledByQueen();
 }

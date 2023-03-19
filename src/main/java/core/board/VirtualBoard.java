@@ -1,21 +1,32 @@
 package core.board;
 
-import com.google.common.annotations.VisibleForTesting;
-import core.movements.MoveFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import core.move.MoveFactory;
 import core.pieces.*;
+import core.pieces.piece.PieceAssistant;
+import core.pieces.piece.PieceDeserializer;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.player.BlackPlayer;
 import core.player.Player;
 import core.player.WhitePlayer;
 import core.pieces.piece.Piece;
 import lombok.Getter;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static core.utils.Utils.BLACK;
+import static core.utils.Utils.WHITE;
+import static util.Constants.*;
 
 /**
  * Questa classe serve per rappresentare la scacchiera in formato virtuale.
@@ -31,7 +42,7 @@ public final class VirtualBoard {
     private final Pawn enPassantPawn;
     private final Move transitionMove;
 
-    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard(); // initDefaultBoardTest(); // initDefaultBoard();
+    private static final VirtualBoard DEFAULT_BOARD = initDefaultBoard();
     
     /**
      * All'interno del costruttore vengono creati i giocatori, calcolate le mosse usabili alla prima mossa,
@@ -40,7 +51,7 @@ public final class VirtualBoard {
      */
     public VirtualBoard(final BoardConfigurator boardConfigurator) {
         this.configuration = Collections.unmodifiableMap(boardConfigurator.getConfiguration());
-        this.whitePieces = calculateActivePiecesByUtils(boardConfigurator, Utils.WHITE);
+        this.whitePieces = calculateActivePiecesByUtils(boardConfigurator, WHITE);
         this.blackPieces = calculateActivePiecesByUtils(boardConfigurator, Utils.BLACK);
         this.enPassantPawn = boardConfigurator.getEnPassant();
 
@@ -98,69 +109,57 @@ public final class VirtualBoard {
      */
     public static VirtualBoard initDefaultBoard() {
         final BoardConfigurator configurator = new BoardConfigurator();
+        final Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(Piece.class, new PieceDeserializer())
+                .enableComplexMapKeySerialization()
+                .create();
+        String inFile = "";
 
-        // Black pieces
-        for(int i = 8; i <= 15; i++)
-            configurator.setPiece(new Pawn(i, Utils.BLACK));
+        try {
+            if(fileExist(SERIALIZATION_PATH + "recovery.json")) {
+                inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + RECOVERY_GAME_FILE)));
+            } else {
+                inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + BASE_GAME_FILE)));
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
 
-        configurator.setPiece(new Rook(0, Utils.BLACK));
-        configurator.setPiece(new Knight(1, Utils.BLACK));
-        configurator.setPiece(new Bishop(2, Utils.BLACK));
-        configurator.setPiece(new Queen(3, Utils.BLACK));
-        configurator.setPiece(new King(4, Utils.BLACK, true, true));
-        configurator.setPiece(new Bishop(5, Utils.BLACK));
-        configurator.setPiece(new Knight(6, Utils.BLACK));
-        configurator.setPiece(new Rook(7, Utils.BLACK));
+        if(!inFile.equals("")) {
+            final PieceAssistant pieceAssistant = new PieceAssistant();
+            final Piece[] objs = gson.fromJson(inFile, Piece[].class);
 
-        // White pieces
-        for(int k = 48; k <= 55; k++)
-            configurator.setPiece(new Pawn(k, Utils.WHITE));
+            for(Piece obj : objs) {
+                try {
+                    configurator.setPiece(pieceAssistant.init(
+                            Class.forName(obj.getClass().getCanonicalName()),
+                            obj.getPieceCoordinate(),
+                            (obj.getPieceUtils() == WHITE ? WHITE : BLACK),
+                            obj.isFirstMove(),
+                            obj.isCastledByQueen(),
+                            obj.isCastledByKing()
+                    ));
+                } catch(ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        configurator.setPiece(new Rook(56, Utils.WHITE));
-        configurator.setPiece(new Knight(57, Utils.WHITE));
-        configurator.setPiece(new Bishop(58, Utils.WHITE));
-        configurator.setPiece(new Queen(59, Utils.WHITE));
-        configurator.setPiece(new King(60, Utils.WHITE, true, true));
-        configurator.setPiece(new Bishop(61, Utils.WHITE));
-        configurator.setPiece(new Knight(62, Utils.WHITE));
-        configurator.setPiece(new Rook(63, Utils.WHITE));
+            configurator.setMoveMaker(WHITE);
+        }
 
-        // Imposta il giocatore che inizia a muovere la prima mossa
-        configurator.setMoveMaker(Utils.WHITE);
-
-        // "Compila" la scacchiera virtuale
         return configurator.build();
     }
 
-    @VisibleForTesting
-    private static VirtualBoard initDefaultBoardTest() {
-        final BoardConfigurator configurator = new BoardConfigurator();
-
-        // Imposta i RE
-        configurator.setPiece(new King(7, Utils.BLACK, true, true));
-        configurator.setPiece(new King(60, Utils.WHITE, true, true));
-
-        // Imposta l'attaccante
-        configurator.setPiece(new Bishop(56, Utils.WHITE));
-
-        // Imposta la prima vittima
-        configurator.setPiece(new Pawn(15, Utils.BLACK));
-        configurator.setPiece(new Pawn(6, Utils.BLACK));
-
-
-
-
-        // EV: comparse
-        /* configurator.setPiece(new Pawn(18, Utils.WHITE));
-        configurator.setPiece(new Pawn(34, Utils.WHITE));
-        configurator.setPiece(new Pawn(36, Utils.WHITE)); */
-
-
-        // Imposta il giocatore che inizia a muovere la prima mossa
-        configurator.setMoveMaker(Utils.WHITE);
-
-        // "Compila" la scacchiera virtuale
-        return configurator.build();
+    /**
+     * Questo metodo serve a verificare che la path sia un file e non una cartella
+     * e soprattutto che esista
+     * @param path percorso file di riferimento
+     * @return valore booleano
+     */
+    private static boolean fileExist(final String path) {
+        File f = new File(path);
+        return f.exists() && !f.isDirectory();
     }
 
     /**

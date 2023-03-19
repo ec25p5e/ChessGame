@@ -1,7 +1,7 @@
 package core.player.ai;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
+import core.move.Move;
 
 public interface IMoveStrategy {
 

@@ -1,12 +1,11 @@
 package core.player;
 
 import core.board.VirtualBoard;
-import core.board.VirtualBoardUtils;
-import core.movements.KingSideCastleMove;
-import core.movements.QueenSideCastleMove;
+import core.move.KingSideCastleMove;
+import core.move.QueenSideCastleMove;
 import core.pieces.Rook;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.pieces.piece.Piece;
 
 import java.util.ArrayList;
@@ -41,6 +40,9 @@ public class WhitePlayer extends Player {
     @Override
     public Collection<Move> calculateKingCastles(Collection<Move> playerUsableMoves, Collection<Move> opponentPlayerMoves) {
         final List<Move> kingCastles = new ArrayList<>();
+
+        if(!hasCastleOpportunities())
+            return Collections.emptyList();
 
         /* Controlla che le condizioni siano soddisfate:
             1. Non sia la prima mossa del RE            AND
