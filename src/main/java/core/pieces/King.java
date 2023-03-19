@@ -47,6 +47,21 @@ public class King extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+     */
+    public King(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
+                final boolean isCastledByKing, final boolean isCastledByQueen) {
+        super(PieceType.KING, pieceCoordinate, pieceUtils, isFirstMove);
+        this.isCastled = isCastled;
+        this.isCastledByKing = isCastledByKing;
+        this.isCastledByQueen = isCastledByQueen;
+    }
+
+    /**
      * Questo costruttore viene utilizzato quando il re sarà la sua prima mossa
      * @param piecePosition coordinata sulla quale è posizionata la torre
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
@@ -55,6 +70,13 @@ public class King extends Piece {
      * @param isCastledByQueen indica se è sotto scacco dalla regina
      */
     public King(final int piecePosition, final Utils pieceUtils, final boolean isCastledByKing, final boolean isCastledByQueen) {
+        super(PieceType.KING, piecePosition, pieceUtils, true);
+        this.isCastled = false;
+        this.isCastledByKing = isCastledByKing;
+        this.isCastledByQueen = isCastledByQueen;
+    }
+
+    public King(final String piecePosition, final Utils pieceUtils, final boolean isCastledByKing, final boolean isCastledByQueen) {
         super(PieceType.KING, piecePosition, pieceUtils, true);
         this.isCastled = false;
         this.isCastledByKing = isCastledByKing;

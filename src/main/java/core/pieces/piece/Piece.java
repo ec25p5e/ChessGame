@@ -9,11 +9,11 @@ import lombok.Getter;
  */
 @Getter
 public abstract class Piece implements IPiece {
-    protected final int piecePosition;
     protected final String pieceCoordinate;
     protected final Utils pieceUtils;
     protected final PieceType pieceType;
     protected final boolean isFirstMove;
+    protected transient final int piecePosition;
     protected transient final int cachedHashCode;
 
     /**
@@ -26,6 +26,22 @@ public abstract class Piece implements IPiece {
         this.pieceType = pieceType;
         this.piecePosition = piecePosition;
         this.pieceCoordinate = VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.piecePosition);
+        this.pieceUtils = pieceUtils;
+        this.isFirstMove = isFirstMove;
+        this.cachedHashCode = computeHashCode();
+    }
+
+    /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file con le pedine alle posizioni
+     * @param pieceType tipo di pedina. 6 disponibili
+     * @param pieceCoordinate coordinata dove è posizionata. ex: a5
+     * @param pieceUtils colore e altri utils come la direzione opposta, ecc...
+     * @param isFirstMove indica se la pedina è alla prima mossa
+     */
+    public Piece(final PieceType pieceType, final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        this.pieceType = pieceType;
+        this.piecePosition = VirtualBoardUtils.INSTANCE.getCoordinateAtPosition(pieceCoordinate);
+        this.pieceCoordinate = pieceCoordinate;
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
         this.cachedHashCode = computeHashCode();
@@ -49,8 +65,8 @@ public abstract class Piece implements IPiece {
     }
 
     /**
-     *
-     * @return
+     * Getter per ritornare l'hashCode della pedina
+     * @return hashcode della pedina
      */
     @Override
     public int hashCode() {
@@ -101,8 +117,8 @@ public abstract class Piece implements IPiece {
     }
 
     /**
-     *
-     * @return
+     * Questo metodo serve a calcolare l'hashcode della pedina
+     * @return numero intero utilizzato come hash
      */
     private int computeHashCode() {
         int result = this.pieceType.hashCode();

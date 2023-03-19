@@ -37,13 +37,14 @@ public class Queen extends Piece {
     }
 
     /**
-     * Questo costruttore viene utilizzato quando la regina sarà la sua prima mossa
-     * @param piecePosition coordinata sulla quale è posizionata la torre
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
-    public Queen(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.QUEEN, piecePosition, pieceUtils, true);
+    public Queen(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        super(PieceType.QUEEN, pieceCoordinate, pieceUtils, isFirstMove);
     }
 
     /**

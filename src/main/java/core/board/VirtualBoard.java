@@ -129,7 +129,7 @@ public final class VirtualBoard {
                 try {
                     configurator.setPiece(pieceAssistant.init(
                             Class.forName(obj.getClass().getCanonicalName()),
-                            obj.getPiecePosition(),
+                            obj.getPieceCoordinate(),
                             (obj.getPieceUtils() == WHITE ? WHITE : BLACK),
                             obj.isFirstMove(),
                             obj.isCastledByQueen(),
