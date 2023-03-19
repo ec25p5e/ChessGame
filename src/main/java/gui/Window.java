@@ -1,13 +1,10 @@
 package gui;
 
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import core.move.*;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
 import core.pieces.piece.Piece;
-import core.pieces.piece.PieceDeserializer;
 import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
@@ -22,14 +19,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.*;
-import static util.Constants.*;
-import static util.Constants.SERIALIZATION_PATH;
 
 /**
  * Questa classe rappresenta la GUI e i suoi elementi collegati.
@@ -59,7 +53,7 @@ public final class Window extends Observable {
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
         this.boardDirection = BoardDirection.NORMAL;
-        this.highlightLegalMoves = true;
+        this.highlightLegalMoves = false;
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
         this.takenPiecesPanel = new TakenPiecesPanel();
@@ -99,29 +93,8 @@ public final class Window extends Observable {
     }
 
     private void populateMenuBar(final JMenuBar tableMenuBar) {
-        tableMenuBar.add(this.createFileMenu());
         tableMenuBar.add(this.createOptionsMenu());
         tableMenuBar.add(this.createPreferencesMenu());
-    }
-
-    private JMenu createFileMenu() {
-        final JMenu filesMenu = new JMenu("File");
-        filesMenu.setMnemonic(KeyEvent.VK_F);
-
-        // Chiudi il gioco
-        final JMenuItem exitMenuItem = new JMenuItem("Chiudi", KeyEvent.VK_X);
-        exitMenuItem.addActionListener(e -> {
-            // Elimina il file di recupero
-            File f = new File(SERIALIZATION_PATH + RECOVERY_GAME_FILE);
-            f.delete();
-
-            // Chiudi la finestra e killa il processo
-            Window.get().getWindowFrame().dispose();
-            System.exit(0);
-        });
-        filesMenu.add(exitMenuItem);
-
-        return filesMenu;
     }
 
     private JMenu createOptionsMenu() {
@@ -178,25 +151,6 @@ public final class Window extends Observable {
        Window.get().getMoveLog().removeMove(lastMove);
        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
        Window.get().getBoardPanel().drawBoard(this.virtualBoard);
-    }
-
-    private void updateRecoveryFile(Collection<Piece> allPieces) {
-        Gson gsonBuilder = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Piece.class, new PieceDeserializer())
-                .enableComplexMapKeySerialization()
-                .create();
-
-        try {
-            FileWriter writer = new FileWriter(SERIALIZATION_PATH + RECOVERY_GAME_FILE);
-            Piece[] objs = allPieces.toArray(new Piece[0]);
-            writer.write(gsonBuilder.toJson(objs));
-            writer.close();
-        } catch(IOException e) {
-            throw new RuntimeException(IO_EXCEPTION);
-        } catch(NullPointerException npe) {
-            throw new NullPointerException(NPE_EXCEPTION);
-        }
     }
 
 
@@ -300,7 +254,6 @@ public final class Window extends Observable {
                     invokeLater(() -> {
                         takenPiecesPanel.redo(moveLog);
                         Window.get().moveMadeUpdate(PlayerType.HUMAN);
-                        Window.get().updateRecoveryFile(Window.get().getVirtualBoard().getAllPieces());
                         boardPanel.drawBoard(virtualBoard);
                     });
                 }
@@ -481,9 +434,7 @@ public final class Window extends Observable {
         @Override
         protected Move doInBackground() {
             final StockAlphaBeta strategy = new StockAlphaBeta(2);
-            final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
-
-            return bestMove;
+            return strategy.execute(Window.get().getVirtualBoard());
         }
 
         /**

@@ -14,7 +14,6 @@ import core.player.WhitePlayer;
 import core.pieces.piece.Piece;
 import lombok.Getter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -117,11 +116,7 @@ public final class VirtualBoard {
         String inFile = "";
 
         try {
-            if(fileExist(SERIALIZATION_PATH + "recovery.json")) {
-                inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + RECOVERY_GAME_FILE)));
-            } else {
-                inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + BASE_GAME_FILE)));
-            }
+            inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + BASE_GAME_FILE)));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -149,17 +144,6 @@ public final class VirtualBoard {
         }
 
         return configurator.build();
-    }
-
-    /**
-     * Questo metodo serve a verificare che la path sia un file e non una cartella
-     * e soprattutto che esista
-     * @param path percorso file di riferimento
-     * @return valore booleano
-     */
-    private static boolean fileExist(final String path) {
-        File f = new File(path);
-        return f.exists() && !f.isDirectory();
     }
 
     /**
