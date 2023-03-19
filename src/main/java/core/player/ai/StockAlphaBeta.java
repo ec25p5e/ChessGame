@@ -4,11 +4,10 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.Move;
-import core.movements.MoveFactory;
-import core.movements.MoveTransition;
+import core.move.Move;
+import core.move.MoveFactory;
+import core.move.MoveTransition;
 import core.player.Player;
-import core.utils.Utils;
 import lombok.Getter;
 
 import java.util.Collection;

@@ -2,12 +2,12 @@ package core.board;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import core.movements.MoveFactory;
+import core.move.MoveFactory;
 import core.pieces.*;
 import core.pieces.piece.PieceAssistant;
-import core.pieces.piece.PieceSerializer;
+import core.pieces.piece.PieceDeserializer;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.player.BlackPlayer;
 import core.player.Player;
 import core.player.WhitePlayer;
@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import static core.utils.Utils.BLACK;
 import static core.utils.Utils.WHITE;
+import static util.Constants.*;
 
 /**
  * Questa classe serve per rappresentare la scacchiera in formato virtuale.
@@ -109,13 +110,13 @@ public final class VirtualBoard {
         final BoardConfigurator configurator = new BoardConfigurator();
         final Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(Piece.class, new PieceSerializer())
+                .registerTypeAdapter(Piece.class, new PieceDeserializer())
                 .enableComplexMapKeySerialization()
                 .create();
         String inFile = "";
 
         try {
-            inFile = new String(Files.readAllBytes(Paths.get("status.json")));
+            inFile = new String(Files.readAllBytes(Paths.get(SERIALIZATION_PATH + BASE_GAME_FILE)));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -128,7 +129,7 @@ public final class VirtualBoard {
                 try {
                     configurator.setPiece(pieceAssistant.init(
                             Class.forName(obj.getClass().getCanonicalName()),
-                            obj.getPiecePosition(),
+                            obj.getPieceCoordinate(),
                             (obj.getPieceUtils() == WHITE ? WHITE : BLACK),
                             obj.isFirstMove(),
                             obj.isCastledByQueen(),

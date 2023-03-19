@@ -1,7 +1,7 @@
 package core.player.ai;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.player.Player;

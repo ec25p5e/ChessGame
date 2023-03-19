@@ -1,12 +1,9 @@
 package gui;
 
 import com.google.common.collect.Lists;
-import core.board.MoveLog;
+import core.move.*;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.Move;
-import core.movements.MoveFactory;
-import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
 import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
@@ -96,16 +93,8 @@ public final class Window extends Observable {
     }
 
     private void populateMenuBar(final JMenuBar tableMenuBar) {
-        tableMenuBar.add(this.createFileMenu());
         tableMenuBar.add(this.createOptionsMenu());
         tableMenuBar.add(this.createPreferencesMenu());
-    }
-
-    private JMenu createFileMenu() {
-        final JMenu filesMenu = new JMenu("File");
-        filesMenu.setMnemonic(KeyEvent.VK_F);
-
-        return filesMenu;
     }
 
     private JMenu createOptionsMenu() {
@@ -445,9 +434,7 @@ public final class Window extends Observable {
         @Override
         protected Move doInBackground() {
             final StockAlphaBeta strategy = new StockAlphaBeta(2);
-            final Move bestMove = strategy.execute(Window.get().getVirtualBoard());
-
-            return bestMove;
+            return strategy.execute(Window.get().getVirtualBoard());
         }
 
         /**

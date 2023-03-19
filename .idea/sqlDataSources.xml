@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="00e867dd-3e3c-436a-b96c-ec5da2d116bb" name="chessGame@localhost Mapping">
+      <data-sources db="85cc6105-c1da-4fd8-97ea-977eea5cd40f" ddl="67b703b0-a8b2-4cb9-b6fb-b03b44e3864b" />
+      <scope>
+        <node negative="1">
+          <node kind="database" qname="@" />
+          <node kind="schema" qname="chessgame" />
+        </node>
+      </scope>
+    </mapping>
+  </component>
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="67b703b0-a8b2-4cb9-b6fb-b03b44e3864b" />
+          <option name="name" value="chessGame@localhost (DDL)" />
+          <option name="dbmsName" value="MARIADB" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/src/main/resources/ddl" />
+            </array>
+          </option>
+          <option name="outPath" value="D:\_2 programmazione\_0 java\ChessGame\src\main\resources\ddl" />
+          <option name="outLayout" value="File per object by schema.groovy" />
+          <option name="scopes">
+            <map>
+              <entry key="$PROJECT_DIR$/src/main/resources/ddl" value="" />
+            </map>
+          </option>
+        </State>
+      </list>
+    </option>
+  </component>
+</project>
