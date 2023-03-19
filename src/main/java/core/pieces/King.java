@@ -2,10 +2,10 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.SimpleAttackMove;
-import core.movements.SimpleMove;
+import core.move.SimpleAttackMove;
+import core.move.SimpleMove;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 

@@ -2,18 +2,17 @@ package core.board;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import core.movements.MoveFactory;
+import core.move.MoveFactory;
 import core.pieces.*;
 import core.pieces.piece.PieceAssistant;
 import core.pieces.piece.PieceDeserializer;
 import core.utils.Utils;
-import core.movements.Move;
+import core.move.Move;
 import core.player.BlackPlayer;
 import core.player.Player;
 import core.player.WhitePlayer;
 import core.pieces.piece.Piece;
 import lombok.Getter;
-import util.Constants;
 
 import java.io.File;
 import java.io.IOException;

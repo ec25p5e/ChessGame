@@ -8,6 +8,7 @@ public class Constants {
     public static final String SERIALIZATION_PATH = "src/main/resources/serialization/";
     public static final String BASE_GAME_FILE = "initGame.json";
     public static final String RECOVERY_GAME_FILE = "recovery.json";
+    public static final String RECOVERY_MOVELOG_FILE = "recoveryMLog.json";
     public static final Color BOARD_PANEL_BACKGROUND = Color.decode("#8B4726");
     public static final Dimension WINDOW_DIMENSION = new Dimension(600, 600);
     public static final Dimension BOARD_DIMENSION = new Dimension(400, 350);
