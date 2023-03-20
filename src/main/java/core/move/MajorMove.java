@@ -8,25 +8,25 @@ import core.pieces.piece.Piece;
  * Questa classe si occupa di effettuare un movimento sulla scacchiera.
  * Un movimento da una coordinata all'altra senza dover saltare/mangiare altre pedine
  */
-public class SimpleMove extends Move {
+public class MajorMove extends Move {
 
     /**
      * @param board scacchiera virtuale di riferimento
      * @param pieceToMove pedina che si vuole muovere
      * @param destinationCoordinate coordinata di destinazione della pedina
      */
-    public SimpleMove(final VirtualBoard board, final Piece pieceToMove, final int destinationCoordinate) {
+    public MajorMove(final VirtualBoard board, final Piece pieceToMove, final int destinationCoordinate) {
         super(board, pieceToMove, destinationCoordinate);
     }
 
     /**
-     * Questo metodo serve per verificare se un oggetto è uguale a un oggetto dell'istanza {@link SimpleMove}
+     * Questo metodo serve per verificare se un oggetto è uguale a un oggetto dell'istanza {@link MajorMove}
      * @param other oggetto da confrontare
-     * @return valore booleano uguale a "TRUE" se l'oggetto è un'istanza di {@link SimpleMove} o se è lo stesso indirizzo di memoria.
+     * @return valore booleano uguale a "TRUE" se l'oggetto è un'istanza di {@link MajorMove} o se è lo stesso indirizzo di memoria.
      */
     @Override
     public boolean equals(final Object other) {
-        return this == other || other instanceof SimpleMove && super.equals(other);
+        return this == other || other instanceof MajorMove && super.equals(other);
     }
 
     /**

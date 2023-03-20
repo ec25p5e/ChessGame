@@ -9,7 +9,9 @@ import core.player.ai.IMoveStrategy;
 import core.player.ai.StockAlphaBeta;
 import core.utils.Utils;
 import org.junit.Test;
+import pgn.FenUtilities;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestCheckMate {
@@ -386,7 +388,6 @@ public class TestCheckMate {
 
         assertTrue(t12.moveStatus().isDone());
         assertTrue(t12.toBoard().getCurrentPlayer().isInCheckMate());
-
     }
 
     @Test
@@ -970,12 +971,12 @@ public class TestCheckMate {
 
     }
 
-    /* @Test
+    @Test
     public void testMateInTwoTest1() {
         final VirtualBoard board = FenUtilities.createGameFromFEN("6k1/1b4pp/1B1Q4/4p1P1/p3q3/2P3r1/P1P2PP1/R5K1 w - - 1 0");
         final IMoveStrategy alphaBeta = new StockAlphaBeta(6);
         final Move bestMove = alphaBeta.execute(board);
-        assertEquals(bestMove, Move.MoveFactory
+        assertEquals(bestMove, MoveFactory
                 .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("d6"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("e6")));
     }
 
@@ -986,7 +987,7 @@ public class TestCheckMate {
         final Move bestMove = alphaBeta.execute(board);
         assertEquals(
                 bestMove,
-                Move.MoveFactory.createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("b7"),
+                MoveFactory.createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("b7"),
                         VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("g7")));
     }
 
@@ -995,7 +996,7 @@ public class TestCheckMate {
         final VirtualBoard board = FenUtilities.createGameFromFEN("rn3rk1/1R3ppp/2p5/8/PQ2P3/1P5P/2P1qPP1/3R2K1 w - - 1 0");
         final IMoveStrategy alphaBeta = new StockAlphaBeta(1);
         final Move bestMove = alphaBeta.execute(board);
-        assertEquals(bestMove, Move.MoveFactory
+        assertEquals(bestMove, MoveFactory
                 .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("b4"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("f8")));
     }
 
@@ -1004,7 +1005,7 @@ public class TestCheckMate {
         final VirtualBoard board = FenUtilities.createGameFromFEN("7k/4r2B/1pb5/2P5/4p2Q/2q5/2P2R2/1K6 w - - 1 0");
         final IMoveStrategy alphaBeta = new StockAlphaBeta(6);
         final Move bestMove = alphaBeta.execute(board);
-        assertEquals(bestMove, Move.MoveFactory
+        assertEquals(bestMove, MoveFactory
                 .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("f2"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("f8")));
     }
 
@@ -1013,8 +1014,7 @@ public class TestCheckMate {
         final VirtualBoard board = FenUtilities.createGameFromFEN("2rr2k1/pb3pp1/4q2p/2pn4/2Q1P3/P4P2/1P3BPP/2KR2NR b - - 0 1");
         final IMoveStrategy alphaBeta = new StockAlphaBeta(6);
         final Move bestMove = alphaBeta.execute(board);
-        assertEquals(bestMove, Move.MoveFactory
+        assertEquals(bestMove, MoveFactory
                 .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("d5"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("e3")));
-    } */
-
+    }
 }

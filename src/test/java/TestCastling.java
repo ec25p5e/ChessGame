@@ -6,6 +6,7 @@ import core.move.MoveTransition;
 import core.player.ai.IMoveStrategy;
 import core.player.ai.StockAlphaBeta;
 import org.junit.Test;
+import pgn.FenUtilities;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -298,7 +299,7 @@ public class TestCastling {
         moveStrategy.execute(t11.toBoard());
     }
 
-    /* @Test
+    @Test
     public void testNoCastlingOutOfCheck() {
         final VirtualBoard board = FenUtilities.createGameFromFEN("r3k2r/1pN1nppp/p3p3/3p4/8/8/PPPK1PPP/R6R b kq - 1 18");
         final Move illegalCastleMove = MoveFactory
@@ -306,6 +307,6 @@ public class TestCastling {
         final MoveTransition t1 = board.getCurrentPlayer()
                 .doMove(illegalCastleMove);
         assertFalse(t1.moveStatus().isDone());
-    } */
+    }
 
 }

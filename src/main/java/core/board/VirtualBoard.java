@@ -59,6 +59,7 @@ public final class VirtualBoard {
 
         this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);
         this.blackPlayer = new BlackPlayer(this, whiteUsableMoves, blackUsableMoves);
+
         this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
         this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
     }

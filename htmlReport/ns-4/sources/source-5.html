@@ -79,8 +79,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import core.board.VirtualBoard;
 &nbsp;import core.board.VirtualBoardUtils;
 &nbsp;import core.move.Move;
-&nbsp;import core.move.SimpleAttackMove;
-&nbsp;import core.move.SimpleMove;
+&nbsp;import core.move.MajorAttackMove;
+&nbsp;import core.move.MajorMove;
 &nbsp;import core.pieces.piece.Piece;
 &nbsp;import core.pieces.piece.PieceType;
 &nbsp;import core.pieces.piece.PieceUtils;
@@ -93,7 +93,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;/**
 &nbsp; * Questa classe serve per rappresentare la regina ed estende la classe {@link Piece}
-&nbsp; * perché la regina è un tipo di pedina
+&nbsp; * perchï¿½ la regina ï¿½ un tipo di pedina
 &nbsp; */
 &nbsp;public class Queen extends Piece {
 &nbsp;
@@ -102,11 +102,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;    private static final int[] OPERATION_MOVE = { -9, -8, -7, -1, 1, 7, 8, 9 };</b>
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando la regina sarà in gioco. Quindi non obbligatoriamente sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando la regina sarï¿½ in gioco. Quindi non obbligatoriamente sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
 &nbsp;     */
 &nbsp;    public Queen(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
 <b class="fc">&nbsp;        super(PieceType.QUEEN, piecePosition, pieceUtils, isFirstMove);</b>
@@ -116,18 +116,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l&#39;oggetto
 &nbsp;     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
 &nbsp;     */
 &nbsp;    public Queen(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
 <b class="fc">&nbsp;        super(PieceType.QUEEN, pieceCoordinate, pieceUtils, isFirstMove);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando la regina sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando la regina sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
 &nbsp;     */
 &nbsp;    public Queen(final int piecePosition, final Utils pieceUtils) {
 <b class="fc">&nbsp;        super(PieceType.QUEEN, piecePosition, pieceUtils, true);</b>
@@ -145,11 +145,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        for(final int candidateOffset : OPERATION_MOVE) {</b>
 <b class="fc">&nbsp;            int candidateDestination = this.piecePosition;</b>
 &nbsp;
-&nbsp;            // Cicla finché non viene rilevata una pedina sulla cella e viene interrotto
+&nbsp;            // Cicla finchï¿½ non viene rilevata una pedina sulla cella e viene interrotto
 &nbsp;            // e si passa la prossima coordinata di calcolo
 &nbsp;            while(true) {
 &nbsp;                // Mostra solamente le coordinate possibili per quella prospettiva.
-&nbsp;                // Senza ciò mostra anche quelle dell&#39;avversario di mosse per la pedina
+&nbsp;                // Senza ciï¿½ mostra anche quelle dell&#39;avversario di mosse per la pedina
 <b class="fc">&nbsp;                if(firstColumnExclusion(candidateOffset, candidateDestination) ||</b>
 <b class="fc">&nbsp;                    eighthColumnExclusion(candidateOffset, candidateDestination))</b>
 <b class="fc">&nbsp;                    break;</b>
@@ -161,7 +161,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                else {
 <b class="fc">&nbsp;                    final Piece pieceAtDestination = board.getPiece(candidateDestination);</b>
 &nbsp;
-&nbsp;                    // Se la cella di destinazione è vuota crea una mossa di movimento semplice
+&nbsp;                    // Se la cella di destinazione ï¿½ vuota crea una mossa di movimento semplice
 <b class="fc">&nbsp;                    if(pieceAtDestination == null)</b>
 <b class="fc">&nbsp;                        usableMoves.add(new SimpleMove(board, this, candidateDestination));</b>
 &nbsp;                    else {
@@ -196,7 +196,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo metodo serve per ritornare un numero intero che indica il bonus
 &nbsp;     * del pedone per la coordinata e il tipo.
 &nbsp;     * Questo valore viene usato principalmente dall&#39;AI per valutare la scacchiera
-&nbsp;     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+&nbsp;     * Tutto questo ha poi una teoria che spiegherï¿½ nella wiki github
 &nbsp;     *
 &nbsp;     * @return numero intero positivo o negativo
 &nbsp;     */
@@ -214,20 +214,20 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla prima riga, per il bianco
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrï¿½ sulla prima riga, per il bianco
 &nbsp;     * @param candidateOffset valore di calcolo attuale
 &nbsp;     * @param candidateCoordinate coordinata della pedina
-&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sull&#39;ultima riga
+&nbsp;     * @return &quot;TRUE&quot; se la pedina ï¿½ posizionata sull&#39;ultima riga
 &nbsp;     */
 &nbsp;    private static boolean firstColumnExclusion(final int candidateOffset, final int candidateCoordinate) {
 <b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.FIRST_COLUMN.get(candidateCoordinate) &amp;&amp; (candidateOffset == -9 || candidateOffset == -1 || candidateOffset == 7);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrà sulla prima riga, per il nero
+&nbsp;     * Questo metodo serve a capire se la coordinata candidata andrï¿½ sulla prima riga, per il nero
 &nbsp;     * @param candidateOffset valore di calcolo attuale
 &nbsp;     * @param candidateCoordinate coordinata della pedina
-&nbsp;     * @return &quot;TRUE&quot; se la pedina è posizionata sull&#39;ultima riga
+&nbsp;     * @return &quot;TRUE&quot; se la pedina ï¿½ posizionata sull&#39;ultima riga
 &nbsp;     */
 &nbsp;    private static boolean eighthColumnExclusion(final int candidateOffset, final int candidateCoordinate) {
 <b class="fc">&nbsp;        return VirtualBoardUtils.INSTANCE.EIGHTH_COLUMN.get(candidateCoordinate) &amp;&amp; (candidateOffset == -7 || candidateOffset == 1 || candidateOffset == 9);</b>

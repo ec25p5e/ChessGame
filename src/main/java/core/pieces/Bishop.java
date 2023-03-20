@@ -86,14 +86,14 @@ public class Bishop extends Piece {
 
                     // Se è nulla significa che è vuota, crea una mossa di movimento
                     if(pieceAtDestination == null)
-                        usableMoves.add(new SimpleMove(board, this, candidateCoordinate));
+                        usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                     else {
                         // Altrimenti se non è vuota controlla che sia dell'avversario e crea una mossa di attacco e termina il ciclo
                         // e procedi al prossimo valore di calcolo
                         final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
                         if(this.pieceUtils != pieceAtDestinationUtils)
-                            usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));
+                            usableMoves.add(new MajorAttackMove(board, this, candidateCoordinate, pieceAtDestination));
 
                         break;
                     }

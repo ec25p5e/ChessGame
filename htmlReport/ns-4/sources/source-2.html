@@ -78,8 +78,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import core.board.VirtualBoard;
 &nbsp;import core.board.VirtualBoardUtils;
-&nbsp;import core.move.SimpleAttackMove;
-&nbsp;import core.move.SimpleMove;
+&nbsp;import core.move.MajorAttackMove;
+&nbsp;import core.move.MajorMove;
 &nbsp;import core.utils.Utils;
 &nbsp;import core.move.Move;
 &nbsp;import core.pieces.piece.Piece;
@@ -92,7 +92,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;/**
 &nbsp; * Questa classe serve per rappresentare la pedina del Re ed estende la classe {@link Piece}
-&nbsp; * perché il pedone è un tipo di pedina
+&nbsp; * perchï¿½ il pedone ï¿½ un tipo di pedina
 &nbsp; */
 &nbsp;public class King extends Piece {
 &nbsp;
@@ -105,14 +105,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final boolean isCastledByQueen;
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando il re sarà in gioco. Quindi non obbligatoriamente sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando il re sarï¿½ in gioco. Quindi non obbligatoriamente sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
-&nbsp;     * @param isCastled indica se è sotto scacco
-&nbsp;     * @param isCastledByKing indica se è sotto scacco dal re
-&nbsp;     * @param isCastledByQueen indica se è sotto scacco dalla regina
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
+&nbsp;     * @param isCastled indica se ï¿½ sotto scacco
+&nbsp;     * @param isCastledByKing indica se ï¿½ sotto scacco dal re
+&nbsp;     * @param isCastledByQueen indica se ï¿½ sotto scacco dalla regina
 &nbsp;     */
 &nbsp;    public King(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
 &nbsp;                final boolean isCastledByKing, final boolean isCastledByQueen) {
@@ -126,8 +126,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l&#39;oggetto
 &nbsp;     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
 &nbsp;     */
 &nbsp;    public King(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
 &nbsp;                final boolean isCastledByKing, final boolean isCastledByQueen) {
@@ -138,12 +138,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando il re sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando il re sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isCastledByKing indica se è sotto scacco dal re
-&nbsp;     * @param isCastledByQueen indica se è sotto scacco dalla regina
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isCastledByKing indica se ï¿½ sotto scacco dal re
+&nbsp;     * @param isCastledByQueen indica se ï¿½ sotto scacco dalla regina
 &nbsp;     */
 &nbsp;    public King(final int piecePosition, final Utils pieceUtils, final boolean isCastledByKing, final boolean isCastledByQueen) {
 <b class="fc">&nbsp;        super(PieceType.KING, piecePosition, pieceUtils, true);</b>
@@ -210,7 +210,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo metodo serve per ritornare un numero intero che indica il bonus
 &nbsp;     * del pedone per la coordinata e il tipo.
 &nbsp;     * Questo valore viene usato principalmente dall&#39;AI per valutare la scacchiera
-&nbsp;     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+&nbsp;     * Tutto questo ha poi una teoria che spiegherï¿½ nella wiki github
 &nbsp;     *
 &nbsp;     * @return numero intero positivo o negativo
 &nbsp;     */
@@ -220,7 +220,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo indica se il pedone è in castling
+&nbsp;     * Questo metodo indica se il pedone ï¿½ in castling
 &nbsp;     * Viene utilizzato solo dai RE
 &nbsp;     *
 &nbsp;     * @return valore booleano
@@ -231,8 +231,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo serve a indicare se è in castling dal
-&nbsp;     * RE. È specifico per il metodo &quot;isCastled&quot;
+&nbsp;     * Questo metodo serve a indicare se ï¿½ in castling dal
+&nbsp;     * RE. ï¿½ specifico per il metodo &quot;isCastled&quot;
 &nbsp;     *
 &nbsp;     * @return valore booleano
 &nbsp;     */
@@ -242,8 +242,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo serve a indicare se è in castling dalla
-&nbsp;     * Regina. È specifico per il metodo &quot;isCastled&quot;
+&nbsp;     * Questo metodo serve a indicare se ï¿½ in castling dalla
+&nbsp;     * Regina. ï¿½ specifico per il metodo &quot;isCastled&quot;
 &nbsp;     *
 &nbsp;     * @return valore booleano
 &nbsp;     */
@@ -280,8 +280,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata è situata sulla prima riga, per i bianchi
-&nbsp;     * @param currentCandidate candidata corrente dove è situata la pedina
+&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata ï¿½ situata sulla prima riga, per i bianchi
+&nbsp;     * @param currentCandidate candidata corrente dove ï¿½ situata la pedina
 &nbsp;     * @param candidateOffset valore di calcolo corrente
 &nbsp;     * @return un valore booleano &quot;TRUE&quot; se le condizioni sono vere, altrimenti &quot;FALSE&quot;
 &nbsp;     */
@@ -290,8 +290,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata è situata sulla ottava riga, per i neri
-&nbsp;     * @param currentCandidate candidata corrente dove è situata la pedina
+&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata ï¿½ situata sulla ottava riga, per i neri
+&nbsp;     * @param currentCandidate candidata corrente dove ï¿½ situata la pedina
 &nbsp;     * @param candidateOffset valore di calcolo corrente
 &nbsp;     * @return un valore booleano &quot;TRUE&quot; se le condizioni sono vere, altrimenti &quot;FALSE&quot;
 &nbsp;     */

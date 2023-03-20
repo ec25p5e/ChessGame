@@ -9,10 +9,9 @@ import org.junit.runners.Suite;
         TestPlayer.class,
         TestCastling.class,
         TestCheckMate.class,
-        /* TestMiniMax.class,
-        TestAlphaBeta.class,
         TestPawnStructure.class,
-        TestFENParser.class,
-        */})
+        TestAlphaBeta.class,
+        TestKingSafety.class,
+        TestFENParser.class})
 public class ChessTestSuite {
 }

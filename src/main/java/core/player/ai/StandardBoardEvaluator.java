@@ -28,6 +28,24 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
         return score(board.getWhitePlayer(), depth) - score(board.getBlackPlayer(), depth);
     }
 
+    public String evaluationDetails(final VirtualBoard board, final int depth) {
+        return
+                ("White Mobility : " + mobility(board.getWhitePlayer()) + "\n") +
+                        "White kingThreats : " + kingThreats(board.getWhitePlayer(), depth) + "\n" +
+                        "White attacks : " + attacks(board.getWhitePlayer()) + "\n" +
+                        "White castle : " + castle(board.getWhitePlayer()) + "\n" +
+                        "White pieceEval : " + pieceEvaluations(board.getWhitePlayer()) + "\n" +
+                        "White pawnStructure : " + pawnStructure(board.getWhitePlayer()) + "\n" +
+                        "---------------------\n" +
+                        "Black Mobility : " + mobility(board.getBlackPlayer()) + "\n" +
+                        "Black kingThreats : " + kingThreats(board.getBlackPlayer(), depth) + "\n" +
+                        "Black attacks : " + attacks(board.getBlackPlayer()) + "\n" +
+                        "Black castle : " + castle(board.getBlackPlayer()) + "\n" +
+                        "Black pieceEval : " + pieceEvaluations(board.getBlackPlayer()) + "\n" +
+                        "Black pawnStructure : " + pawnStructure(board.getBlackPlayer()) + "\n\n" +
+                        "Final Score = " + evaluate(board, depth);
+    }
+
     /**
      *
      * @param player
@@ -144,6 +162,6 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
      * @return
      */
     private static int pawnStructure(final Player player) {
-        return 0;
+        return PawnStructureAnalyzer.get().pawnStructureScore(player);
     }
 }

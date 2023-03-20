@@ -1,6 +1,7 @@
 package core.player;
 
 import core.board.VirtualBoard;
+import core.board.VirtualBoardUtils;
 import core.move.KingSideCastleMove;
 import core.move.QueenSideCastleMove;
 import core.pieces.Rook;
@@ -39,48 +40,43 @@ public class WhitePlayer extends Player {
      */
     @Override
     public Collection<Move> calculateKingCastles(Collection<Move> playerUsableMoves, Collection<Move> opponentPlayerMoves) {
-        final List<Move> kingCastles = new ArrayList<>();
-
         if(!hasCastleOpportunities())
             return Collections.emptyList();
 
-        /* Controlla che le condizioni siano soddisfate:
-            1. Non sia la prima mossa del RE            AND
-            2. Il re non sia in posizione iniziale      AND
-            3. Il giocatore non sia sotto scacco
-         */
-        if(this.playerKing.isFirstMove() && this.playerKing.getPiecePosition() == 60 && !this.isInCheck) {
+        final List<Move> kingCastles = new ArrayList<>();
 
-            // Pedine nere che mettono in scacco il RE
+        if(this.playerKing.isFirstMove() && this.playerKing.getPiecePosition() == 60 && !this.isInCheck()) {
+
+            //whites king side castle
             if(this.board.getPiece(61) == null && this.board.getPiece(62) == null) {
                 final Piece kingSideRook = this.board.getPiece(63);
 
-                if(kingSideRook != null && kingSideRook.isFirstMove() &&
-                        Player.calculateAttacksOnTile(61, opponentPlayerMoves).isEmpty() &&
-                        Player.calculateAttacksOnTile(62, opponentPlayerMoves).isEmpty() &&
-                        kingSideRook.getPieceType() == ROOK) {
+                if(kingSideRook != null && kingSideRook.isFirstMove()) {
+                    if(Player.calculateAttacksOnTile(61, opponentPlayerMoves).isEmpty() &&
+                            Player.calculateAttacksOnTile(62, opponentPlayerMoves).isEmpty() &&
+                            kingSideRook.getPieceType() == ROOK) {
 
-                    kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 62,
-                            (Rook) kingSideRook, kingSideRook.getPiecePosition(), 61));
+                        if(!VirtualBoardUtils.isKingPawnTrap(this.board, this.playerKing, 52))
+                            kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 62, (Rook) kingSideRook, kingSideRook.getPiecePosition(), 61));
+                    }
                 }
             }
 
-            // Pedine nere che mettono in scacco la regina
-            if(this.board.getPiece(59) == null && this.board.getPiece(50) == null &&
+            //whites queen side castle
+            if(this.board.getPiece(59) == null && this.board.getPiece(58) == null &&
                     this.board.getPiece(57) == null) {
                 final Piece queenSideRook = this.board.getPiece(56);
 
-                if(queenSideRook != null && queenSideRook.isFirstMove() &&
-                        Player.calculateAttacksOnTile(2, opponentPlayerMoves).isEmpty() &&
-                        Player.calculateAttacksOnTile(3, opponentPlayerMoves).isEmpty() &&
-                        queenSideRook.getPieceType() == ROOK) {
+                if(queenSideRook != null && queenSideRook.isFirstMove()) {
+                    if(Player.calculateAttacksOnTile(58, opponentPlayerMoves).isEmpty() &&
+                            Player.calculateAttacksOnTile(59, opponentPlayerMoves).isEmpty() && queenSideRook.getPieceType() == ROOK) {
 
-                    kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 58,
-                            (Rook) queenSideRook, queenSideRook.getPiecePosition(), 59));
+                        if(!VirtualBoardUtils.isKingPawnTrap(this.board, this.playerKing, 52))
+                            kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 58, (Rook) queenSideRook, queenSideRook.getPiecePosition(), 59));
+                    }
                 }
             }
         }
-
         return Collections.unmodifiableList(kingCastles);
     }
 

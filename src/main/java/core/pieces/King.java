@@ -2,8 +2,8 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.move.SimpleAttackMove;
-import core.move.SimpleMove;
+import core.move.MajorMove;
+import core.move.MajorAttackMove;
 import core.utils.Utils;
 import core.move.Move;
 import core.pieces.piece.Piece;
@@ -104,12 +104,12 @@ public class King extends Piece {
                 final Piece pieceAtDestination = board.getPiece(candidateDestination);
 
                 if(pieceAtDestination == null) {
-                    usableMoves.add(new SimpleMove(board, this, candidateDestination));
+                    usableMoves.add(new MajorMove(board, this, candidateDestination));
                 } else {
                     final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
                     if(this.pieceUtils != pieceAtDestinationUtils) {
-                        usableMoves.add(new SimpleAttackMove(board, this, candidateDestination, pieceAtDestination));
+                        usableMoves.add(new MajorAttackMove(board, this, candidateDestination, pieceAtDestination));
                     }
                 }
             }

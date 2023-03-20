@@ -7,7 +7,7 @@ import core.pieces.piece.Piece;
 /**
  * Questa classe crea un mossa di movimento. Ma un movimento di attacco, ovvero,
  * la pedina si vuole muovere su una coordinata dove è già presente una pedina.
- * Questa classe è stata creata per avere un altro oggetto uguale a {@link SimpleAttackMove}
+ * Questa classe è stata creata per avere un altro oggetto uguale a {@link MajorAttackMove}
  * solo per avere una distinzione di quando una pedina attacca rispetto a una generica
  */
 public class PawnAttackMove extends AttackMove {

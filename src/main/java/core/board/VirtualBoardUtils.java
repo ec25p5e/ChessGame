@@ -87,6 +87,20 @@ public enum VirtualBoardUtils {
     }
 
     /**
+     *
+     * @param board
+     * @param king
+     * @param frontTile
+     * @return
+     */
+    public static boolean isKingPawnTrap(final VirtualBoard board, final King king, final int frontTile) {
+        final Piece piece = board.getPiece(frontTile);
+        return piece != null &&
+                piece.getPieceType() == PieceType.PAWN &&
+                piece.getPieceUtils() != king.getPieceUtils();
+    }
+
+    /**
      * Questo metodo serve a verificare se a una coordinata è posizionato un pedone.
      * Viene confrontato con un RE in base al colore e viene verificato il tipo e che non sia nullo
      * @param board scacchiera "virtuale" di riferimento

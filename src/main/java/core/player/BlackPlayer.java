@@ -1,6 +1,7 @@
 package core.player;
 
 import core.board.VirtualBoard;
+import core.board.VirtualBoardUtils;
 import core.move.KingSideCastleMove;
 import core.move.QueenSideCastleMove;
 import core.pieces.Rook;
@@ -39,44 +40,39 @@ public class BlackPlayer extends Player {
      */
     @Override
     public Collection<Move> calculateKingCastles(Collection<Move> playerUsableMoves, Collection<Move> opponentPlayerMoves) {
-        final List<Move> kingCastles = new ArrayList<>();
-
-        if(!hasCastleOpportunities())
+        if (!hasCastleOpportunities())
             return Collections.emptyList();
 
-        /* Controlla che le condizioni siano soddisfate:
-            1. Non sia la prima mossa del RE            AND
-            2. Il re non sia in posizione iniziale      AND
-            3. Il giocatore non sia sotto scacco
-         */
-        if(this.playerKing.isFirstMove() && this.playerKing.getPiecePosition() == 4 && !this.isInCheck) {
+        final List<Move> kingCastles = new ArrayList<>();
 
-            // Pedine nere che mettono in scacco il RE
-            if(this.board.getPiece(5) == null && this.board.getPiece(6) == null) {
+        if (this.playerKing.isFirstMove() && this.playerKing.getPiecePosition() == 4 && !this.isInCheck) {
+
+            //blacks king side castle
+            if (this.board.getPiece(5) == null && this.board.getPiece(6) == null) {
                 final Piece kingSideRook = this.board.getPiece(7);
 
-                if(kingSideRook != null && kingSideRook.isFirstMove() &&
-                    Player.calculateAttacksOnTile(5, opponentPlayerMoves).isEmpty() &&
-                    Player.calculateAttacksOnTile(6, opponentPlayerMoves).isEmpty() &&
-                    kingSideRook.getPieceType() == ROOK) {
+                if (kingSideRook != null && kingSideRook.isFirstMove() &&
+                        Player.calculateAttacksOnTile(5, opponentPlayerMoves).isEmpty() &&
+                        Player.calculateAttacksOnTile(6, opponentPlayerMoves).isEmpty() &&
+                        kingSideRook.getPieceType() == ROOK) {
 
-                    kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 6,
-                            (Rook) kingSideRook, kingSideRook.getPiecePosition(), 5));
+                    if (!VirtualBoardUtils.isKingPawnTrap(this.board, this.playerKing, 12))
+                        kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 6, (Rook) kingSideRook, kingSideRook.getPiecePosition(), 5));
                 }
             }
 
-            // Pedine nere che mettono in scacco la regina
-            if(this.board.getPiece(1) == null && this.board.getPiece(2) == null &&
-                this.board.getPiece(3) == null) {
+            //blacks queen side castle
+            if (this.board.getPiece(1) == null && this.board.getPiece(2) == null &&
+                    this.board.getPiece(3) == null) {
                 final Piece queenSideRook = this.board.getPiece(0);
 
-                if(queenSideRook != null && queenSideRook.isFirstMove() &&
-                    Player.calculateAttacksOnTile(2, opponentPlayerMoves).isEmpty() &&
-                    Player.calculateAttacksOnTile(3, opponentPlayerMoves).isEmpty() &&
-                    queenSideRook.getPieceType() == ROOK) {
+                if (queenSideRook != null && queenSideRook.isFirstMove() &&
+                        Player.calculateAttacksOnTile(2, opponentPlayerMoves).isEmpty() &&
+                        Player.calculateAttacksOnTile(3, opponentPlayerMoves).isEmpty() &&
+                        queenSideRook.getPieceType() == ROOK) {
 
-                    kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 2,
-                            (Rook) queenSideRook, queenSideRook.getPiecePosition(), 3));
+                    if (!VirtualBoardUtils.isKingPawnTrap(this.board, this.playerKing, 12))
+                        kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 2, (Rook) queenSideRook, queenSideRook.getPiecePosition(), 3));
                 }
             }
         }

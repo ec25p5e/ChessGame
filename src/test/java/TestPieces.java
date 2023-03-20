@@ -335,7 +335,7 @@ public class TestPieces {
     }
 
     @Test
-    public void testMiddleRookOnEmptyVirtualBoard() {
+    public void testMiddleRookOnEmptyBoard() {
         final BoardConfigurator builder = new BoardConfigurator();
         // Black Layout
         builder.setPiece(new King(4, Utils.BLACK, false, false));
@@ -374,8 +374,7 @@ public class TestPieces {
         assertTrue(whiteLegals.contains(MoveFactory
                 .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("e4"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("g4"))));
         assertTrue(whiteLegals.contains(MoveFactory
-                .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("e4"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("h4"))));
-    }
+                .createMove(board, VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("e4"), VirtualBoardUtils.INSTANCE.getCoordinateAtPosition("h4"))));}
 
     @Test
     public void testPawnPromotion() {

@@ -79,8 +79,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import core.board.VirtualBoard;
 &nbsp;import core.utils.Utils;
 &nbsp;import core.board.VirtualBoardUtils;
-&nbsp;import core.move.SimpleAttackMove;
-&nbsp;import core.move.SimpleMove;
+&nbsp;import core.move.MajorAttackMove;
+&nbsp;import core.move.MajorMove;
 &nbsp;import core.move.Move;
 &nbsp;import core.pieces.piece.Piece;
 &nbsp;import core.pieces.piece.PieceType;
@@ -93,7 +93,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;/**
 &nbsp; * Questa classe serve per rappresentare la pedina della torre ed estende la classe {@link Piece}
-&nbsp; * perché la torre è un tipo di pedina
+&nbsp; * perchï¿½ la torre ï¿½ un tipo di pedina
 &nbsp; */
 &nbsp;public class Rook extends Piece {
 &nbsp;
@@ -102,11 +102,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;    private static final int[] OPERATION_MOVE = { -8, -1, 1, 8 };</b>
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando la torre sarà in gioco. Quindi non obbligatoriamente sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando la torre sarï¿½ in gioco. Quindi non obbligatoriamente sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
 &nbsp;     */
 &nbsp;    public Rook(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
 <b class="fc">&nbsp;        super(PieceType.ROOK, piecePosition, pieceUtils, isFirstMove);</b>
@@ -116,18 +116,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l&#39;oggetto
 &nbsp;     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
-&nbsp;     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     * @param isFirstMove valore booleano che indica se ï¿½ la prima mossa del pedone
 &nbsp;     */
 &nbsp;    public Rook(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
 <b class="fc">&nbsp;        super(PieceType.ROOK, pieceCoordinate, pieceUtils, isFirstMove);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo costruttore viene utilizzato quando per la torre sarà la sua prima mossa
-&nbsp;     * @param piecePosition coordinata sulla quale è posizionata la torre
+&nbsp;     * Questo costruttore viene utilizzato quando per la torre sarï¿½ la sua prima mossa
+&nbsp;     * @param piecePosition coordinata sulla quale ï¿½ posizionata la torre
 &nbsp;     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
-&nbsp;     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+&nbsp;     *                   Ad esempio se la pedina ï¿½ bianca o nera. Immagazzinare chi fosse il colore avversario,...
 &nbsp;     */
 &nbsp;    public Rook(final int piecePosition, final Utils pieceUtils) {
 <b class="fc">&nbsp;        super(PieceType.ROOK, piecePosition, pieceUtils, true);</b>
@@ -147,8 +147,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            // Viene impostata la variabile con la posizione corrente della torre
 <b class="fc">&nbsp;            int candidateCoordinate = this.piecePosition;</b>
 &nbsp;
-&nbsp;            // Viene avviato un ciclo finché il calcolo della posizione candidata genera un valore al di fuori del range di valori della scacchiera.
-&nbsp;            // Oppure se alla coordinata candidata è già presente una pedina non dei nostri oppure se si capita sulla prima/ultima riga della scacchiera
+&nbsp;            // Viene avviato un ciclo finchï¿½ il calcolo della posizione candidata genera un valore al di fuori del range di valori della scacchiera.
+&nbsp;            // Oppure se alla coordinata candidata ï¿½ giï¿½ presente una pedina non dei nostri oppure se si capita sulla prima/ultima riga della scacchiera
 <b class="fc">&nbsp;            while(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {</b>
 &nbsp;                // Se la coordinata candidata sarebbe una coordinata sulla prima o ultima riga.
 &nbsp;                // Interrompi e passa a un&#39;altra coordinata
@@ -158,14 +158,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                // Aggiungi il valore di calcolo alla posizione corrente
 <b class="fc">&nbsp;                candidateCoordinate += candidateOffset;</b>
 &nbsp;
-&nbsp;                // Controlla se la coordinata candidata è all&#39;interno del range della scacchiera
+&nbsp;                // Controlla se la coordinata candidata ï¿½ all&#39;interno del range della scacchiera
 <b class="fc">&nbsp;                if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {</b>
 &nbsp;                    // Imposta la variabile con i valore della cella di destinazione
 <b class="fc">&nbsp;                    final Piece pieceAtDestination = board.getPiece(candidateCoordinate);</b>
 &nbsp;
-&nbsp;                    // Se la cella di destinazione è vuota crea un movimento non di attacco ma &quot;pacifico&quot;
+&nbsp;                    // Se la cella di destinazione ï¿½ vuota crea un movimento non di attacco ma &quot;pacifico&quot;
 <b class="fc">&nbsp;                    if(pieceAtDestination == null) {</b>
-&nbsp;                        // System.out.println(&quot;La destinazione è vuota&quot;);
+&nbsp;                        // System.out.println(&quot;La destinazione ï¿½ vuota&quot;);
 <b class="fc">&nbsp;                        usableMoves.add(new SimpleMove(board, this, candidateCoordinate));</b>
 &nbsp;                    } else {
 &nbsp;                        // Altrimenti analizza il contenuto della cella
@@ -176,7 +176,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                        // Se gli utils della pedina trovata sono diversi dalla torre in esame
 &nbsp;                        // crea una mossa di attacco, con l&#39;obbiettivo di muovere la torre e rimuovere la pedina sulla cella analizzata
 <b class="fc">&nbsp;                        if(this.pieceUtils != pieceAtDestinationUtils) {</b>
-&nbsp;                            // System.out.println(&quot;La pedina sulla destinazione non è del mio colore&quot;);
+&nbsp;                            // System.out.println(&quot;La pedina sulla destinazione non ï¿½ del mio colore&quot;);
 <b class="fc">&nbsp;                            usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));</b>
 &nbsp;                        }
 &nbsp;
@@ -205,7 +205,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;     * Questo metodo serve per ritornare un numero intero che indica il bonus
 &nbsp;     * del pedone per la coordinata e il tipo.
 &nbsp;     * Questo valore viene usato principalmente dall&#39;AI per valutare la scacchiera
-&nbsp;     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+&nbsp;     * Tutto questo ha poi una teoria che spiegherï¿½ nella wiki github
 &nbsp;     *
 &nbsp;     * @return numero intero positivo o negativo
 &nbsp;     */
@@ -223,8 +223,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
-&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata è situata sulla prima o ultima riga della scacchiera
-&nbsp;     * @param currentCandidate candidata corrente dove è situata la pedina
+&nbsp;     * Questo metodo ha l&#39;obbiettivo di controllare se la coordinata candidata ï¿½ situata sulla prima o ultima riga della scacchiera
+&nbsp;     * @param currentCandidate candidata corrente dove ï¿½ situata la pedina
 &nbsp;     * @param candidateCoordinate coordinata candidata per l&#39;analisi
 &nbsp;     * @return un valore booleano &quot;TRUE&quot; se le condizioni sono vere, altrimenti &quot;FALSE&quot;
 &nbsp;     */

@@ -2,9 +2,9 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.move.SimpleMove;
+import core.move.MajorMove;
 import core.move.Move;
-import core.move.SimpleAttackMove;
+import core.move.MajorAttackMove;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.pieces.piece.PieceUtils;
@@ -81,14 +81,14 @@ public class Knight extends Piece {
 
                 // Se la destinazione è vuota crea una mossa normale/semplice
                 if(pieceAtDestination == null)
-                    usableMoves.add(new SimpleMove(board, this, candidateCoordinate));
+                    usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                 else {
                     // Altrimenti se il colore è diverso dal corrente
                     final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
                     // Crea una mossa di attacco
                     if(pieceAtDestinationUtils != this.pieceUtils)
-                        usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));
+                        usableMoves.add(new MajorAttackMove(board, this, candidateCoordinate, pieceAtDestination));
                 }
             }
         }
