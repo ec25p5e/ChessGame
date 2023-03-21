@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Getter
 public class BoardConfigurator {
-    private Map<Integer, Piece> configuration;
+    private final Map<Integer, Piece> configuration;
     private Utils nextMoveMaker;
     private Move moveTransition;
     private Pawn enPassant;

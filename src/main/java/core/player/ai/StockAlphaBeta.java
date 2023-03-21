@@ -101,11 +101,11 @@ public class StockAlphaBeta extends Observable implements IMoveStrategy {
                 }
 
                 final String quiescenceInfo = " " + score(getCurrentPlayer, highestSeenValue, lowestSeenValue) + " q: " +this.quiescenceCount;
-                s = "\t" + toString() + "(" +this.searchDepth+ "), m: (" +moveCounter+ "/" +numMoves+ ") " + move + ", best:  " + bestMove
+                s = "\t" + this + "(" +this.searchDepth+ "), m: (" +moveCounter+ "/" +numMoves+ ") " + move + ", best:  " + bestMove
 
                         + quiescenceInfo + ", t: " +calculateTimeTaken(candidateMoveStartTime, System.nanoTime());
             } else {
-                s = "\t" + toString() + "(" +this.searchDepth + ")" + ", m: (" +moveCounter+ "/" +numMoves+ ") " + move + " is illegal! best: " +bestMove;
+                s = "\t" + this + "(" +this.searchDepth + ")" + ", m: (" +moveCounter+ "/" +numMoves+ ") " + move + " is illegal! best: " +bestMove;
             }
             System.out.println(s);
             setChanged();

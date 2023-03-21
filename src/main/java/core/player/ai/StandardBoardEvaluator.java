@@ -23,34 +23,22 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
         return INSTANCE;
     }
 
+    /**
+     * Questo metodo serve per valutare la scacchiera, come un'entry point method
+     * @param board scacchiera virtuale di riferimento
+     * @param depth profondità di pensiero del valutatore
+     * @return numero intero
+     */
     @Override
     public int evaluate(final VirtualBoard board, final int depth) {
         return score(board.getWhitePlayer(), depth) - score(board.getBlackPlayer(), depth);
     }
 
-    public String evaluationDetails(final VirtualBoard board, final int depth) {
-        return
-                ("White Mobility : " + mobility(board.getWhitePlayer()) + "\n") +
-                        "White kingThreats : " + kingThreats(board.getWhitePlayer(), depth) + "\n" +
-                        "White attacks : " + attacks(board.getWhitePlayer()) + "\n" +
-                        "White castle : " + castle(board.getWhitePlayer()) + "\n" +
-                        "White pieceEval : " + pieceEvaluations(board.getWhitePlayer()) + "\n" +
-                        "White pawnStructure : " + pawnStructure(board.getWhitePlayer()) + "\n" +
-                        "---------------------\n" +
-                        "Black Mobility : " + mobility(board.getBlackPlayer()) + "\n" +
-                        "Black kingThreats : " + kingThreats(board.getBlackPlayer(), depth) + "\n" +
-                        "Black attacks : " + attacks(board.getBlackPlayer()) + "\n" +
-                        "Black castle : " + castle(board.getBlackPlayer()) + "\n" +
-                        "Black pieceEval : " + pieceEvaluations(board.getBlackPlayer()) + "\n" +
-                        "Black pawnStructure : " + pawnStructure(board.getBlackPlayer()) + "\n\n" +
-                        "Final Score = " + evaluate(board, depth);
-    }
-
     /**
-     *
-     * @param player
-     * @param depth
-     * @return
+     * Questo metodo serve per calcolare il punteggio del giocatore
+     * @param player giocatore corrente
+     * @param depth profondità di pensiero
+     * @return numero intero, indica il punteggio
      */
     private static int score(final Player player, final int depth) {
         return mobility(player) +
@@ -62,9 +50,10 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola l'attacco del player
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int attacks(final Player player) {
         int attackScore = 0;
@@ -82,9 +71,10 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola il valore delle pedine attive
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int pieceEvaluations(final Player player) {
         int pieceValuationScore = 0;
@@ -101,46 +91,50 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola la mobilità del player
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int mobility(final Player player) {
         return MOBILITY_MULTIPLAYER * mobilityRatio(player);
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso il rateo di mobilità del player
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int mobilityRatio(final Player player) {
         return (int)((player.getUsableMoves().size() * 10.0f) / player.getOpponent().getUsableMoves().size());
     }
 
     /**
-     *
-     * @param player
-     * @param depth
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola lo scacco matto del re
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int kingThreats(final Player player, final int depth) {
         return player.getOpponent().isInCheckMate() ? CHECK_MATE_BONUS  * depthBonus(depth) : check(player);
     }
 
     /**
-     *
-     * @param depth
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola il bonus della profondità di pensiero
+     * @param depth profondità di pensiero
+     * @return numero intero
      */
     private static int depthBonus(final int depth) {
         return depth == 0 ? 1 : 100 * depth;
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola se il giocatore è sotto scacco
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int check(final Player player) {
         return player.getOpponent().isInCheck() ? CHECK_BONUS : 0;
@@ -148,18 +142,19 @@ public class StandardBoardEvaluator implements IBoardEvaluator {
 
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int castle(final Player player) {
         return player.isCastled() ? CASTLE_BONUS : 0;
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Questo metodo viene utilizzato per calcolare il punteggio.
+     * In questo caso calcola la struttura dei pedoni
+     * @param player giocatore corrente
+     * @return numero intero
      */
     private static int pawnStructure(final Player player) {
         return PawnStructureAnalyzer.get().pawnStructureScore(player);
