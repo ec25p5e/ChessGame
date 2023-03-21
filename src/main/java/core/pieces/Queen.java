@@ -2,9 +2,9 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.Move;
-import core.movements.SimpleAttackMove;
-import core.movements.SimpleMove;
+import core.move.MajorAttackMove;
+import core.move.MajorMove;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.pieces.piece.PieceUtils;
@@ -37,6 +37,17 @@ public class Queen extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+     */
+    public Queen(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        super(PieceType.QUEEN, pieceCoordinate, pieceUtils, isFirstMove);
+    }
+
+    /**
      * Questo costruttore viene utilizzato quando la regina sarà la sua prima mossa
      * @param piecePosition coordinata sulla quale è posizionata la torre
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
@@ -55,43 +66,36 @@ public class Queen extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        for(final int candidateOffset : OPERATION_MOVE) {
-            int candidateDestination = this.piecePosition;
+        for (final int currentCandidateOffset : OPERATION_MOVE) {
+            int candidateDestinationCoordinate = this.piecePosition;
 
-            // Cicla finché non viene rilevata una pedina sulla cella e viene interrotto
-            // e si passa la prossima coordinata di calcolo
-            while(true) {
-                // Mostra solamente le coordinate possibili per quella prospettiva.
-                // Senza ciò mostra anche quelle dell'avversario di mosse per la pedina
-                if(firstColumnExclusion(candidateOffset, candidateDestination) ||
-                    eighthColumnExclusion(candidateOffset, candidateDestination))
+            while (true) {
+                if (firstColumnExclusion(currentCandidateOffset, candidateDestinationCoordinate) ||
+                        eighthColumnExclusion(currentCandidateOffset, candidateDestinationCoordinate)) {
                     break;
+                }
 
-                candidateDestination += candidateOffset;
+                candidateDestinationCoordinate += currentCandidateOffset;
 
-                if(!VirtualBoardUtils.isValidTileCoordinate(candidateDestination))
+                if (!VirtualBoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
                     break;
-                else {
-                    final Piece pieceAtDestination = board.getPiece(candidateDestination);
+                } else {
+                    final Piece pieceAtDestination = board.getPiece(candidateDestinationCoordinate);
 
-                    // Se la cella di destinazione è vuota crea una mossa di movimento semplice
-                    if(pieceAtDestination == null)
-                        usableMoves.add(new SimpleMove(board, this, candidateDestination));
-                    else {
-                        // Altrimenti confronta gli utils e se sono diversi crea una mossa d'attacco
-                        final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
+                    if (pieceAtDestination == null) {
+                        usableMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));
+                    } else {
+                        final Utils pieceAtDestinationAllegiance = pieceAtDestination.getPieceUtils();
 
-                        if(this.pieceUtils != pieceAtDestinationUtils)
-                            usableMoves.add(new SimpleAttackMove(board, this, candidateDestination, pieceAtDestination));
+                        if (this.pieceUtils != pieceAtDestinationAllegiance)
+                            usableMoves.add(new MajorAttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
 
-                        // e interrompi il ciclo per passare a un altro valore di calcolo
                         break;
                     }
                 }
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 
@@ -103,6 +107,27 @@ public class Queen extends Piece {
     @Override
     public Piece movePiece(final Move move) {
         return PieceUtils.INSTANCE.getPieceAtCoordinate(Queen.class, move.getPieceToMove().getPieceUtils(), move.getDestinationCoordinate());
+    }
+
+    /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.queenBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
     }
 
     /**

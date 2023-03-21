@@ -5,6 +5,8 @@ import core.player.BlackPlayer;
 import core.player.Player;
 import core.player.WhitePlayer;
 
+import static core.utils.AIUtils.*;
+
 public enum Utils implements IUtils {
     WHITE() {
         /**
@@ -65,13 +67,44 @@ public enum Utils implements IUtils {
             return whitePlayer;
         }
 
-        /**
-         * @return la stesura del colore (bianco/nero)
+        @Override
+        public int pawnBonus(final int position) {
+            return WHITE_PAWN_PREFERRED_COORDINATES[position];
+        }
 
-         @Override
-         public String toString() {
-         return "nero";
-         }*/
+        @Override
+        public int knightBonus(final int position) {
+            return WHITE_KNIGHT_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int bishopBonus(final int position) {
+            return WHITE_BISHOP_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int rookBonus(final int position) {
+            return WHITE_ROOK_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int queenBonus(final int position) {
+            return WHITE_QUEEN_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int kingBonus(final int position) {
+            return WHITE_KING_PREFERRED_COORDINATES[position];
+        }
+
+        /**
+         *
+         * @return
+         */
+        @Override
+        public String toString() {
+            return "White";
+        }
     },
     BLACK() {
         /**
@@ -132,13 +165,44 @@ public enum Utils implements IUtils {
             return blackPlayer;
         }
 
-        /**
-         * @return la stesura del colore (bianco/nero)
+        @Override
+        public int pawnBonus(final int position) {
+            return BLACK_PAWN_PREFERRED_COORDINATES[position];
+        }
 
         @Override
+        public int knightBonus(final int position) {
+            return BLACK_KNIGHT_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int bishopBonus(final int position) {
+            return BLACK_BISHOP_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int rookBonus(final int position) {
+            return BLACK_ROOK_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int queenBonus(final int position) {
+            return BLACK_QUEEN_PREFERRED_COORDINATES[position];
+        }
+
+        @Override
+        public int kingBonus(final int position) {
+            return BLACK_KING_PREFERRED_COORDINATES[position];
+        }
+
+        /**
+         *
+         * @return
+         */
+        @Override
         public String toString() {
-            return "nero";
-        }*/
+            return "Black";
+        }
     };
 
     // Valore utilizzato per sapere di quanto muoversi in una determinata direzione

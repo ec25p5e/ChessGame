@@ -1,18 +1,21 @@
 package gui;
 
+import com.google.common.collect.Lists;
+import core.move.*;
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.Move;
-import core.movements.MoveFactory;
-import core.movements.MoveTransition;
 import core.pieces.piece.Piece;
+import core.player.ai.PlayerType;
+import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
 import util.Constants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -22,6 +25,8 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.*;
+import static util.Constants.RESOURCE_BASE_PATH;
+import static util.Constants.SEARCH_DEPTH;
 
 /**
  * Questa classe rappresenta la GUI e i suoi elementi collegati.
@@ -30,19 +35,35 @@ import static javax.swing.SwingUtilities.*;
 @Setter
 public final class Window extends Observable {
     private final JFrame windowFrame;
+    private final MoveLog moveLog;
+    private final TakenPiecesPanel takenPiecesPanel;
 
     private VirtualBoard virtualBoard;
+    private BoardDirection boardDirection;
     private Piece sourceTile;
+    private Piece humanMovedPiece;
     private BoardPanel boardPanel;
+    private Move computerMove;
+    private boolean highlightLegalMoves;
+    private String pieceIconPath;
 
     private static final Window INSTANCE = new Window();
 
     private Window() {
         this.windowFrame = new JFrame(Constants.WINDOW_TITLE);
+        final JMenuBar tableMenuBar = new JMenuBar();
+        this.populateMenuBar(tableMenuBar);
+        this.windowFrame.setJMenuBar(tableMenuBar);
         this.windowFrame.setLayout(new BorderLayout());
         this.virtualBoard = VirtualBoard.getDefaultBoard();
+        this.boardDirection = BoardDirection.NORMAL;
+        this.highlightLegalMoves = false;
         this.boardPanel = new BoardPanel();
-        this.addObserver(new GameObserver());
+        this.moveLog = new MoveLog();
+        this.pieceIconPath = "src/main/resources/icons/fancy/";
+        this.takenPiecesPanel = new TakenPiecesPanel();
+        this.addObserver(new WindowGameAIWatcher());
+        this.windowFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.windowFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.windowFrame.setSize(Constants.WINDOW_DIMENSION);
@@ -53,17 +74,198 @@ public final class Window extends Observable {
         return INSTANCE;
     }
 
+    /**
+     * Questo metodo è l'entry point della scacchiera.
+     * Qui tutte le cose vengono create
+     */
     public void start() {
-        this.boardPanel.drawBoard(this.getVirtualBoard());
+        Window.get().getMoveLog().clear();
+        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
     }
 
     /**
-     * Questo metodo serve a chiamare l'update dell'observer quando viene mossa una pedina
+     * Questo metodo serve per aggiornare le informazioni degli observers
+     * su chi tocca a giocare
+     * @param playerType
      */
-    private void moveUpdate() {
+    private void moveMadeUpdate(final PlayerType playerType) {
         setChanged();
-        notifyObservers();
+        notifyObservers(playerType);
     }
+
+    /**
+     * Questo metodo serve ad aggiornare la scacchiera virtuale
+     * È UN WRAPPER PER IL SETTER
+     * @param board
+     */
+    private void updateGameBoard(final VirtualBoard board) {
+        this.virtualBoard = board;
+    }
+
+    /**
+     * Questo metodo serve a impostare la mossa effettuata dall'AI
+     * È UN WRAPPER AL SETTER
+     * @param move
+     */
+    private void updateComputerMove(final Move move) {
+        this.computerMove = move;
+    }
+
+    /**
+     * Questo metodo serve a chiamare tutti gli altri metodi che creano a loro volta
+     * le voci del menu
+     * @param tableMenuBar menu
+     */
+    private void populateMenuBar(final JMenuBar tableMenuBar) {
+        tableMenuBar.add(this.createOptionsMenu());
+        tableMenuBar.add(this.createPreferencesMenu());
+    }
+
+    /**
+     * Questo metodo serve per creare il menu chiamato "OPZIONI"
+     * @return menu popolato con tutte le sue voci
+     */
+    private JMenu createOptionsMenu() {
+        final JMenu optionsMenu = new JMenu("Opzioni");
+        optionsMenu.setMnemonic(KeyEvent.VK_O);
+
+        // Nuova partita
+        final JMenuItem resetMenuItem = new JMenuItem("New Game", KeyEvent.VK_P);
+        resetMenuItem.addActionListener(e -> this.undoAllMoves());
+        optionsMenu.add(resetMenuItem);
+
+        // Annullare ultima mossa
+        final JMenuItem undoLastMove = new JMenuItem("Annulla ultima mossa", KeyEvent.VK_Z);
+        undoLastMove.addActionListener(e -> {
+            if(Window.get().getMoveLog().size() > 0)
+                this.undoLastMove();
+        });
+        optionsMenu.add(undoLastMove);
+
+        return optionsMenu;
+    }
+
+    /**
+     * Questo metodo serve per creare il menu chiamato "PREFERENZE"
+     * @return menu popolato con tutte le sue voci
+     */
+    private JMenu createPreferencesMenu() {
+        final JMenu preferencesMenu = new JMenu("Preferenze");
+        preferencesMenu.setMnemonic(KeyEvent.VK_P);
+
+        // Scegli il colore della board
+        final JMenu colorChooserSubMenu = new JMenu("Scegli i colori della scacchiera");
+        colorChooserSubMenu.setMnemonic(KeyEvent.VK_S);
+
+        final JMenuItem chooseDarkMenuItem = new JMenuItem("Colore celle scure");
+        colorChooserSubMenu.add(chooseDarkMenuItem);
+
+        final JMenuItem chooseLightMenuItem = new JMenuItem("Colore celle chiare");
+        colorChooserSubMenu.add(chooseLightMenuItem);
+
+        preferencesMenu.add(colorChooserSubMenu);
+
+        // Scelta del set d'icone da usare
+        final JMenu chessMenChoiceSubMenu = new JMenu("Set di icone");
+
+        final JMenuItem holyWarriorsMenuItem = new JMenuItem("Holy Warriors");
+        chessMenChoiceSubMenu.add(holyWarriorsMenuItem);
+
+        final JMenuItem fancyMan = new JMenuItem("Fancy");
+        chessMenChoiceSubMenu.add(fancyMan);
+
+        final JMenuItem abstractMenMenuItem = new JMenuItem("Abstract Men");
+        chessMenChoiceSubMenu.add(abstractMenMenuItem);
+
+        holyWarriorsMenuItem.addActionListener(e -> {
+            pieceIconPath = "src/main/resources/icons/holywarriors/";
+            Window.get().getBoardPanel().drawBoard(virtualBoard);
+            Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        });
+
+        fancyMan.addActionListener(e -> {
+            pieceIconPath = "src/main/resources/icons/fancy/";
+            Window.get().getBoardPanel().drawBoard(virtualBoard);
+            Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        });
+
+        abstractMenMenuItem.addActionListener(e -> {
+            pieceIconPath = "src/main/resources/icons/simple/";
+            Window.get().getBoardPanel().drawBoard(virtualBoard);
+            Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        });
+
+        preferencesMenu.add(chessMenChoiceSubMenu);
+
+        chooseDarkMenuItem.addActionListener(e -> {
+            final Color colorChoice = JColorChooser.showDialog(Window.get().getWindowFrame(), "Choose Dark Tile Color",
+                    Window.get().getWindowFrame().getBackground());
+            if (colorChoice != null) {
+                Window.get().getBoardPanel().setTileDarkColor(this.virtualBoard, colorChoice);
+            }
+        });
+
+        chooseLightMenuItem.addActionListener(e -> {
+            final Color colorChoice = JColorChooser.showDialog(Window.get().getWindowFrame(), "Choose Light Tile Color",
+                    Window.get().getWindowFrame().getBackground());
+            if (colorChoice != null) {
+                Window.get().getBoardPanel().setTileLightColor(this.virtualBoard, colorChoice);
+            }
+        });
+
+        // Invertire la board (flip board)
+        final JMenuItem flipBoardItem = new JMenuItem("Inverti scacchiera");
+        flipBoardItem.addActionListener(e -> {
+            this.boardDirection = this.boardDirection.opposite();
+            this.boardPanel.drawBoard(this.virtualBoard);
+        });
+        preferencesMenu.add(flipBoardItem);
+
+        // Aggiungi una riga per dividere il menu
+        preferencesMenu.addSeparator();
+
+        // Evidenzia le mosse possibili
+        final JCheckBoxMenuItem cbLegalMoveHighlighter = new JCheckBoxMenuItem(
+                "Mostra aiuto mosse", false);
+
+        cbLegalMoveHighlighter.addActionListener(e -> highlightLegalMoves = cbLegalMoveHighlighter.isSelected());
+
+        preferencesMenu.add(cbLegalMoveHighlighter);
+
+        return preferencesMenu;
+    }
+
+    /**
+     * Questo metodo viene utilizzato per annullare l'ultima mossa effettuata
+     */
+    private void undoLastMove() {
+       final Move lastMove = Window.get().getMoveLog().removeMove(Window.get().getMoveLog().size() - 1);
+       this.virtualBoard = this.virtualBoard.getCurrentPlayer().unMakeMove(lastMove).toBoard();
+       this.computerMove = null;
+
+       Window.get().getMoveLog().removeMove(lastMove);
+       Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+       Window.get().getBoardPanel().drawBoard(this.virtualBoard);
+    }
+
+    /**
+     * Questo metodo serve per annullare tutte le mosse eseguite.
+     * Viene utilizzato come metodo per reinizializzare una partita
+     */
+    private void undoAllMoves() {
+        for(int i = Window.get().getMoveLog().size() - 1; i >= 0; i--) {
+            final Move lastMove = Window.get().getMoveLog().removeMove(Window.get().getMoveLog().size() - 1);
+            this.virtualBoard = this.virtualBoard.getCurrentPlayer().unMakeMove(lastMove).toBoard();
+        }
+
+        this.computerMove = null;
+        Window.get().getMoveLog().clear();
+        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        Window.get().getBoardPanel().drawBoard(this.virtualBoard);
+    }
+
+
 
     /**
      * Questa classe rappresenta la scacchiera "fisica" che viene disegnata nella GUI
@@ -85,7 +287,6 @@ public final class Window extends Observable {
             this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             this.setBackground(Constants.BOARD_PANEL_BACKGROUND);
             this.validate();
-            // this.controlState(virtualBoard);
         }
 
         /**
@@ -95,15 +296,43 @@ public final class Window extends Observable {
         public void drawBoard(final VirtualBoard board) {
             this.removeAll();
 
-            for (final Tile boardTile : boardTiles) {
+            for (final Tile boardTile : boardDirection.traverse(boardTiles)) {
                 boardTile.drawTile(board);
-                this.add(boardTile);
+                add(boardTile);
             }
 
-            this.validate();
-            this.repaint();
+            validate();
+            repaint();
+        }
+
+        /**
+         * Questo metodo serve a impostare le celle scure della scacchiera con il colore desiderato
+         * @param board scacchiera virtuale di riferimento
+         * @param darkColor colore scuro da impostare
+         */
+        public void setTileDarkColor(final VirtualBoard board, final Color darkColor) {
+            for (final Tile boardTile : boardTiles) {
+                boardTile.setDarkTileColor(darkColor);
+            }
+
+            drawBoard(board);
+        }
+
+        /**
+         * Questo metodo serve a impostare le celle chiare della scacchiera con il colore desiderato
+         * @param board scacchiera virtuale di riferimento
+         * @param lightColor colore chiaro da impostare
+         */
+        public void setTileLightColor(final VirtualBoard board, final Color lightColor) {
+            for (final Tile boardTile : boardTiles) {
+                boardTile.setLightTileColor(lightColor);
+            }
+
+            drawBoard(board);
         }
     }
+
+
 
     /**
      * Questa classe serve a rappresentare la singola cella della scacchiera "fisica"
@@ -111,7 +340,9 @@ public final class Window extends Observable {
     private class Tile extends JPanel {
         private final int tileId;
 
+        @Setter
         private Color lightTileColor = Color.decode("#FFFACD");
+        @Setter
         private Color darkTileColor = Color.decode("#593E1A");
 
         /**
@@ -130,27 +361,40 @@ public final class Window extends Observable {
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    // Se il gioco è finito blocca le mosse
+                    if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
+                        return;
+
                     if(isRightMouseButton(e)) {
                         sourceTile = null;
+                        humanMovedPiece = null;
                     } else if(isLeftMouseButton(e)) {
                         // Se l'attributo della pedina selezionata è vuoto, imposta una nuova pedina
                         // Altrimenti esegui il movimento della pedina
                         if(sourceTile == null) {
                             sourceTile = virtualBoard.getPiece(tileId);
+                            humanMovedPiece = sourceTile;
+
+                            if(humanMovedPiece == null)
+                                sourceTile = null;
                         } else {
                             final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
                             final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
 
-                            if (transition.moveStatus().isDone())
+                            if (transition.moveStatus().isDone()) {
                                 virtualBoard = transition.toBoard();
+                                moveLog.addMove(move);
+                            }
 
                             sourceTile = null;
+                            humanMovedPiece = null;
                         }
                     }
 
                     invokeLater(() -> {
+                        takenPiecesPanel.redo(moveLog);
+                        Window.get().moveMadeUpdate(PlayerType.HUMAN);
                         boardPanel.drawBoard(virtualBoard);
-                        moveUpdate();
                     });
                 }
 
@@ -219,15 +463,13 @@ public final class Window extends Observable {
         private void setPieceIcon(final VirtualBoard board) {
             this.removeAll();
             final Piece actualPiece = board.getPiece(this.tileId);
-            // System.out.println(Constants.RESOURCE_BASE_PATH + "pieceIcon/" + actualPiece.getPieceUtils().toString().charAt(0) + "" + actualPiece + ".gif");
 
             if(actualPiece != null) {
                 try {
                     final BufferedImage image = ImageIO.read(new File(
-                            Constants.RESOURCE_BASE_PATH + "pieceIcon/" + actualPiece.getPieceUtils().toString().charAt(0) + "" + actualPiece + ".gif"));
+                            pieceIconPath +  "" + actualPiece.getPieceUtils().toString().charAt(0) + "" + actualPiece + ".gif"));
                     this.add(new JLabel(new ImageIcon(image)));
                 } catch(final IOException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -238,7 +480,7 @@ public final class Window extends Observable {
          * @param board scacchiera "virtuale" di riferimento
          */
         private void highlightTileBorder(final VirtualBoard board) {
-            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getPlayerColor() && sourceTile.getPiecePosition() == this.tileId)
+            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getUtils() && sourceTile.getPiecePosition() == this.tileId)
                 setBorder(BorderFactory.createLineBorder(Color.cyan));
             else
                 setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -250,12 +492,14 @@ public final class Window extends Observable {
          * @param board scacchiera "virtuale" di riferimento
          */
         private void highlightUsable(final VirtualBoard board) {
-            for(final Move move : this.pieceUsableMoves(board)) {
-                if (move.getDestinationCoordinate() == this.tileId) {
-                    try {
-                        this.add(new JLabel(new ImageIcon(ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "game/greenIndicator.png")))));
-                    } catch (final IOException e) {
-                        e.printStackTrace();
+            if(isHighlightLegalMoves()) {
+                for (final Move move : this.pieceUsableMoves(board)) {
+                    if (move.getDestinationCoordinate() == this.tileId) {
+                        try {
+                            this.add(new JLabel(new ImageIcon(ImageIO.read(new File(RESOURCE_BASE_PATH + "icons/misc/greenIndicator.png")))));
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -267,62 +511,128 @@ public final class Window extends Observable {
          * @return una lista di mosse
          */
         private Collection<Move> pieceUsableMoves(final VirtualBoard board) {
-            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getPlayerColor())
+            if(sourceTile != null && sourceTile.getPieceUtils() == board.getCurrentPlayer().getUtils())
                 return sourceTile.calculateMoves(board);
 
             return Collections.emptyList();
         }
     }
 
+
+
     /**
-     * Questa classe viene utilizzata come osservatore dello stato della scacchiera.
-     * Più precisamente a ogni cambio di stato esegue dei controlli
+     *
      */
-    private static class GameObserver implements Observer {
-        private static int COUNT_CHECK_WHITE = 0;
-        private static int COUNT_CHECK_BLACK = 0;
+    private static class WindowGameAIWatcher implements Observer {
 
         /**
-         * Questo metodo serve per osservare lo stato della scacchiera e a segnalare all'utente quando un giocatore è sotto scacco, scacco matto o stallo
+         *
          * @param o     the observable object.
          * @param arg   an argument passed to the {@code notifyObservers}
          *                 method.
          */
         @Override
-        public void update(final Observable o, final Object arg) {
-            if(VirtualBoardUtils.isGameOver(get().getVirtualBoard()))
-                this.createJOptionPane("Game Over!", "Ha vinto il giocatore\s" + get().getVirtualBoard().getCurrentPlayer());
-            else if(get().getVirtualBoard().getCurrentPlayer().isInCheckMate())
-                this.createJOptionPane("Game Over!", "Il giocatore\s" + get().getVirtualBoard().getCurrentPlayer() + "\s è sotto scacco matto");
-            else if(get().getVirtualBoard().getCurrentPlayer().isInStaleMate())
-                this.createJOptionPane("Game Over", "Il giocatore\s" + get().getVirtualBoard().getCurrentPlayer() + "\s è in stallo!");
-            else if(get().getVirtualBoard().getBlackPlayer().isInCheck()) {
-                if(COUNT_CHECK_BLACK == 0)
-                    this.createJOptionPane("Attenzione", "Il giocatore\s" + get().getVirtualBoard().getBlackPlayer() + "\s è in scacco!");
-
-                COUNT_CHECK_BLACK++;
-            } else if(get().getVirtualBoard().getWhitePlayer().isInCheck()) {
-                if(COUNT_CHECK_WHITE == 0)
-                    this.createJOptionPane("Attenzione", "Il giocatore\s" + get().getVirtualBoard().getWhitePlayer() + "\s è in scacco!");
-
-                COUNT_CHECK_WHITE++;
+        public void update(Observable o, Object arg) {
+            if(Window.get().getVirtualBoard().getCurrentPlayer().getUtils().isBlack() &&
+                !Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate() &&
+                !Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
+                final AIThinkThank thinkThank = new AIThinkThank();
+                thinkThank.execute();
             }
 
-            if(!get().getVirtualBoard().getBlackPlayer().isInCheck())
-                COUNT_CHECK_BLACK = 0;
-            else if(!get().getVirtualBoard().getWhitePlayer().isInCheck())
-                COUNT_CHECK_WHITE = 0;
+            if (Window.get().getVirtualBoard().getCurrentPlayer().isInCheckMate()) {
+                JOptionPane.showMessageDialog(Window.get().getBoardPanel(),
+                        "Game Over: Giocatore " + Window.get().getVirtualBoard().getCurrentPlayer() + " è sotto scacco matto!", "Game Over",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            if (Window.get().getVirtualBoard().getCurrentPlayer().isInStaleMate()) {
+                JOptionPane.showMessageDialog(Window.get().getBoardPanel(),
+                        "Game Over: Giocatore " + Window.get().getVirtualBoard().getCurrentPlayer() + " è in una situazione di blocco (stallo)!", "Game Over",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+
+
+    private static class AIThinkThank extends SwingWorker<Move, String>{
+
+        private AIThinkThank() {
         }
 
         /**
-         * Questo metodo si occupa di creare un popup d'informazione a schermo
-         * @param title titolo del popup
-         * @param text testo da mostrare
+         * Questo metodo viene chiamato dall'observer dell'AI e si occupa di eseguire
+         * la logica della AI del giocatore.
+         * Valuterà dunque tutte le mosse e sceglierà la migliore
+         * @return
          */
-        private void createJOptionPane(String title, String text) {
-            JOptionPane.showMessageDialog(get().getBoardPanel(),
-                    text, title,
-                    JOptionPane.INFORMATION_MESSAGE);
+        @Override
+        protected Move doInBackground() {
+            final StockAlphaBeta strategy = new StockAlphaBeta(SEARCH_DEPTH);
+            return strategy.execute(Window.get().getVirtualBoard());
+        }
+
+        /**
+         *
+         */
+        @Override
+        protected void done() {
+            try {
+                final Move bestMove = get();
+                Window.get().updateComputerMove(bestMove);
+                Window.get().updateGameBoard(Window.get().getVirtualBoard().getCurrentPlayer().doMove(bestMove).toBoard());
+                Window.get().getMoveLog().addMove(bestMove);
+                Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+                Window.get().getBoardPanel().drawBoard(Window.get().getVirtualBoard());
+                Window.get().moveMadeUpdate(PlayerType.COMPUTER);
+            } catch(final Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
+
+
+    /**
+     *
+     */
+    private enum BoardDirection {
+        NORMAL {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return boardTiles;
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return FLIPPED;
+            }
+        },
+        FLIPPED {
+            @Override
+            List<Tile> traverse(final List<Tile> boardTiles) {
+                return Lists.reverse(boardTiles);
+            }
+
+            @Override
+            BoardDirection opposite() {
+                return NORMAL;
+            }
+        };
+
+        /**
+         * Questo metodo serve a invertire la board
+         * @param boardTiles celle della scacchiera fisica
+         * @return lista di celle ordinate
+         */
+        abstract List<Tile> traverse(final List<Tile> boardTiles);
+
+        /**
+         * Questo metodo serve a trovare l'opposto della configurazione attuale
+         * @return l'opposto. ex: NORMAL --> FLIPPED
+         */
+        abstract BoardDirection opposite();
+    }
+
 }

@@ -3,8 +3,10 @@ package util;
 import java.awt.*;
 
 public class Constants {
-    public static final String WINDOW_TITLE = "Scacchi in versione array :)";
+    public static final String WINDOW_TITLE = "!!! SCACCHI !!!";
     public static final String RESOURCE_BASE_PATH = "src/main/resources/";
+    public static final String SERIALIZATION_PATH = "src/main/resources/files/";
+    public static final String BASE_GAME_FILE = "initGame.json";
     public static final Color BOARD_PANEL_BACKGROUND = Color.decode("#8B4726");
     public static final Dimension WINDOW_DIMENSION = new Dimension(600, 600);
     public static final Dimension BOARD_DIMENSION = new Dimension(400, 350);
@@ -22,4 +24,5 @@ public class Constants {
     // Throw error message
     public static final String CLASS_NOT_FOUND = "Classe non trovata!";
     public static final String RUNTIME_EXCEPTION = "Eccezione di runtime";
+    public static final Integer SEARCH_DEPTH = 3;
 }

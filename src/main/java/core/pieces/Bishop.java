@@ -2,7 +2,7 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.*;
+import core.move.*;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.pieces.piece.PieceUtils;
@@ -35,6 +35,17 @@ public class Bishop extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+     */
+    public Bishop(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        super(PieceType.BISHOP, pieceCoordinate, pieceUtils, isFirstMove);
+    }
+
+    /**
      * Questo costruttore viene utilizzato quando l'alfiere sarà la sua prima mossa
      * @param piecePosition coordinata sulla quale è posizionata la torre
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
@@ -53,36 +64,26 @@ public class Bishop extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
         for(final int candidateOffset : OPERATION_MOVE) {
-            // Viene impostata la variabile con la posizione corrente della torre
             int candidateCoordinate = this.piecePosition;
 
-            // Viene avviato un ciclo finché il calcolo della posizione candidata genera un valore al di fuori del range di valori della scacchiera.
-            // Oppure se alla coordinata candidata è già presente una pedina non dei nostri oppure se si capita sulla prima/ultima riga della scacchiera
             while(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
                 if(firstColumnExclusion(candidateOffset, candidateCoordinate) ||
                     eighthColumnExclusion(candidateOffset, candidateCoordinate))
                     break;
 
-                // Aggiungi il valore di calcolo alla coordinata corrente
                 candidateCoordinate += candidateOffset;
 
-                // Controlla che il nuovo valore sia valido
                 if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                    // Cattura il contenuto della cella di destinazione
                     final Piece pieceAtDestination = board.getPiece(candidateCoordinate);
 
-                    // Se è nulla significa che è vuota, crea una mossa di movimento
                     if(pieceAtDestination == null)
-                        usableMoves.add(new SimpleMove(board, this, candidateCoordinate));
+                        usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                     else {
-                        // Altrimenti se non è vuota controlla che sia dell'avversario e crea una mossa di attacco e termina il ciclo
-                        // e procedi al prossimo valore di calcolo
                         final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
                         if(this.pieceUtils != pieceAtDestinationUtils)
-                            usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));
+                            usableMoves.add(new MajorAttackMove(board, this, candidateCoordinate, pieceAtDestination));
 
                         break;
                     }
@@ -90,7 +91,6 @@ public class Bishop extends Piece {
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 
@@ -102,6 +102,27 @@ public class Bishop extends Piece {
     @Override
     public Piece movePiece(final Move move) {
         return PieceUtils.INSTANCE.getPieceAtCoordinate(Bishop.class, move.getPieceToMove().getPieceUtils(), move.getDestinationCoordinate());
+    }
+
+    /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.bishopBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
     }
 
     /**

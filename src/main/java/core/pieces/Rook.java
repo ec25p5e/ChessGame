@@ -3,9 +3,9 @@ package core.pieces;
 import core.board.VirtualBoard;
 import core.utils.Utils;
 import core.board.VirtualBoardUtils;
-import core.movements.SimpleAttackMove;
-import core.movements.SimpleMove;
-import core.movements.Move;
+import core.move.MajorAttackMove;
+import core.move.MajorMove;
+import core.move.Move;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.pieces.piece.PieceUtils;
@@ -37,6 +37,17 @@ public class Rook extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+     */
+    public Rook(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        super(PieceType.ROOK, pieceCoordinate, pieceUtils, isFirstMove);
+    }
+
+    /**
      * Questo costruttore viene utilizzato quando per la torre sarà la sua prima mossa
      * @param piecePosition coordinata sulla quale è posizionata la torre
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
@@ -55,52 +66,31 @@ public class Rook extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
-        for(final int candidateOffset : OPERATION_MOVE) {
-            // Viene impostata la variabile con la posizione corrente della torre
-            int candidateCoordinate = this.piecePosition;
+        for (final int currentCandidateOffset : OPERATION_MOVE) {
+            int candidateDestinationCoordinate = this.piecePosition;
 
-            // Viene avviato un ciclo finché il calcolo della posizione candidata genera un valore al di fuori del range di valori della scacchiera.
-            // Oppure se alla coordinata candidata è già presente una pedina non dei nostri oppure se si capita sulla prima/ultima riga della scacchiera
-            while(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                // Se la coordinata candidata sarebbe una coordinata sulla prima o ultima riga.
-                // Interrompi e passa a un'altra coordinata
-                if(isColumnExclusion(candidateOffset, candidateCoordinate))
+            while (VirtualBoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+                if (isColumnExclusion(currentCandidateOffset, candidateDestinationCoordinate))
                     break;
 
-                // Aggiungi il valore di calcolo alla posizione corrente
-                candidateCoordinate += candidateOffset;
+                candidateDestinationCoordinate += currentCandidateOffset;
 
-                // Controlla se la coordinata candidata è all'interno del range della scacchiera
-                if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                    // Imposta la variabile con i valore della cella di destinazione
-                    final Piece pieceAtDestination = board.getPiece(candidateCoordinate);
+                if (VirtualBoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+                    final Piece pieceAtDestination = board.getPiece(candidateDestinationCoordinate);
 
-                    // Se la cella di destinazione è vuota crea un movimento non di attacco ma "pacifico"
-                    if(pieceAtDestination == null) {
-                        // System.out.println("La destinazione è vuota");
-                        usableMoves.add(new SimpleMove(board, this, candidateCoordinate));
+                    if (pieceAtDestination == null) {
+                        usableMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));
                     } else {
-                        // Altrimenti analizza il contenuto della cella
+                        final Utils pieceAtDestinationAllegiance = pieceAtDestination.getPieceUtils();
 
-                        // Imposta la variabile con gli utils della pedina sulla cella
-                        final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
-
-                        // Se gli utils della pedina trovata sono diversi dalla torre in esame
-                        // crea una mossa di attacco, con l'obbiettivo di muovere la torre e rimuovere la pedina sulla cella analizzata
-                        if(this.pieceUtils != pieceAtDestinationUtils) {
-                            // System.out.println("La pedina sulla destinazione non è del mio colore");
-                            usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));
-                        }
-
-                        // In questo caso smetti di cercare alternative e prosegui con il prossimo valore di calcolo
+                        if (this.pieceUtils != pieceAtDestinationAllegiance)
+                            usableMoves.add(new MajorAttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
                         break;
                     }
                 }
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 
@@ -115,12 +105,34 @@ public class Rook extends Piece {
     }
 
     /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.rookBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
+
+    /**
      * Questo metodo ha l'obbiettivo di controllare se la coordinata candidata è situata sulla prima o ultima riga della scacchiera
      * @param currentCandidate candidata corrente dove è situata la pedina
      * @param candidateCoordinate coordinata candidata per l'analisi
      * @return un valore booleano "TRUE" se le condizioni sono vere, altrimenti "FALSE"
      */
     private static boolean isColumnExclusion(final int currentCandidate, final int candidateCoordinate) {
-        return VirtualBoardUtils.INSTANCE.FIRST_ROW.get(candidateCoordinate) && currentCandidate == -1 || VirtualBoardUtils.INSTANCE.EIGHTH_ROW.get(candidateCoordinate) && currentCandidate == 1;
+        return (VirtualBoardUtils.INSTANCE.FIRST_COLUMN.get(candidateCoordinate) && (currentCandidate == -1)) ||
+                (VirtualBoardUtils.INSTANCE.EIGHTH_COLUMN.get(candidateCoordinate) && (currentCandidate == 1));
     }
 }

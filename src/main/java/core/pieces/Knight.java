@@ -2,9 +2,9 @@ package core.pieces;
 
 import core.board.VirtualBoard;
 import core.board.VirtualBoardUtils;
-import core.movements.SimpleMove;
-import core.movements.Move;
-import core.movements.SimpleAttackMove;
+import core.move.MajorMove;
+import core.move.Move;
+import core.move.MajorAttackMove;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
 import core.pieces.piece.PieceUtils;
@@ -33,6 +33,17 @@ public class Knight extends Piece {
     }
 
     /**
+     * Questo costruttore viene utilizzato quando viene deserializzato il file e di conseguenza instantiazo l'oggetto
+     * @param pieceCoordinate coordinata sulla quale posizionata la torre. ex: a5
+     * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
+     *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
+     * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
+     */
+    public Knight(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+        super(PieceType.KNIGHT, pieceCoordinate, pieceUtils, isFirstMove);
+    }
+
+    /**
      * Questo costruttore viene utilizzato quando il cavallo sarà la sua prima mossa
      * @param piecePosition coordinata sulla quale è posizionata la torre
      * @param pieceUtils Utility della pedina. Gli utility sono dei metodi o caratteristiche di un gruppo di pedine.
@@ -51,38 +62,29 @@ public class Knight extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
         for(final int candidateOffset : OPERATION_MOVE) {
-            // Se la torre capita sulla prima o seconda colonna continua perché cosi può saltare via le pedine allo stato iniziale
             if(firstColumnExclusion(this.piecePosition, candidateOffset) ||
                 secondColumnExclusion(this.piecePosition, candidateOffset) ||
                 seventhColumnExclusion(this.piecePosition, candidateOffset) ||
                 eighthColumnExclusion(this.piecePosition, candidateOffset))
                 continue;
 
-            // Imposta la coordinata con sommata quella di calcolo
             final int candidateCoordinate = this.piecePosition + candidateOffset;
 
-            // Controlla che non sia uscito dalla scacchiera
             if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                // Prendi il contenuto della cella di destinazione
                 final Piece pieceAtDestination = board.getPiece(candidateCoordinate);
 
-                // Se la destinazione è vuota crea una mossa normale/semplice
                 if(pieceAtDestination == null)
-                    usableMoves.add(new SimpleMove(board, this, candidateCoordinate));
+                    usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                 else {
-                    // Altrimenti se il colore è diverso dal corrente
                     final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
-                    // Crea una mossa di attacco
                     if(pieceAtDestinationUtils != this.pieceUtils)
-                        usableMoves.add(new SimpleAttackMove(board, this, candidateCoordinate, pieceAtDestination));
+                        usableMoves.add(new MajorAttackMove(board, this, candidateCoordinate, pieceAtDestination));
                 }
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 
@@ -95,6 +97,28 @@ public class Knight extends Piece {
     public Piece movePiece(final Move move) {
         return PieceUtils.INSTANCE.getPieceAtCoordinate(Knight.class, move.getPieceToMove().getPieceUtils(), move.getDestinationCoordinate());
     }
+
+    /**
+     * Questo metodo serve per ritornare un numero intero che indica il bonus
+     * del pedone per la coordinata e il tipo.
+     * Questo valore viene usato principalmente dall'AI per valutare la scacchiera
+     * Tutto questo ha poi una teoria che spiegherò nella wiki github
+     *
+     * @return numero intero positivo o negativo
+     */
+    @Override
+    public int locationBonus() {
+        return this.pieceUtils.knightBonus(this.piecePosition);
+    }
+
+    /**
+     * @return il carattere identificativo di ogni pedina. Ogni tipo di pedina ha il suo
+     */
+    @Override
+    public String toString() {
+        return this.pieceType.toString();
+    }
+
 
     /**
      * Questo metodo serve a capire se la coordinata candidata andrà sulla prima riga, per il bianco

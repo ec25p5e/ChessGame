@@ -1,8 +1,12 @@
 package core.board;
 
+import core.move.Move;
+import core.move.MoveFactory;
+import core.move.MoveTransition;
 import core.pieces.King;
 import core.pieces.piece.Piece;
 import core.pieces.piece.PieceType;
+import core.player.Player;
 
 import java.util.*;
 
@@ -16,10 +20,6 @@ public enum VirtualBoardUtils {
 
     public final List<Boolean> FIRST_COLUMN = setupColumn(0);
     public final List<Boolean> SECOND_COLUMN = setupColumn(1);
-    public final List<Boolean> THIRD_COLUMN = setupColumn(2);
-    public final List<Boolean> FOURTH_COLUMN = setupColumn(3);
-    public final List<Boolean> FIFTH_COLUMN = setupColumn(4);
-    public final List<Boolean> SIXTH_COLUMN = setupColumn(5);
     public final List<Boolean> SEVENTH_COLUMN = setupColumn(6);
     public final List<Boolean> EIGHTH_COLUMN = setupColumn(7);
     public final List<Boolean> FIRST_ROW = setupRow(0);
@@ -74,6 +74,29 @@ public enum VirtualBoardUtils {
     }
 
     /**
+     * Questo metodo serve per verificare immediatamente se uno dei due giocatori è in scacco.
+     * @param board scacchiera virtuale di riferimento
+     * @return valore booleano. Basta che solo uno dei due giocatori sia in scacco per essere "TRUE"
+     */
+    public static boolean isThreatenedBoardImmediate(final VirtualBoard board) {
+        return board.getWhitePlayer().isInCheck() || board.getBlackPlayer().isInCheck();
+    }
+
+    /**
+     * Questo metodo serve a verificare se il re è messo in pericolo da un pedone
+     * @param board scacchiera virtuale di riferimento
+     * @param king tipo di pedina del RE
+     * @param frontTile coordinata della cella di fronte in diagonale
+     * @return valore booleano
+     */
+    public static boolean isKingPawnTrap(final VirtualBoard board, final King king, final int frontTile) {
+        final Piece piece = board.getPiece(frontTile);
+        return piece != null &&
+                piece.getPieceType() == PieceType.PAWN &&
+                piece.getPieceUtils() != king.getPieceUtils();
+    }
+
+    /**
      * Questo metodo serve a verificare se a una coordinata è posizionato un pedone.
      * Viene confrontato con un RE in base al colore e viene verificato il tipo e che non sia nullo
      * @param board scacchiera "virtuale" di riferimento
@@ -84,6 +107,67 @@ public enum VirtualBoardUtils {
     public static boolean isKingPawn(final VirtualBoard board, final King king, final int frontTile) {
         final Piece piece = board.getPiece(frontTile);
         return piece != null && piece.getPieceType() == PieceType.PAWN && piece.getPieceUtils() != king.getPieceUtils();
+    }
+
+    /**
+     * Questo metodo serve per controllare quando la mossa mette in scacco un pedone
+     * Nel dettaglio, il metodo verrà chiamato per verificare la situazione del RE
+     * @param move mossa che si vuole eseguire
+     * @return "TRUE" se la pedina (giocatore) è in scacco
+     */
+    public static boolean kingThreat(final Move move) {
+       final VirtualBoard board = move.getBoard();
+       final MoveTransition transition = board.getCurrentPlayer().doMove(move);
+
+       return transition.toBoard().getCurrentPlayer().isInCheck();
+    }
+
+    /**
+     * Questo metodo esegue un ragionamento complesso degli scacchi, ovvero si occupa di trovare
+     * la vittima con più valore e l'aggressore meno prezioso
+     * MVVLVA: Most Valuable Victim - Least Valuable Aggressor
+     * Il metodo viene utilizzato dalla piccola AI che muove le pedine avversarie
+     * @param move la mossa che si sta valutando
+     * @return il delta (differenza) di valore tra le due pedine
+     */
+    public static int mvvlva(final Move move) {
+        final Piece movingPiece = move.getPieceToMove();
+
+        if(move.isAttack()) {
+            final Piece attackedPiece = move.getPieceAttacked();
+            return (attackedPiece.getPieceValue() - movingPiece.getPieceValue() + PieceType.KING.getPieceValue()) * 100;
+        }
+
+        return PieceType.KING.getPieceValue() - movingPiece.getPieceValue();
+    }
+
+    /**
+     * Questo metodo serve per calcolare le ultime N mosse effettuate
+     * @param board scacchiera virtuale di riferimento
+     * @param N numero di mosse da ricercare a ritroso
+     * @return lista di mosse precedentemente effettuate
+     */
+    public static List<Move> lastNMoves(final VirtualBoard board, int N) {
+        final List<Move> moveHistory = new ArrayList<>();
+        Move currentMove = board.getTransitionMove();
+
+        for(int i = 0; currentMove != MoveFactory.getNullMove() && i < N; i++) {
+            moveHistory.add(currentMove);
+            currentMove = currentMove.getBoard().getTransitionMove();
+        }
+
+        return Collections.unmodifiableList(moveHistory);
+    }
+
+    /**
+     * Questo metodo si occupa di controllare se il giocatore è sotto scacco matto
+     * o è in una situazione di stallo (nessuna mossa possibile)
+     * @param board la scacchiera virtuale di riferimento
+     * @return valore booleano "TRUE" se la partita deve terminare
+     */
+    public static boolean isEndGame(final VirtualBoard board) {
+        final Player currentPlayer = board.getCurrentPlayer();
+        return currentPlayer.isInCheckMate() || currentPlayer.isInStaleMate();
     }
 
     /**

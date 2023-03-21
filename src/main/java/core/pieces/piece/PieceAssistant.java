@@ -8,25 +8,59 @@ import static util.Constants.*;
 /**
  * Questa classe serve a creare nuove pedine in base alla classe.
  * Viene utilizzato dalla classe {@link PieceUtils}
- * @param <T> tipo di pedina
  */
 @SuppressWarnings("ALL")
-public class PieceAssistant<T> {
-    public <T extends Piece> T init(Class<? extends Piece> pieceClass, final int position, final Utils utils, final boolean isFirstMove, final boolean isQueenCastle, final boolean isKingCastle) throws ClassNotFoundException {
+public class PieceAssistant {
+
+    /**
+     * Questo metodo serve per creare le istanze delle varie pedine. Il filtro è dato dal modo in cui l'id
+     * della cella viene passato. In questo caso i numeri interi, ex: 60.
+     * @param pieceClass classe di riferimento della pedina
+     * @param coordinate coordinata dove deve essere posizionata la pedina (60)
+     * @param utils indicazione degli utilities da utilizzare (black or white)
+     * @param firstMove valore booleano che indica se la pedina è la prima volta che si muove
+     * @param isQueenCastle indica se è stato messo sotto scacco dalla regina
+     * @param isKingCastle indica se è stato messo sotto scacco dal RE
+     * @return istanza della pedina corretta. ex: Rook
+     * @param <T> qualsiasi oggetto che estenda la classe {@link Piece}
+     * @throws ClassNotFoundException eccezione in caso la classe richiesta non sia esistente o non venga trovata
+     */
+    public <T extends Piece> T init(Class<?> pieceClass, final int coordinate, final Utils utils, final boolean firstMove,
+                                    final boolean isQueenCastle, final boolean isKingCastle) throws ClassNotFoundException {
         return switch (pieceClass.getName()) {
-            case KING_PACKAGE -> (T) new King(position, utils, isKingCastle, isQueenCastle);
-            default -> this.init(pieceClass, position, utils, isFirstMove);
+            case ROOK_PACKAGE   -> (T) new Rook(coordinate, utils, firstMove);
+            case BISHOP_PACKAGE ->(T) new Bishop(coordinate, utils, firstMove);
+            case KNIGHT_PACKAGE -> (T) new Knight(coordinate, utils, firstMove);
+            case PAWN_PACKAGE   -> (T) new Pawn(coordinate, utils, firstMove);
+            case QUEEN_PACKAGE  -> (T) new Queen(coordinate, utils, firstMove);
+            case KING_PACKAGE   -> (T) new King(coordinate, utils, isKingCastle, isQueenCastle);
+            default             -> throw new ClassNotFoundException(CLASS_NOT_FOUND);
         };
     }
 
-    public <T extends Piece> T init(Class<? extends Piece> pieceClass, final int position, final Utils utils, final boolean firstMove) throws ClassNotFoundException {
+    /**
+     * Questo metodo serve per creare le istanze delle varie pedine. Il filtro è dato dal modo in cui l'id
+     * della cella viene passato. In questo caso le coordinate algebriche, ex: a5
+     * @param pieceClass classe di riferimento della pedina
+     * @param coordinate coordinata dove deve essere posizionata la pedina (a5)
+     * @param utils indicazione degli utilities da utilizzare (black or white)
+     * @param firstMove valore booleano che indica se la pedina è la prima volta che si muove
+     * @param isQueenCastle indica se è stato messo sotto scacco dalla regina
+     * @param isKingCastle indica se è stato messo sotto scacco dal RE
+     * @return istanza della pedina corretta. ex: Rook
+     * @param <T> qualsiasi oggetto che estenda la classe {@link Piece}
+     * @throws ClassNotFoundException eccezione in caso la classe richiesta non sia esistente o non venga trovata
+     */
+    public <T extends Piece> T init(Class<?> pieceClass, final String coordinate, final Utils utils, final boolean firstMove,
+                                    final boolean isQueenCastle, final boolean isKingCastle) throws ClassNotFoundException {
         return switch (pieceClass.getName()) {
-            case ROOK_PACKAGE -> (T) new Rook(position, utils, firstMove);
-            case BISHOP_PACKAGE ->(T) new Bishop(position, utils, firstMove);
-            case KNIGHT_PACKAGE -> (T) new Knight(position, utils, firstMove);
-            case PAWN_PACKAGE -> (T) new Pawn(position, utils, firstMove);
-            case QUEEN_PACKAGE -> (T) new Queen(position, utils, firstMove);
-            default -> throw new ClassNotFoundException(CLASS_NOT_FOUND);
+            case ROOK_PACKAGE   -> (T) new Rook(coordinate, utils, firstMove);
+            case BISHOP_PACKAGE -> (T) new Bishop(coordinate, utils, firstMove);
+            case KNIGHT_PACKAGE -> (T) new Knight(coordinate, utils, firstMove);
+            case PAWN_PACKAGE   -> (T) new Pawn(coordinate, utils, firstMove);
+            case QUEEN_PACKAGE  -> (T) new Queen(coordinate, utils, firstMove);
+            case KING_PACKAGE   -> (T) new King(coordinate, utils, isKingCastle, isQueenCastle);
+            default             -> throw new ClassNotFoundException(CLASS_NOT_FOUND);
         };
     }
 }

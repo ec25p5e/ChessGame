@@ -1,11 +1,10 @@
 package core.player;
 
 import core.board.VirtualBoard;
-import core.movements.Move;
-import core.movements.MoveStatus;
-import core.movements.MoveTransition;
+import core.move.Move;
+import core.move.MoveStatus;
+import core.move.MoveTransition;
 import core.pieces.King;
-import core.utils.Utils;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -16,8 +15,8 @@ import static java.util.stream.Collectors.collectingAndThen;
 import static core.pieces.piece.PieceType.KING;
 
 /**
- * Questa classe serve a rappresentare il giocatore generico che deve essere estesa dal {@link BlackPlayer} e {@link WhitePlayer}
- *
+ * Questa classe serve a rappresentare il giocatore generico che deve essere
+ * estesa dal {@link BlackPlayer} e {@link WhitePlayer}
  */
 @Getter
 public abstract class Player implements IPlayer {
@@ -26,20 +25,63 @@ public abstract class Player implements IPlayer {
     protected final Collection<Move> usableMoves;
     protected final boolean isInCheck;
 
-    public Player(final VirtualBoard board, final Collection<Move> playerUsableMoves, final Collection<Move> opponentPlayerMoves) {
+    /**
+     *
+     * @param board
+     * @param playerUsable
+     * @param opponentUsable
+     */
+    public Player(final VirtualBoard board, final Collection<Move> playerUsable, final Collection<Move> opponentUsable) {
         this.board = board;
         this.playerKing = this.detectKing();
-        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentPlayerMoves).isEmpty();
-        this.usableMoves = Collections.unmodifiableCollection(playerUsableMoves);
+        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentUsable).isEmpty();
+        playerUsable.addAll(calculateKingCastles(playerUsable, opponentUsable));
+        this.usableMoves = Collections.unmodifiableCollection(playerUsable);
     }
 
+    /**
+     * Questo metodo serve a indicare se il giocatore è sotto scacco matto
+     * @return valore booleano "TRUE" se in scacco matto
+     */
     public boolean isInCheckMate() {
         return this.isInCheck && !this.findEscapeMoves();
     }
 
+    /**
+     * Questo metodo serve a indicare se il giocatore è in stallo
+     * @return valore booleano "TRUE" se in stallo
+     */
     public boolean isInStaleMate() {
         return !this.isInCheck && !this.findEscapeMoves();
     }
+
+    /**
+     * Questo metodo serve a indicare se il giocatore è stato messo in arrocco
+     * Il RE implementa questa funzionalità
+     * @return valore booleano "TRUE" se in arrocco
+     */
+    public boolean isCastled() {
+        return this.playerKing.isCastled();
+    }
+
+    /**
+     * Questo metodo indica se il RE è in grado di gestirsi o se è sotto scacco
+     * Metodo specifico per il RE
+     * @return valore booleano
+     */
+    public boolean isKingSideCastleCapable() {
+        return this.playerKing.isCastledByKing();
+    }
+
+    /**
+     * Questo metodo indica se la regina è in grado di gestirsi o se è sotto scacco
+     * Metodo specifico per la regina
+     * @return valore booleano
+     */
+    public boolean isQueenSideCastleCapable() {
+        return this.playerKing.isCastledByQueen();
+    }
+
 
     /**
      * Questo metodo si può definire come il punto di entrata nell'esecuzione dei movimenti;
@@ -48,19 +90,25 @@ public abstract class Player implements IPlayer {
      * @return Una mossa di transizione che può essere "terminata", "sotto scacco". Altrimenti è "invalida"
      */
     public MoveTransition doMove(final Move move) {
-        // Se la mossa non è tra quelle eseguibili termina e ritorna un animazione di movimento non valida
-        if(!this.usableMoves.contains(move))
-            return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVES);
+        if (!this.usableMoves.contains(move)) {
+            System.out.println(move.getDestinationCoordinate());
+            return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVE);
+        }
 
-        // Esegui il movimento
-        final VirtualBoard transitionMove = move.run();
+        final VirtualBoard transitionedBoard = move.run();
 
-        // Se il giocatore è in scacco ritorna una mossa di transizione con lo stato di "in scacco",
-        // quindi non è possibile eseguire altre mosse.
-        // Altrimenti crea una mossa di transizione con lo stato di terminata, quindi la mossa è stata eseguita
-        return transitionMove.getCurrentPlayer().getOpponentPlayer().isInCheck() ?
+        return transitionedBoard.getCurrentPlayer().getOpponent().isInCheck() ?
                 new MoveTransition(this.board, this.board, move, MoveStatus.LEAVES_PLAYER_IN_CHECK) :
-                new MoveTransition(this.board, transitionMove, move, MoveStatus.DONE);
+                new MoveTransition(this.board, transitionedBoard, move, MoveStatus.DONE);
+    }
+
+    /**
+     * Questo metodo serve ad annullare una mossa. Infatti ritorna lo stato precedente alla mossa
+     * @param move mossa di riferimento per capire la situazione precedente
+     * @return transizione di mossa con la situazione precedente
+     */
+    public MoveTransition unMakeMove(final Move move) {
+        return new MoveTransition(this.board, move.undo(), move, MoveStatus.DONE);
     }
 
     /**
@@ -73,6 +121,15 @@ public abstract class Player implements IPlayer {
         return moves.stream()
                 .filter(move -> move.getDestinationCoordinate() == tileId)
                 .collect(collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+    }
+
+    /**
+     * Questo metodo serve a capire se ci sono ancora apportunità di scacco
+     * @return valore booleano
+     */
+    protected boolean hasCastleOpportunities() {
+        return !this.isInCheck && !this.playerKing.isCastled() &&
+                (this.playerKing.isCastledByKing() || this.playerKing.isCastledByQueen());
     }
 
     /**
@@ -94,13 +151,5 @@ public abstract class Player implements IPlayer {
         return this.usableMoves.stream()
                 .anyMatch(move -> doMove(move)
                         .moveStatus().isDone());
-    }
-
-    /**
-     * Questo metodo controlla se c'è la possibilità di fare delle mosse d'arrocco
-     * @return "TRUE" se non sono in scacco, attraverso scacco
-     */
-    protected boolean hasCastleOpportunities() {
-        return !this.isInCheck && !this.playerKing.isCastled() && (this.playerKing.isCastledByKing() || this.playerKing.isCastledByQueen());
     }
 }
