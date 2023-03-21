@@ -58,7 +58,7 @@ Classica | Personalizzata | Durante il gioco
 <br />
 
 ## Volete contribuire? 🤝
-Se vuoi contribuire a questa applicazione, sei sempre il benvenuto! Leggi [linee guida per contribuire](https://github.com/ec25p5e/ChessGame/blob/master/CONTRIBUTION.md). 
+Se vuoi contribuire a questa applicazione, sei sempre il benvenuto! Leggi [linee guida per contribuire](https://github.com/ec25p5e/ChessGame/blob/master/CONTRIBUTING.md). 
 
 <br />
 
