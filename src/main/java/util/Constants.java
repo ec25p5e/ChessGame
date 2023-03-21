@@ -24,6 +24,5 @@ public class Constants {
     // Throw error message
     public static final String CLASS_NOT_FOUND = "Classe non trovata!";
     public static final String RUNTIME_EXCEPTION = "Eccezione di runtime";
-    public static final String NPE_EXCEPTION = "Eccezione di puntatore nullo";
-    public static final String IO_EXCEPTION = "Eccezione di IO";
+    public static final Integer SEARCH_DEPTH = 3;
 }

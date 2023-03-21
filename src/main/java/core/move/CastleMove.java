@@ -14,8 +14,8 @@ import lombok.Getter;
 @Getter
 public abstract class CastleMove extends Move {
     private final Rook castleRook;
-    private int castleRookStart;
-    private int castleRookDestination;
+    private final int castleRookStart;
+    private final int castleRookDestination;
 
     public CastleMove(final VirtualBoard board, final Piece pieceToMove, final int destinationCoordinate, final Rook castleRook, final int castleRookStart, final int castleRookDestination) {
         super(board, pieceToMove, destinationCoordinate);

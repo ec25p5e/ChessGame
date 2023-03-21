@@ -25,9 +25,8 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.*;
-import static pgn.PGNUtilities.persistPGNFile;
-import static pgn.PGNUtilities.writeGameToPGNFile;
 import static util.Constants.RESOURCE_BASE_PATH;
+import static util.Constants.SEARCH_DEPTH;
 
 /**
  * Questa classe rappresenta la GUI e i suoi elementi collegati.
@@ -119,53 +118,8 @@ public final class Window extends Observable {
      * @param tableMenuBar menu
      */
     private void populateMenuBar(final JMenuBar tableMenuBar) {
-        tableMenuBar.add(this.createFileMenu());
         tableMenuBar.add(this.createOptionsMenu());
         tableMenuBar.add(this.createPreferencesMenu());
-    }
-
-    /**
-     * Questo metodo serve per creare il menu chiamato "FILE"
-     * @return menu popolato con tutte le sue voci
-     */
-    private JMenu createFileMenu() {
-        final JMenu filesMenu = new JMenu("File");
-        filesMenu.setMnemonic(KeyEvent.VK_F);
-
-        // Leggi dati da file PGN
-        final JMenuItem openPGN = new JMenuItem("Carica da PGN", KeyEvent.VK_O);
-        openPGN.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            int option = chooser.showOpenDialog(Window.get().getWindowFrame());
-            if (option == JFileChooser.APPROVE_OPTION) {
-                loadPGNFile(chooser.getSelectedFile());
-            }
-        });
-        filesMenu.add(openPGN);
-
-        // Salva dati su un file PGN
-        final JMenuItem saveToPGN = new JMenuItem("Salva partita", KeyEvent.VK_S);
-        saveToPGN.addActionListener(e -> {
-            final JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileFilter() {
-                @Override
-                public String getDescription() {
-                    return ".pgn";
-                }
-                @Override
-                public boolean accept(final File file) {
-                    return file.isDirectory() || file.getName().toLowerCase().endsWith("pgn");
-                }
-            });
-
-            final int option = chooser.showSaveDialog(Window.get().getWindowFrame());
-
-            if (option == JFileChooser.APPROVE_OPTION)
-                savePGNFile(chooser.getSelectedFile());
-        });
-        filesMenu.add(saveToPGN);
-
-        return filesMenu;
     }
 
     /**
@@ -311,32 +265,6 @@ public final class Window extends Observable {
         Window.get().getBoardPanel().drawBoard(this.virtualBoard);
     }
 
-    /**
-     * Questo metodo serve a chiamare il metodo degli utilities PGN per salvare
-     * lo stato del gioco in un file
-     * @param pgnFile file pgn dove salvare le info
-     */
-    private static void savePGNFile(final File pgnFile) {
-        try {
-            writeGameToPGNFile(pgnFile, Window.get().getMoveLog());
-        }
-        catch (final IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Questo metodo serve per caricare lo stato della partita da un file PGN
-     * @param pgnFile file di riferimento
-     */
-    private static void loadPGNFile(final File pgnFile) {
-        try {
-            persistPGNFile(pgnFile);
-        }
-        catch (final IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -641,7 +569,7 @@ public final class Window extends Observable {
          */
         @Override
         protected Move doInBackground() {
-            final StockAlphaBeta strategy = new StockAlphaBeta(2);
+            final StockAlphaBeta strategy = new StockAlphaBeta(SEARCH_DEPTH);
             return strategy.execute(Window.get().getVirtualBoard());
         }
 
