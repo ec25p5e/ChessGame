@@ -1,16 +1,14 @@
 package core.move;
 
-/**
- *
- */
+
 public enum MoveUtils {
 
     INSTANCE;
 
     /**
-     *
-     * @param move
-     * @return
+     * Questo metodo serve per calcolare il valore della mossa
+     * @param move mossa di riferimento
+     * @return valore intero per indicare il valore
      */
     public static int exchangeScore(final Move move) {
         if(move == MoveFactory.getNullMove()) {

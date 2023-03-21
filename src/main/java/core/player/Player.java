@@ -15,8 +15,8 @@ import static java.util.stream.Collectors.collectingAndThen;
 import static core.pieces.piece.PieceType.KING;
 
 /**
- * Questa classe serve a rappresentare il giocatore generico che deve essere estesa dal {@link BlackPlayer} e {@link WhitePlayer}
- *
+ * Questa classe serve a rappresentare il giocatore generico che deve essere
+ * estesa dal {@link BlackPlayer} e {@link WhitePlayer}
  */
 @Getter
 public abstract class Player implements IPlayer {
@@ -25,6 +25,12 @@ public abstract class Player implements IPlayer {
     protected final Collection<Move> usableMoves;
     protected final boolean isInCheck;
 
+    /**
+     *
+     * @param board
+     * @param playerUsable
+     * @param opponentUsable
+     */
     public Player(final VirtualBoard board, final Collection<Move> playerUsable, final Collection<Move> opponentUsable) {
         this.board = board;
         this.playerKing = this.detectKing();
@@ -34,40 +40,43 @@ public abstract class Player implements IPlayer {
     }
 
     /**
-     *
-     * @return
+     * Questo metodo serve a indicare se il giocatore è sotto scacco matto
+     * @return valore booleano "TRUE" se in scacco matto
      */
     public boolean isInCheckMate() {
         return this.isInCheck && !this.findEscapeMoves();
     }
 
     /**
-     *
-     * @return
+     * Questo metodo serve a indicare se il giocatore è in stallo
+     * @return valore booleano "TRUE" se in stallo
      */
     public boolean isInStaleMate() {
         return !this.isInCheck && !this.findEscapeMoves();
     }
 
     /**
-     *
-     * @return
+     * Questo metodo serve a indicare se il giocatore è stato messo in arrocco
+     * Il RE implementa questa funzionalità
+     * @return valore booleano "TRUE" se in arrocco
      */
     public boolean isCastled() {
         return this.playerKing.isCastled();
     }
 
     /**
-     *
-     * @return
+     * Questo metodo indica se il RE è in grado di gestirsi o se è sotto scacco
+     * Metodo specifico per il RE
+     * @return valore booleano
      */
     public boolean isKingSideCastleCapable() {
         return this.playerKing.isCastledByKing();
     }
 
     /**
-     *
-     * @return
+     * Questo metodo indica se la regina è in grado di gestirsi o se è sotto scacco
+     * Metodo specifico per la regina
+     * @return valore booleano
      */
     public boolean isQueenSideCastleCapable() {
         return this.playerKing.isCastledByQueen();
@@ -94,9 +103,9 @@ public abstract class Player implements IPlayer {
     }
 
     /**
-     *
-     * @param move
-     * @return
+     * Questo metodo serve ad annullare una mossa. Infatti ritorna lo stato precedente alla mossa
+     * @param move mossa di riferimento per capire la situazione precedente
+     * @return transizione di mossa con la situazione precedente
      */
     public MoveTransition unMakeMove(final Move move) {
         return new MoveTransition(this.board, move.undo(), move, MoveStatus.DONE);
@@ -115,8 +124,8 @@ public abstract class Player implements IPlayer {
     }
 
     /**
-     *
-     * @return
+     * Questo metodo serve a capire se ci sono ancora apportunità di scacco
+     * @return valore booleano
      */
     protected boolean hasCastleOpportunities() {
         return !this.isInCheck && !this.playerKing.isCastled() &&

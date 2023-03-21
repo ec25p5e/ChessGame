@@ -31,7 +31,45 @@ public class PGNUtilities {
     }
 
     public static void persistPGNFile(final File pgnFile) throws IOException {
-        /* TODO("Eventualmente implemento il metodo con la logica") */
+        int count = 0;
+        int validCount = 0;
+
+        /* try (final BufferedReader br = new BufferedReader(new FileReader(pgnFile))) {
+            String line;
+            PGNGameTags.TagsBuilder tagsBuilder = new PGNGameTags.TagsBuilder();
+            StringBuilder gameTextBuilder = new StringBuilder();
+            while((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    if (isTag(line)) {
+                        final Matcher matcher = PGN_PATTERN.matcher(line);
+                        if (matcher.find()) {
+                            tagsBuilder.addTag(matcher.group(1), matcher.group(2));
+                        }
+                    }
+                    else if (isEndOfGame(line)) {
+                        final String[] ending = line.split(" ");
+                        final String outcome = ending[ending.length - 1];
+                        gameTextBuilder.append(line.replace(outcome, "")).append(" ");
+                        final String gameText = gameTextBuilder.toString().trim();
+                        if(!gameText.isEmpty() && gameText.length() > 80) {
+                            final Game game = GameFactory.createGame(tagsBuilder.build(), gameText, outcome);
+                            System.out.println("(" +(++count)+") Finished parsing " +game+ " count = " + (++count));
+                            if(game.isValid()) {
+                                MySqlGamePersistence.get().persistGame(game);
+                                validCount++;
+                            }
+                        }
+                        gameTextBuilder = new StringBuilder();
+                        tagsBuilder = new PGNGameTags.TagsBuilder();
+                    }
+                    else {
+                        gameTextBuilder.append(line).append(" ");
+                    }
+                }
+            }
+            br.readLine();
+        } */
+        System.out.println("Finished building book from pgn file: " + pgnFile + " Parsed " +count+ " games, valid = " +validCount);
     }
 
     /**
@@ -114,6 +152,25 @@ public class PGNUtilities {
         }
 
         return MoveFactory.getNullMove();
+    }
+
+    /**
+     *
+     * @param pgnFile
+     * @param moveLog
+     * @throws IOException
+     */
+    public static void writeGameToPGNFile(final File pgnFile, final MoveLog moveLog) throws IOException {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(calculateEventString()).append("\n");
+        builder.append(calculateDateString()).append("\n");
+        builder.append(calculatePlyCountString(moveLog)).append("\n");
+        for(final Move move : moveLog.getMoves()) {
+            builder.append(move.toString()).append(" ");
+        }
+        try (final Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pgnFile, true)))) {
+            writer.write(builder.toString());
+        }
     }
 
     /**

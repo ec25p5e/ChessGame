@@ -64,7 +64,6 @@ public abstract class CastleMove extends Move {
         }
 
         configurator.setPiece(this.pieceToMove.movePiece(this));
-        // non so come mai ma chiamare il metodo "doMove" non funziona, quindi creo una nuova torre
         configurator.setPiece(new Rook(this.castleRookDestination, this.castleRook.getPieceUtils(), false));
         configurator.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getUtils());
         configurator.setMoveTransition(this);

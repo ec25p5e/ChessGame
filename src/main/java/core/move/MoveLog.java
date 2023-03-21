@@ -1,16 +1,9 @@
 package core.move;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static util.Constants.*;
-import static util.Constants.NPE_EXCEPTION;
 
 public class MoveLog {
     @Getter
@@ -21,33 +14,29 @@ public class MoveLog {
     }
 
     /**
-     *
-     * @param move
+     * Questo metodo serve per aggiungere una mossa nel log
+     * @param move mossa effettuata da aggiungere
      */
     public void addMove(final Move move) {
         this.moves.add(move);
     }
 
     /**
-     *
-     * @param index
-     * @return
+     * Questo metodo serve per rimuovere una mossa dai log
+     * @param index indice di riferimento
+     * @return mossa appena rimossa
      */
     public Move removeMove(final int index) {
-        Move remove = this.moves.remove(index);
-
-        return remove;
+        return this.moves.remove(index);
     }
 
     /**
-     *
-     * @param move
-     * @return
+     * Questo metodo serve per rimuovere una mossa dai log
+     * @param move mossa da cercare nei log
+     * @return valore booleano "TRUE" se la mossa è stata rimossa
      */
     public boolean removeMove(final Move move) {
-        boolean remove = this.moves.remove(move);
-
-        return remove;
+        return this.moves.remove(move);
     }
 
     public int size() {

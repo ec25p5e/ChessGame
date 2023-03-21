@@ -20,10 +20,6 @@ public enum VirtualBoardUtils {
 
     public final List<Boolean> FIRST_COLUMN = setupColumn(0);
     public final List<Boolean> SECOND_COLUMN = setupColumn(1);
-    public final List<Boolean> THIRD_COLUMN = setupColumn(2);
-    public final List<Boolean> FOURTH_COLUMN = setupColumn(3);
-    public final List<Boolean> FIFTH_COLUMN = setupColumn(4);
-    public final List<Boolean> SIXTH_COLUMN = setupColumn(5);
     public final List<Boolean> SEVENTH_COLUMN = setupColumn(6);
     public final List<Boolean> EIGHTH_COLUMN = setupColumn(7);
     public final List<Boolean> FIRST_ROW = setupRow(0);
@@ -78,20 +74,20 @@ public enum VirtualBoardUtils {
     }
 
     /**
-     *
-     * @param board
-     * @return
+     * Questo metodo serve per verificare immediatamente se uno dei due giocatori è in scacco.
+     * @param board scacchiera virtuale di riferimento
+     * @return valore booleano. Basta che solo uno dei due giocatori sia in scacco per essere "TRUE"
      */
     public static boolean isThreatenedBoardImmediate(final VirtualBoard board) {
         return board.getWhitePlayer().isInCheck() || board.getBlackPlayer().isInCheck();
     }
 
     /**
-     *
-     * @param board
-     * @param king
-     * @param frontTile
-     * @return
+     * Questo metodo serve a verificare se il re è messo in pericolo da un pedone
+     * @param board scacchiera virtuale di riferimento
+     * @param king tipo di pedina del RE
+     * @param frontTile coordinata della cella di fronte in diagonale
+     * @return valore booleano
      */
     public static boolean isKingPawnTrap(final VirtualBoard board, final King king, final int frontTile) {
         final Piece piece = board.getPiece(frontTile);
@@ -146,10 +142,10 @@ public enum VirtualBoardUtils {
     }
 
     /**
-     *
-     * @param board
-     * @param N
-     * @return
+     * Questo metodo serve per calcolare le ultime N mosse effettuate
+     * @param board scacchiera virtuale di riferimento
+     * @param N numero di mosse da ricercare a ritroso
+     * @return lista di mosse precedentemente effettuate
      */
     public static List<Move> lastNMoves(final VirtualBoard board, int N) {
         final List<Move> moveHistory = new ArrayList<>();

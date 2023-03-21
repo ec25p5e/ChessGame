@@ -64,32 +64,22 @@ public class Bishop extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
         for(final int candidateOffset : OPERATION_MOVE) {
-            // Viene impostata la variabile con la posizione corrente della torre
             int candidateCoordinate = this.piecePosition;
 
-            // Viene avviato un ciclo finché il calcolo della posizione candidata genera un valore al di fuori del range di valori della scacchiera.
-            // Oppure se alla coordinata candidata è già presente una pedina non dei nostri oppure se si capita sulla prima/ultima riga della scacchiera
             while(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
                 if(firstColumnExclusion(candidateOffset, candidateCoordinate) ||
                     eighthColumnExclusion(candidateOffset, candidateCoordinate))
                     break;
 
-                // Aggiungi il valore di calcolo alla coordinata corrente
                 candidateCoordinate += candidateOffset;
 
-                // Controlla che il nuovo valore sia valido
                 if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                    // Cattura il contenuto della cella di destinazione
                     final Piece pieceAtDestination = board.getPiece(candidateCoordinate);
 
-                    // Se è nulla significa che è vuota, crea una mossa di movimento
                     if(pieceAtDestination == null)
                         usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                     else {
-                        // Altrimenti se non è vuota controlla che sia dell'avversario e crea una mossa di attacco e termina il ciclo
-                        // e procedi al prossimo valore di calcolo
                         final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
                         if(this.pieceUtils != pieceAtDestinationUtils)
@@ -101,7 +91,6 @@ public class Bishop extends Piece {
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 

@@ -62,38 +62,29 @@ public class Knight extends Piece {
     public Collection<Move> calculateMoves(final VirtualBoard board) {
         final List<Move> usableMoves = new ArrayList<>();
 
-        // Viene percorso l'array contenente i valori di calcolo
         for(final int candidateOffset : OPERATION_MOVE) {
-            // Se la torre capita sulla prima o seconda colonna continua perché cosi può saltare via le pedine allo stato iniziale
             if(firstColumnExclusion(this.piecePosition, candidateOffset) ||
                 secondColumnExclusion(this.piecePosition, candidateOffset) ||
                 seventhColumnExclusion(this.piecePosition, candidateOffset) ||
                 eighthColumnExclusion(this.piecePosition, candidateOffset))
                 continue;
 
-            // Imposta la coordinata con sommata quella di calcolo
             final int candidateCoordinate = this.piecePosition + candidateOffset;
 
-            // Controlla che non sia uscito dalla scacchiera
             if(VirtualBoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-                // Prendi il contenuto della cella di destinazione
                 final Piece pieceAtDestination = board.getPiece(candidateCoordinate);
 
-                // Se la destinazione è vuota crea una mossa normale/semplice
                 if(pieceAtDestination == null)
                     usableMoves.add(new MajorMove(board, this, candidateCoordinate));
                 else {
-                    // Altrimenti se il colore è diverso dal corrente
                     final Utils pieceAtDestinationUtils = pieceAtDestination.getPieceUtils();
 
-                    // Crea una mossa di attacco
                     if(pieceAtDestinationUtils != this.pieceUtils)
                         usableMoves.add(new MajorAttackMove(board, this, candidateCoordinate, pieceAtDestination));
                 }
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 

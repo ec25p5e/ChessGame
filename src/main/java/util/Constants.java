@@ -5,7 +5,7 @@ import java.awt.*;
 public class Constants {
     public static final String WINDOW_TITLE = "!!! SCACCHI !!!";
     public static final String RESOURCE_BASE_PATH = "src/main/resources/";
-    public static final String SERIALIZATION_PATH = "src/main/resources/serialization/";
+    public static final String SERIALIZATION_PATH = "src/main/resources/files/";
     public static final String BASE_GAME_FILE = "initGame.json";
     public static final Color BOARD_PANEL_BACKGROUND = Color.decode("#8B4726");
     public static final Dimension WINDOW_DIMENSION = new Dimension(600, 600);

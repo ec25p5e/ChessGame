@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Questa classe rappresenta il pannello delle pedine catturate
+ */
 public class TakenPiecesPanel extends JPanel {
     private final JPanel northPanel;
     private final JPanel southPanel;
@@ -38,6 +41,12 @@ public class TakenPiecesPanel extends JPanel {
         setPreferredSize(TAKEN_PIECES_PANEL_DIMENSION);
     }
 
+    /**
+     * Questo metodo serve a raccogliere tutte le mosse dal log
+     * e capire le pedine catturate. Successivamente le deve presentare su due colonne
+     * (divisione per colore) nel pannello delle pedine catturate
+     * @param moveLog log delle mosse effettuate
+     */
     public void redo(final MoveLog moveLog) {
         // Pulisci entrambe le colonne
         this.southPanel.removeAll();
@@ -72,8 +81,8 @@ public class TakenPiecesPanel extends JPanel {
         // Mostra le pedine bianche nella colonna
         for (final Piece takenPiece : whiteTakenPieces) {
             try {
-                final BufferedImage image = ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "pieceIcon/"
-                        + takenPiece.getPieceUtils().toString().substring(0, 1) + "" + takenPiece.toString()
+                final BufferedImage image = ImageIO.read(new File(Window.get().getPieceIconPath()
+                        + takenPiece.getPieceUtils().toString().charAt(0) + "" + takenPiece.toString()
                         + ".gif"));
                 final ImageIcon ic = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(ic.getImage().getScaledInstance(
@@ -81,15 +90,14 @@ public class TakenPiecesPanel extends JPanel {
                 this.southPanel.add(imageLabel);
             }
             catch (final IOException e) {
-                e.printStackTrace();
             }
         }
 
         // Mostra le pedine nere nella colonna
         for (final Piece takenPiece : blackTakenPieces) {
             try {
-                final BufferedImage image = ImageIO.read(new File(Constants.RESOURCE_BASE_PATH + "pieceIcon/"
-                        + takenPiece.getPieceUtils().toString().substring(0, 1) + "" + takenPiece.toString()
+                final BufferedImage image = ImageIO.read(new File(Window.get().getPieceIconPath()
+                        + takenPiece.getPieceUtils().toString().charAt(0) + "" + takenPiece.toString()
                         + ".gif"));
                 final ImageIcon ic = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(ic.getImage().getScaledInstance(
@@ -97,7 +105,6 @@ public class TakenPiecesPanel extends JPanel {
                 this.northPanel.add(imageLabel);
 
             } catch (final IOException e) {
-                e.printStackTrace();
             }
         }
 

@@ -96,7 +96,6 @@ public class Queen extends Piece {
             }
         }
 
-        // Ritorna la lista completa di tutti i movimenti possibili
         return Collections.unmodifiableList(usableMoves);
     }
 
