@@ -9,6 +9,7 @@ import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
+import pgn.MySqlGamePersistence;
 import util.Configuration;
 import util.Constants;
 
@@ -618,8 +619,24 @@ public final class Window extends Observable {
          */
         @Override
         protected Move doInBackground() {
-            final StockAlphaBeta strategy = new StockAlphaBeta(SEARCH_DEPTH);
-            return strategy.execute(Window.get().getVirtualBoard());
+            final Move bestMove;
+
+            // Se deve usare le mosse precedenti per determinare la mossa migliore usa il DB
+            final Move bookMove = Configuration.useBook
+                    ? MySqlGamePersistence.get().getNextBestMove(Window.get().getVirtualBoard(),
+                        Window.get().getVirtualBoard().getCurrentPlayer(),
+                        Window.get().getMoveLog().getMoves().toString().replaceAll("\\[", "").replace("]", ""))
+                    : MoveFactory.getNullMove();
+
+            // Se usa il DB e la mossa archiviata non è nulla, impostala come migliore
+            if(Configuration.useBook && bookMove != MoveFactory.getNullMove()) {
+                bestMove = bookMove;
+            } else {
+                final StockAlphaBeta strategy = new StockAlphaBeta(SEARCH_DEPTH);
+                bestMove = strategy.execute(Window.get().getVirtualBoard());
+            }
+
+            return bestMove;
         }
 
         /**
