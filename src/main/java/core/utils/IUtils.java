@@ -93,4 +93,14 @@ public interface IUtils {
      */
     @Override
     String toString();
+
+    /**
+     * @return metodo wrapper del toString, e ritorna tutto in uppercase
+     */
+    String toStringUpper();
+
+    /**
+     * @return metodo wrapper del toString, e ritorna tutto in lowercase
+     */
+    String toStringLower();
 }

@@ -1,0 +1,9 @@
+{
+  "type": "core.pieces.Knight",
+  "properties": {
+    "pieceCoordinate": "[b1, g1] || [b8, g8]",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "KNIGHT",
+    "isFirstMove": true
+  }
+}

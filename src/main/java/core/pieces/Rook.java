@@ -33,7 +33,7 @@ public class Rook extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Rook(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.ROOK, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.ROOK, piecePosition, pieceUtils, isFirstMove, PieceType.ROOK.getDrawFileName());
     }
 
     /**
@@ -44,7 +44,7 @@ public class Rook extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Rook(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.ROOK, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.ROOK, pieceCoordinate, pieceUtils, isFirstMove, PieceType.ROOK.getDrawFileName());
     }
 
     /**
@@ -54,7 +54,7 @@ public class Rook extends Piece {
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
      */
     public Rook(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.ROOK, piecePosition, pieceUtils, true);
+        super(PieceType.ROOK, piecePosition, pieceUtils, true, PieceType.ROOK.getDrawFileName());
     }
 
     /**

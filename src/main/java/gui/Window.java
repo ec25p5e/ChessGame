@@ -9,11 +9,11 @@ import core.player.ai.PlayerType;
 import core.player.ai.StockAlphaBeta;
 import lombok.Getter;
 import lombok.Setter;
+import util.Configuration;
 import util.Constants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -37,6 +37,8 @@ public final class Window extends Observable {
     private final JFrame windowFrame;
     private final MoveLog moveLog;
     private final TakenPiecesPanel takenPiecesPanel;
+    private final DrawingGame drawingGame;
+    private final GameSetup gameSetup;
 
     private VirtualBoard virtualBoard;
     private BoardDirection boardDirection;
@@ -55,13 +57,15 @@ public final class Window extends Observable {
         this.populateMenuBar(tableMenuBar);
         this.windowFrame.setJMenuBar(tableMenuBar);
         this.windowFrame.setLayout(new BorderLayout());
-        this.virtualBoard = VirtualBoard.getDefaultBoard();
+        this.virtualBoard = Configuration.isDrawingMode ? VirtualBoard.clearVirtualBoard() : VirtualBoard.getDefaultBoard();
         this.boardDirection = BoardDirection.NORMAL;
         this.highlightLegalMoves = false;
         this.boardPanel = new BoardPanel();
         this.moveLog = new MoveLog();
         this.pieceIconPath = "src/main/resources/icons/fancy/";
         this.takenPiecesPanel = new TakenPiecesPanel();
+        this.drawingGame = new DrawingGame(this.windowFrame, true);
+        this.gameSetup = new GameSetup(this.windowFrame, true);
         this.addObserver(new WindowGameAIWatcher());
         this.windowFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.windowFrame.add(this.boardPanel, BorderLayout.CENTER);
@@ -118,8 +122,25 @@ public final class Window extends Observable {
      * @param tableMenuBar menu
      */
     private void populateMenuBar(final JMenuBar tableMenuBar) {
+        tableMenuBar.add(this.createFilesMenu());
         tableMenuBar.add(this.createOptionsMenu());
         tableMenuBar.add(this.createPreferencesMenu());
+    }
+
+    /**
+     *
+     * @return
+     */
+    private JMenu createFilesMenu() {
+       final JMenu filesMenu = new JMenu("File");
+       filesMenu.setMnemonic(KeyEvent.VK_F);
+
+        // Disegna situazione
+        final JMenuItem drawGame = new JMenuItem("Draw game", KeyEvent.VK_D);
+        drawGame.addActionListener(e -> this.drawGame());
+        filesMenu.add(drawGame);
+
+       return filesMenu;
     }
 
     /**
@@ -222,6 +243,14 @@ public final class Window extends Observable {
         });
         preferencesMenu.add(flipBoardItem);
 
+        // Configurare la scacchiera
+        final JMenuItem gameSetup = new JMenuItem("Impostazioni");
+        gameSetup.addActionListener(e -> {
+            Window.get().getGameSetup().promptUser();
+
+        });
+        preferencesMenu.add(gameSetup);
+
         // Aggiungi una riga per dividere il menu
         preferencesMenu.addSeparator();
 
@@ -247,6 +276,20 @@ public final class Window extends Observable {
        Window.get().getMoveLog().removeMove(lastMove);
        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
        Window.get().getBoardPanel().drawBoard(this.virtualBoard);
+    }
+
+    /**
+     * Questo metodo serve per la funzionalità di disegnare una partita allo stato desiderato.
+     * Il metodo si occupa di pulire la board da tutte le pedine e mostrarle nel riquadro accanto
+     */
+    private void drawGame() {
+        Configuration.isDrawingMode = true;
+        this.virtualBoard = VirtualBoard.clearVirtualBoard();
+        this.computerMove = null;
+
+        Window.get().getMoveLog().clear();
+        Window.get().getTakenPiecesPanel().redo(Window.get().getMoveLog());
+        Window.get().getBoardPanel().drawBoard(this.virtualBoard);
     }
 
     /**
@@ -361,41 +404,47 @@ public final class Window extends Observable {
             this.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // Se il gioco è finito blocca le mosse
-                    if(VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
-                        return;
+                    if(!Configuration.isDrawingMode) {
+                        // Se il gioco è finito blocca le mosse
+                        if (VirtualBoardUtils.isEndGame(Window.get().getVirtualBoard()))
+                            return;
 
-                    if(isRightMouseButton(e)) {
-                        sourceTile = null;
-                        humanMovedPiece = null;
-                    } else if(isLeftMouseButton(e)) {
-                        // Se l'attributo della pedina selezionata è vuoto, imposta una nuova pedina
-                        // Altrimenti esegui il movimento della pedina
-                        if(sourceTile == null) {
-                            sourceTile = virtualBoard.getPiece(tileId);
-                            humanMovedPiece = sourceTile;
-
-                            if(humanMovedPiece == null)
-                                sourceTile = null;
-                        } else {
-                            final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
-                            final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
-
-                            if (transition.moveStatus().isDone()) {
-                                virtualBoard = transition.toBoard();
-                                moveLog.addMove(move);
-                            }
-
+                        if (isRightMouseButton(e)) {
                             sourceTile = null;
                             humanMovedPiece = null;
+                        } else if (isLeftMouseButton(e)) {
+                            // Se l'attributo della pedina selezionata è vuoto, imposta una nuova pedina
+                            // Altrimenti esegui il movimento della pedina
+                            if (sourceTile == null) {
+                                sourceTile = virtualBoard.getPiece(tileId);
+                                humanMovedPiece = sourceTile;
+
+                                if (humanMovedPiece == null)
+                                    sourceTile = null;
+                            } else {
+                                final Move move = MoveFactory.createMove(virtualBoard, sourceTile.getPiecePosition(), tileId);
+                                final MoveTransition transition = virtualBoard.getCurrentPlayer().doMove(move);
+
+                                if (transition.moveStatus().isDone()) {
+                                    virtualBoard = transition.toBoard();
+                                    moveLog.addMove(move);
+                                }
+
+                                sourceTile = null;
+                                humanMovedPiece = null;
+                            }
+                        }
+
+                        invokeLater(() -> {
+                            takenPiecesPanel.redo(moveLog);
+                            Window.get().moveMadeUpdate(PlayerType.HUMAN);
+                            boardPanel.drawBoard(virtualBoard);
+                        });
+                    } else {
+                        if(isLeftMouseButton(e)) {
+                            Window.get().getDrawingGame().promptUser(tileId);
                         }
                     }
-
-                    invokeLater(() -> {
-                        takenPiecesPanel.redo(moveLog);
-                        Window.get().moveMadeUpdate(PlayerType.HUMAN);
-                        boardPanel.drawBoard(virtualBoard);
-                    });
                 }
 
                 @Override

@@ -15,35 +15,41 @@ public abstract class Piece implements IPiece {
     protected final boolean isFirstMove;
     protected transient final int piecePosition;
     protected transient final int cachedHashCode;
+    protected transient final String fileDrawName;
 
     /**
-     * @param pieceType tipo di pedina. 6 disponibili
+     * @param pieceType     tipo di pedina. 6 disponibili
      * @param piecePosition coordinata dove è posizionata
-     * @param pieceUtils colore e altri utils come la direzione opposta, ecc...
-     * @param isFirstMove indica se la pedina è alla prima mossa
+     * @param pieceUtils    colore e altri utils come la direzione opposta, ecc...
+     * @param isFirstMove   indica se la pedina è alla prima mossa
+     * @param fileDrawName  stringa dove è indicato il nome del file di disegno
      */
-    public Piece(final PieceType pieceType, final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
+    public Piece(final PieceType pieceType, final int piecePosition, final Utils pieceUtils, final boolean isFirstMove, final String fileDrawName) {
         this.pieceType = pieceType;
         this.piecePosition = piecePosition;
         this.pieceCoordinate = VirtualBoardUtils.INSTANCE.getPositionAtCoordinate(this.piecePosition);
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
+        this.fileDrawName = fileDrawName;
         this.cachedHashCode = computeHashCode();
     }
 
     /**
      * Questo costruttore viene utilizzato quando viene deserializzato il file con le pedine alle posizioni
-     * @param pieceType tipo di pedina. 6 disponibili
+     *
+     * @param pieceType       tipo di pedina. 6 disponibili
      * @param pieceCoordinate coordinata dove è posizionata. ex: a5
-     * @param pieceUtils colore e altri utils come la direzione opposta, ecc...
-     * @param isFirstMove indica se la pedina è alla prima mossa
+     * @param pieceUtils      colore e altri utils come la direzione opposta, ecc...
+     * @param isFirstMove     indica se la pedina è alla prima mossa
+     * @param fileDrawName    stringa dove è indicato il nome del file di disegno
      */
-    public Piece(final PieceType pieceType, final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
+    public Piece(final PieceType pieceType, final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove, String fileDrawName) {
         this.pieceType = pieceType;
         this.piecePosition = VirtualBoardUtils.INSTANCE.getCoordinateAtPosition(pieceCoordinate);
         this.pieceCoordinate = pieceCoordinate;
         this.pieceUtils = pieceUtils;
         this.isFirstMove = isFirstMove;
+        this.fileDrawName = fileDrawName;
         this.cachedHashCode = computeHashCode();
     }
 

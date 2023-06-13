@@ -31,7 +31,7 @@ public class Bishop extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Bishop(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.BISHOP, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.BISHOP, piecePosition, pieceUtils, isFirstMove, PieceType.BISHOP.getDrawFileName());
     }
 
     /**
@@ -42,7 +42,7 @@ public class Bishop extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Bishop(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.BISHOP, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.BISHOP, pieceCoordinate, pieceUtils, isFirstMove, PieceType.BISHOP.getDrawFileName());
     }
 
     /**
@@ -52,7 +52,7 @@ public class Bishop extends Piece {
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
      */
     public Bishop(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.BISHOP, piecePosition, pieceUtils, true);
+        super(PieceType.BISHOP, piecePosition, pieceUtils, true, PieceType.BISHOP.getDrawFileName());
     }
 
     /**

@@ -6,6 +6,7 @@ import core.move.MoveStatus;
 import core.move.MoveTransition;
 import core.pieces.King;
 import lombok.Getter;
+import util.Configuration;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,12 +32,19 @@ public abstract class Player implements IPlayer {
      * @param playerUsable
      * @param opponentUsable
      */
-    public Player(final VirtualBoard board, final Collection<Move> playerUsable, final Collection<Move> opponentUsable) {
+    public Player(final VirtualBoard board, final Collection<Move> playerUsable, final Collection<Move> opponentUsable, boolean isDrawingMode) {
         this.board = board;
-        this.playerKing = this.detectKing();
-        this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentUsable).isEmpty();
-        playerUsable.addAll(calculateKingCastles(playerUsable, opponentUsable));
-        this.usableMoves = Collections.unmodifiableCollection(playerUsable);
+
+        if(!isDrawingMode) {
+            this.playerKing = this.detectKing();
+            this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentUsable).isEmpty();
+            playerUsable.addAll(calculateKingCastles(playerUsable, opponentUsable));
+            this.usableMoves = Collections.unmodifiableCollection(playerUsable);
+        } else {
+            this.playerKing = null;
+            this.isInCheck = false;
+            this.usableMoves = null;
+        }
     }
 
     /**

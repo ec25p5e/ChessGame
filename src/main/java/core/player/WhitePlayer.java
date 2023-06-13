@@ -26,8 +26,9 @@ public class WhitePlayer extends Player {
      * @param whiteUsableMoves mosse usabili dal giocatore bianco
      * @param blackUsableMoves mosse usabili dal giocatore nero, avversario
      */
-    public WhitePlayer(final VirtualBoard board, final Collection<Move> whiteUsableMoves, final Collection<Move> blackUsableMoves) {
-        super(board, whiteUsableMoves, blackUsableMoves);
+    public WhitePlayer(final VirtualBoard board, final Collection<Move> whiteUsableMoves,
+                       final Collection<Move> blackUsableMoves, boolean isDrawingMode) {
+        super(board, whiteUsableMoves, blackUsableMoves, isDrawingMode);
     }
 
     /**

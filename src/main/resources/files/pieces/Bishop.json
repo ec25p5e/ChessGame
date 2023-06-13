@@ -1,0 +1,9 @@
+{
+  "type": "core.pieces.Bishop",
+  "properties": {
+    "pieceCoordinate": "[c1, f1] || [c8, f8]",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "BISHOP",
+    "isFirstMove": true
+  }
+}

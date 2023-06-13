@@ -29,7 +29,7 @@ public class Knight extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Knight(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.KNIGHT, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.KNIGHT, piecePosition, pieceUtils, isFirstMove, PieceType.KNIGHT.getDrawFileName());
     }
 
     /**
@@ -40,7 +40,7 @@ public class Knight extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Knight(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.KNIGHT, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.KNIGHT, pieceCoordinate, pieceUtils, isFirstMove, PieceType.KNIGHT.getDrawFileName());
     }
 
     /**
@@ -50,7 +50,7 @@ public class Knight extends Piece {
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
      */
     public Knight(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.KNIGHT, piecePosition, pieceUtils, true);
+        super(PieceType.KNIGHT, piecePosition, pieceUtils, true, PieceType.KNIGHT.getDrawFileName());
     }
 
     /**

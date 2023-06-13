@@ -1,0 +1,9 @@
+{
+  "type": "core.pieces.Queen",
+  "properties": {
+    "pieceCoordinate": "[d1] || [d8]",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "QUEEN",
+    "isFirstMove": true
+  }
+}

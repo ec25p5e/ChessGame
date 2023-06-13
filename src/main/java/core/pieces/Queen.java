@@ -33,7 +33,7 @@ public class Queen extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Queen(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.QUEEN, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.QUEEN, piecePosition, pieceUtils, isFirstMove, PieceType.QUEEN.getDrawFileName());
     }
 
     /**
@@ -44,7 +44,7 @@ public class Queen extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Queen(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.QUEEN, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.QUEEN, pieceCoordinate, pieceUtils, isFirstMove, PieceType.QUEEN.getDrawFileName());
     }
 
     /**
@@ -54,7 +54,7 @@ public class Queen extends Piece {
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
      */
     public Queen(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.QUEEN, piecePosition, pieceUtils, true);
+        super(PieceType.QUEEN, piecePosition, pieceUtils, true, PieceType.QUEEN.getDrawFileName());
     }
 
     /**

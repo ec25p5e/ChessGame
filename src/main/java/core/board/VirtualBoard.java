@@ -13,6 +13,7 @@ import core.player.Player;
 import core.player.WhitePlayer;
 import core.pieces.piece.Piece;
 import lombok.Getter;
+import util.Configuration;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,18 +51,31 @@ public final class VirtualBoard {
      */
     public VirtualBoard(final BoardConfigurator boardConfigurator) {
         this.configuration = Collections.unmodifiableMap(boardConfigurator.getConfiguration());
-        this.whitePieces = calculateActivePiecesByUtils(boardConfigurator, WHITE);
-        this.blackPieces = calculateActivePiecesByUtils(boardConfigurator, Utils.BLACK);
-        this.enPassantPawn = boardConfigurator.getEnPassant();
 
-        final Collection<Move> whiteUsableMoves = this.calculateUsableMoves(this.whitePieces);
-        final Collection<Move> blackUsableMoves = this.calculateUsableMoves(this.blackPieces);
+        if(!Configuration.isDrawingMode) {
+            this.whitePieces = calculateActivePiecesByUtils(boardConfigurator, WHITE);
+            this.blackPieces = calculateActivePiecesByUtils(boardConfigurator, Utils.BLACK);
+            this.enPassantPawn = boardConfigurator.getEnPassant();
 
-        this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves);
-        this.blackPlayer = new BlackPlayer(this, whiteUsableMoves, blackUsableMoves);
+            final Collection<Move> whiteUsableMoves = this.calculateUsableMoves(this.whitePieces);
+            final Collection<Move> blackUsableMoves = this.calculateUsableMoves(this.blackPieces);
 
-        this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
-        this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
+            this.whitePlayer = new WhitePlayer(this, whiteUsableMoves, blackUsableMoves, Configuration.isDrawingMode);
+            this.blackPlayer = new BlackPlayer(this, whiteUsableMoves, blackUsableMoves, Configuration.isDrawingMode);
+
+            this.currentPlayer = boardConfigurator.getNextMoveMaker().selectPlayerByUtils(this.whitePlayer, this.blackPlayer);
+            this.transitionMove = boardConfigurator.getMoveTransition() != null ? boardConfigurator.getMoveTransition() : MoveFactory.getNullMove();
+        } else {
+            this.whitePieces = null;
+            this.blackPieces = null;
+
+            this.whitePlayer = null;
+            this.blackPlayer = null;
+
+            this.currentPlayer = null;
+            this.transitionMove = null;
+            this.enPassantPawn = null;
+        }
     }
 
     /**
@@ -105,7 +119,7 @@ public final class VirtualBoard {
     /**
      * All'interno di questo metodo vengono definiti i tipi, colori e coordinate delle pedine
      * oltre al colore che deve muovere per primo
-     * @return la scacchiera virtuale con le pedine posizionate
+     * @return la scacchiera virtuale con le pedine posizionate lette nel file JSON
      */
     public static VirtualBoard initDefaultBoard() {
         final BoardConfigurator configurator = new BoardConfigurator();
@@ -144,6 +158,16 @@ public final class VirtualBoard {
             configurator.setMoveMaker(WHITE);
         }
 
+        return configurator.build();
+    }
+
+    /**
+     * Questo metodo serve per pulire la scacchiera
+     * Per pulire si intende la creazione di una board virtuale vuota.
+     * @return board virtuale vuota
+     */
+    public static VirtualBoard clearVirtualBoard() {
+        final BoardConfigurator configurator = new BoardConfigurator();
         return configurator.build();
     }
 

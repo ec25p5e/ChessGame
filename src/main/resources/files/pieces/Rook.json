@@ -1,0 +1,9 @@
+{
+  "type": "core.pieces.Rook",
+  "properties": {
+    "pieceCoordinate": "[a1, h1] || [a8, h8]",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "ROOK",
+    "isFirstMove": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "core.pieces.King",
+  "properties": {
+    "isCastled": false,
+    "isCastledByKing": true,
+    "isCastledByQueen": true,
+    "pieceCoordinate": "[e1] || [e8]",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "KING",
+    "isFirstMove": true
+  }
+}

@@ -31,7 +31,7 @@ public class Pawn extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Pawn(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.PAWN, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.PAWN, piecePosition, pieceUtils, isFirstMove, PieceType.PAWN.getDrawFileName());
     }
 
     /**
@@ -42,7 +42,7 @@ public class Pawn extends Piece {
      * @param isFirstMove valore booleano che indica se è la prima mossa del pedone
      */
     public Pawn(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove) {
-        super(PieceType.PAWN, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.PAWN, pieceCoordinate, pieceUtils, isFirstMove, PieceType.PAWN.getDrawFileName());
     }
 
     /**
@@ -52,7 +52,7 @@ public class Pawn extends Piece {
      *                   Ad esempio se la pedina è bianca o nera. Immagazzinare chi fosse il colore avversario,...
      */
     public Pawn(final int piecePosition, final Utils pieceUtils) {
-        super(PieceType.PAWN, piecePosition, pieceUtils, true);
+        super(PieceType.PAWN, piecePosition, pieceUtils, true, PieceType.PAWN.getDrawFileName());
     }
 
     /**

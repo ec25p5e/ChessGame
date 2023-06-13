@@ -1,0 +1,9 @@
+{
+  "type": "core.pieces.Pawn",
+  "properties": {
+    "pieceCoordinate": "a2 => h2 / [d4] || a7 => h7 / [g7] ?? letter",
+    "pieceUtils": "WHITE || BLACK",
+    "pieceType": "PAWN",
+    "isFirstMove": true
+  }
+}

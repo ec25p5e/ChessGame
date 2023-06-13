@@ -105,6 +105,22 @@ public enum Utils implements IUtils {
         public String toString() {
             return "White";
         }
+
+        /**
+         * @return metodo wrapper del toString, e ritorna tutto in uppercase
+         */
+        @Override
+        public String toStringUpper() {
+            return Utils.WHITE.toString().toUpperCase();
+        }
+
+        /**
+         * @return metodo wrapper del toString, e ritorna tutto in lowercase
+         */
+        @Override
+        public String toStringLower() {
+            return Utils.WHITE.toString().toLowerCase();
+        }
     },
     BLACK() {
         /**
@@ -212,4 +228,20 @@ public enum Utils implements IUtils {
     // Valore utilizzato per sapere di quanto muoversi in una determinata direzione
     // Per scendere 1
     private static final int DOWN_DIRECTION = 1;
+
+    /**
+     * @return metodo wrapper del toString, e ritorna tutto in uppercase
+     */
+    @Override
+    public String toStringUpper() {
+        return Utils.BLACK.toString().toUpperCase();
+    }
+
+    /**
+     * @return metodo wrapper del toString, e ritorna tutto in lowercase
+     */
+    @Override
+    public String toStringLower() {
+        return Utils.BLACK.toString().toLowerCase();
+    }
 }

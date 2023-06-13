@@ -40,7 +40,8 @@ public class King extends Piece {
      */
     public King(final int piecePosition, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
                 final boolean isCastledByKing, final boolean isCastledByQueen) {
-        super(PieceType.KING, piecePosition, pieceUtils, isFirstMove);
+        super(PieceType.KING, piecePosition, pieceUtils, isFirstMove, PieceType.KING.getDrawFileName());
+
         this.isCastled = isCastled;
         this.isCastledByKing = isCastledByKing;
         this.isCastledByQueen = isCastledByQueen;
@@ -55,7 +56,8 @@ public class King extends Piece {
      */
     public King(final String pieceCoordinate, final Utils pieceUtils, final boolean isFirstMove, final boolean isCastled,
                 final boolean isCastledByKing, final boolean isCastledByQueen) {
-        super(PieceType.KING, pieceCoordinate, pieceUtils, isFirstMove);
+        super(PieceType.KING, pieceCoordinate, pieceUtils, isFirstMove, PieceType.KING.getDrawFileName());
+
         this.isCastled = isCastled;
         this.isCastledByKing = isCastledByKing;
         this.isCastledByQueen = isCastledByQueen;
@@ -70,14 +72,21 @@ public class King extends Piece {
      * @param isCastledByQueen indica se è sotto scacco dalla regina
      */
     public King(final int piecePosition, final Utils pieceUtils, final boolean isCastledByKing, final boolean isCastledByQueen) {
-        super(PieceType.KING, piecePosition, pieceUtils, true);
+        super(PieceType.KING, piecePosition, pieceUtils, true, PieceType.KING.getDrawFileName());
         this.isCastled = false;
         this.isCastledByKing = isCastledByKing;
         this.isCastledByQueen = isCastledByQueen;
     }
 
+    /**
+     *
+     * @param piecePosition
+     * @param pieceUtils
+     * @param isCastledByKing
+     * @param isCastledByQueen
+     */
     public King(final String piecePosition, final Utils pieceUtils, final boolean isCastledByKing, final boolean isCastledByQueen) {
-        super(PieceType.KING, piecePosition, pieceUtils, true);
+        super(PieceType.KING, piecePosition, pieceUtils, true, PieceType.KING.getDrawFileName());
         this.isCastled = false;
         this.isCastledByKing = isCastledByKing;
         this.isCastledByQueen = isCastledByQueen;
