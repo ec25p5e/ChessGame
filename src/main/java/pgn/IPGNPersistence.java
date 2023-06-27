@@ -4,7 +4,7 @@ import core.board.VirtualBoard;
 import core.move.Move;
 import core.player.Player;
 
-public interface PGNPersistence {
+public interface IPGNPersistence {
 
     /**
      *

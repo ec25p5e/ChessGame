@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.List;
 
 import static javax.swing.SwingUtilities.*;
+import static pgn.PGNUtilities.persistPGNFile;
 import static util.Constants.RESOURCE_BASE_PATH;
 import static util.Constants.SEARCH_DEPTH;
 
@@ -140,6 +141,17 @@ public final class Window extends Observable {
         final JMenuItem drawGame = new JMenuItem("Draw game", KeyEvent.VK_D);
         drawGame.addActionListener(e -> this.drawGame());
         filesMenu.add(drawGame);
+
+        // Carica dati da un file PGN
+        final JMenuItem openPGN = new JMenuItem("Load PGN File", KeyEvent.VK_O);
+        openPGN.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            int option = chooser.showOpenDialog(Window.get().getWindowFrame());
+
+            if (option == JFileChooser.APPROVE_OPTION)
+                loadPGNFile(chooser.getSelectedFile());
+        });
+        filesMenu.add(openPGN);
 
        return filesMenu;
     }
@@ -309,6 +321,17 @@ public final class Window extends Observable {
         Window.get().getBoardPanel().drawBoard(this.virtualBoard);
     }
 
+    /**
+     * Questo metodo viene chiamato quando si vuole caricare un file PGN
+     * @param pgnFile percorso del file da caricare
+     */
+    private static void loadPGNFile(final File pgnFile) {
+        try {
+            persistPGNFile(pgnFile);
+        } catch(final IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**
